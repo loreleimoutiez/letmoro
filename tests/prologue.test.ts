@@ -1,3 +1,4 @@
+import { recordsFor } from '../src/domain/records.ts';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { apply, createRun, travelCost } from '../src/domain/prologue.ts';
@@ -56,4 +57,23 @@ test('presentation follows local clock boundaries without story effects', () => 
   for (const [hour, expected] of [[0, 'night'], [6, 'dusk'], [8, 'day'], [18, 'dusk'], [21, 'night']] as const) {
     assert.equal(themeAt(new Date(2026, 10, 5, hour)), expected);
   }
+});
+
+test('records reveal only encountered people and earned badges, preserving sealed letters after reload', () => {
+  let run = createRun(100);
+  assert.deepEqual(recordsFor(run).characters, []);
+  assert.deepEqual(recordsFor(run).letters, []);
+  assert.equal(recordsFor(run).badges[0].description, null);
+  run = apply(apply(run, { type: 'steps', amount: 100 }), { type: 'cross' });
+  assert.equal(recordsFor(run).characters.length, 1);
+  assert.equal(recordsFor(apply(run, { type: 'rest' })).badges[0].description, null);
+  run = apply(run, { type: 'accept' });
+  assert.equal(recordsFor(run).badges[0].title, 'A first job');
+  assert.equal(recordsFor(run).letters[0].opened, false);
+  run = apply(apply(run, { type: 'arrive' }), { type: 'deliver' });
+  const restored = recordsFor(decodeSave(encodeSave(run)));
+  assert.equal(restored.characters.length, 2);
+  assert.equal(restored.letters[0].status, 'Delivered intact');
+  assert.equal(restored.letters[0].opened, false);
+  assert.equal(restored.badges[0].title, 'A first job');
 });
