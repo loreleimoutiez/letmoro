@@ -12,13 +12,6 @@ h1, h2, h3 { font-size: 1rem; font-weight: 400; line-height: 2; }
 p, li, label, dt, dd { line-height: 2.2; overflow-wrap: anywhere; }
 .world { position: relative; width: 100%; height: 100svh; min-height: 240px; overflow: hidden; }
 .moro { position: absolute; display: block; width: 24px; height: 24px; top: calc(50% - 32px); background: #fff; }
-.position-0 { left: calc(50% - 12px); }
-.position-1 { left: calc(60% - 12px); }
-.position-2 { left: calc(70% - 12px); }
-.path { position: absolute; display: block; left: calc(50% - 32px); top: 50%; height: 1px; background: #fff; }
-.route-0 { width: 64px; }
-.route-1 { width: calc(10% + 64px); }
-.route-2 { width: calc(20% + 64px); }
 .menu-button { position: fixed; top: max(16px, env(safe-area-inset-top)); right: max(16px, env(safe-area-inset-right)); width: 48px; height: 48px; border: 0; display: grid; place-items: center; }
 .menu-icon, .menu-icon::before, .menu-icon::after { display: block; width: 18px; height: 2px; background: currentColor; }
 .menu-icon { position: relative; }
@@ -40,7 +33,6 @@ label { display: block; }
 dd { margin: 0; white-space: nowrap; }
 ol { padding-left: 24px; } li { margin-block: 16px; }
 .warning { position: fixed; bottom: 0; padding: 16px; margin: 0; background: #000; border-top: 1px solid #fff; width: 100%; }
-.reset button { margin-block: 8px; }
 @media (min-width: 640px) { dialog { padding: 32px; } }
 /* A quiet terminal: square geometry, sparse rules, distinct text levels. */
 .moro { animation: moro-pulse 4.8s ease-in-out infinite; }
@@ -51,12 +43,9 @@ ol { padding-left: 24px; } li { margin-block: 16px; }
 .step-value { font-size: 14px; } .step-label { font-size: 9px; color: #aaa; }
 dialog { border-color: #555; padding: 24px; }
 .menu-head { border-bottom: 1px solid #333; padding-bottom: 12px; margin-bottom: 20px; }
-.menu-caption { color: #999; font-size: 10px; }
 .close-button { border: 0; width: 44px; height: 44px; padding: 0; font: 30px/1 monospace; }
 .menu-list { display: flex; flex-direction: column; gap: 8px; margin-block: 16px; }
 .menu-list button { flex: none; display: grid; grid-template-columns: 30px 1fr 12px; align-items: center; gap: 12px; text-align: left; border: 0; border-bottom: 1px solid #222; padding: 16px 8px; }
-.menu-number { color: #777; font-size: 9px; }
-.menu-arrow { color: #aaa; }
 .back-button { border: 0; color: #aaa; padding-left: 0; font-size: 10px; }
 h1, h2 { font-size: 16px; line-height: 1.8; margin: 28px 0 24px; }
 h3 { font-size: 12px; color: #fff; margin: 12px 0 16px; }
@@ -70,3 +59,40 @@ article { border-color: #333; margin-block: 28px; padding-block: 16px; }
 .receipt { font-size: 10px; } .receipt div:last-child { border-top: 1px solid #555; padding-top: 16px; }
 .actions button { width: 100%; text-align: left; font-size: 10px; }
 @media (prefers-reduced-motion: reduce) { .moro { animation: none; opacity: 1; } }
+/* The camera travels; Moro stays centered above the path. */
+.world { touch-action: none; }
+.moro { left: calc(50% - 12px); }
+.terrain-origin { position: absolute; left: 50%; top: 50%; }
+.terrain { position: relative; transform-origin: 0 0; transition: transform 350ms steps(12, end); }
+.discovered-path { position: absolute; left: -12px; top: 0; height: 1px; background: #fff; }
+.crossing { position: absolute; left: 160px; top: -24px; width: 1px; height: 49px; background: #fff; }
+.pebble { position: absolute; width: 2px; height: 2px; background: #888; }
+.coin-counter { position: fixed; left: max(24px, env(safe-area-inset-left)); bottom: max(20px, env(safe-area-inset-bottom)); border: 0; display: flex; align-items: center; gap: 8px; padding-inline: 0 12px; }
+.coin-pixel { width: 6px; height: 6px; background: currentColor; }
+.menu-list button { grid-template-columns: 20px 1fr 12px; gap: 16px; }
+.menu-list { min-height: min(460px, 65svh); }
+.menu-list .settings-entry { margin-top: auto; border-bottom: 0; border-top: 1px solid #333; }
+.pixel-icon { width: 16px; height: 16px; flex-shrink: 0; }
+.back-button { display: inline-flex; align-items: center; gap: 12px; }
+.menu-head { min-height: 44px; margin-bottom: 12px; }
+.collection-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-block: 24px 32px; }
+.collection-tabs button { border: 0; border-bottom: 1px solid #444; padding: 12px 4px; font-size: 9px; }
+.language { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; margin-block: 24px; font-size: 10px; }
+select { background: #000; color: #fff; font: inherit; min-height: 44px; border: 1px solid #777; border-radius: 0; padding: 8px; max-width: 100%; }
+fieldset { border: 0; border-top: 1px solid #444; margin: 32px 0; padding: 20px 0 0; min-width: 0; }
+legend { font-size: 11px; line-height: 2; padding-right: 12px; }
+.setup label { font-size: 10px; }
+fieldset label { display: flex; align-items: center; gap: 10px; min-height: 44px; line-height: 1.8; }
+fieldset input { width: 18px; min-height: 18px; height: 18px; flex-shrink: 0; margin: 0; accent-color: #fff; }
+fieldset label:has(input:disabled) { color: #777; }
+.trait-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
+.introduction { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; margin: 0; background: transparent; text-align: center; }
+.introduction h1 { font-size: clamp(14px, 4vw, 20px); max-width: 500px; margin-top: 140px; line-height: 2.2; }
+.meet-moro { animation: intro-fade 3.6s steps(5, end) forwards; }
+@keyframes intro-fade { 0%, 45% { opacity: 1; } 100% { opacity: 0; } }
+.intro-actions { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 24px; }
+.map-access { position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; opacity: 0; }
+.map-access:focus-within { opacity: 1; }
+@media (min-width: 480px) { .trait-grid { grid-template-columns: 1fr 1fr; } }
+@media (prefers-reduced-motion: reduce) { .terrain { transition: none; } .meet-moro { animation: none; } }
+.post-office { position: absolute; left: 154px; top: -56px; width: 12px; height: 12px; background: #ffe05c; }

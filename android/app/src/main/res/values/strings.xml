@@ -2,6 +2,5 @@
 <resources>
     <string name="app_name">Letmoro</string>
     <string name="title_activity_main">Letmoro</string>
-    <string name="package_name">app.letmoro.internal</string>
-    <string name="custom_url_scheme">app.letmoro.internal</string>
+    <string name="health_rationale">Letmoro — step access\n\nLetmoro reads today’s step total from Health Connect to display your activity. Only step reading is requested.\n\nIn this internal test, health observations stay in memory on this device. They are not sent to a server or saved in the story journal. They do not change travel, coins, or lives.\n\nYou can revoke access in Health Connect at any time. Missing data never counts as zero steps.</string>
 </resources>
