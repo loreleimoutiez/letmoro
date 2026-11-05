@@ -1,3 +1,5 @@
+import { parseProfile } from './profile.ts';
+import type { Profile } from './profile.ts';
 export const CONTENT_VERSION = 'prologue-1';
 export const stages = ['street', 'job', 'delivery', 'handover', 'settlement', 'complete', 'rest'] as const;
 export type Stage = typeof stages[number];
@@ -6,6 +8,7 @@ export type Action =
   | { type: 'cross' | 'accept' | 'rest' | 'arrive' | 'deliver' | 'settle' };
 export interface Run {
   readonly goal: number;
+  readonly profile?: Profile;
   readonly stage: Stage;
   readonly reserve: number;
   readonly simulatedSteps: number;
@@ -13,9 +16,9 @@ export interface Run {
   readonly delivered: number;
   readonly events: readonly Action[];
 }
-export function createRun(goal: number): Run {
+export function createRun(goal: number, profile?: Profile): Run {
   if (!Number.isSafeInteger(goal) || goal < 1 || goal > 100000) throw new Error('Invalid daily goal');
-  return { goal, stage: 'street', reserve: 0, simulatedSteps: 0, sous: 0, delivered: 0, events: [] };
+  return { ...(profile ? { profile: parseProfile(profile) } : {}), goal, stage: 'street', reserve: 0, simulatedSteps: 0, sous: 0, delivered: 0, events: [] };
 }
 // Trial ratios only; production travel balance and goal changes are undecided.
 export function travelCost(run: Run): number {
