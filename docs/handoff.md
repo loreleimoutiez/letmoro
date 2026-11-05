@@ -1,6 +1,6 @@
 # Session handoff
 
-Updated on 2026-11-05. Internal implementation milestone, not a public release.
+Updated on 2026-11-05. Internal Android milestone, not a public release.
 
 ## Read first
 
@@ -8,32 +8,35 @@ Read `AGENTS.md`, `docs/decision-ledger.md`, `docs/product.md`, `docs/narrative.
 
 ## Workspace and authorization
 
-Project: `/home/lorelei/Documents/letmoro`. Git was initialized using the existing configured identity; local Conventional Commits are authorized and exist on `main`. Git metadata writes may require sandbox escalation. No remote is configured, no push is authorized, and no project license has been chosen. The supplied future remote is `https://github.com/loreleimoutiez/letmoro.git`.
+Project: `/home/lorelei/Documents/letmoro`. Git initialized with the existing configured identity; local Conventional Commits authorized on `main`. Git writes may require escalation. No remote, push, public license, publication, other-person contact, or sub-agent delegation authorized. Future supplied remote: `https://github.com/loreleimoutiez/letmoro.git`.
 
-Local development and documentation upkeep are authorized. No sub-agent delegation, publication, or contact with others is authorized.
+Final platform selection: Android directly. The user briefly selected PWA plus Android, then explicitly replaced that with Android. Do not revive PWA work. Shared React UI, Capacitor packaging, Kotlin health access, browser preview for development. No service worker or PWA install flow.
 
-## Implemented
+## Current implementation
 
-React/TypeScript/Vite internal prologue with personal goal, simulated steps, seven-goal reserve, explicit story choices, intact delivery, 8 minus 2 minus 2 settlement, event journal, validated versioned local saves, storage warnings, and explicit trial replacement. Invalid saves remain until explicit replacement. Trial costs are 2% and 10%, rounded up, not final balance.
+- Internal simulated prologue: goal, seven-goal reserve, explicit job/refusal/delivery/settlement choices, 8 minus 2 minus 2 payment, event journal. Draft refusal endpoint, not a complete branch. Costs 2%/10% are trial values.
+- Versioned validated local saves; new optional mode and three-positive/three-negative profile round-trips through replay. Legacy saves without profile remain readable. Trait conflicts and exact counts validated. Modes and traits are recorded only; effects are not implemented.
+- FR/EN UI and narrative draft, persisted language setting. Source English with separate French translation. New-run goal/mode/trait setup, “Meet Moro” with stepped fade, brief user-paced lines, skip control, then first objective. Old saves are preserved, not forcibly replaced.
+- Terminal black/white view: borderless 24 px white Moro, same-width initial underline below, three fixed red life squares top-left, coins bottom-left, unknown-safe health steps bottom-right. Moro opacity 0.48–1 over 4.8 seconds, disabled with reduced motion. No clock palette yet.
+- Main menu: Story, Collection, Step connection, bottom-aligned Settings with pixel icons. No caption/numbering. Borderless cross. Collection groups letters, encounters, badges, journal. Secret first-job badge unlocks at acceptance. No authored letter opening or other badges yet.
+- Centered Moro and translating terrain. Progressively discovered trial geometry, visible crossing only once reached, sparse 2 px markers. Dragging/clamped revisiting, pinch zoom after first journey, keyboard companion controls. Revisits currently move the camera only, not narrative state; notes, witnesses, and changing inhabitants remain to author. No unknown branches rendered.
+- Underlined black square mark in SVG, Android vector and reproducible generated PNGs (`scripts/icons.mjs`); no AI artwork. Local Press Start 2P with OFL dependency license; no project license chosen.
+- Kotlin Health Connect plugin: read-steps permission, permission rationale in native EN/FR, today's aggregate with provider deduplication, null for empty/error/unavailable/denied. Foreground polling every 15 seconds and on focus/visibility return; corrected totals may decrease. Observations in memory only, no health events in story saves. Native logging and backup/transfer disabled. No Google account login, cloud credentials, or heart-rate permission.
 
-Latest interface revision: mobile-first black viewport, borderless white Moro square, 1 CSS px path below with a gap, and one menu button. No visible map text, scenery, counters, or branding. Native modal dialog holds story, letters, encountered characters, badges, coins, journal, and internal trial controls. Character and letter lists start empty. The first badge hides its title/description until job acceptance. Records derive from saved events and survive reload without a schema change. Letters remain sealed; opening and authored letter contents are not implemented. Other badges are not authored.
+## Verification and environment
 
-English currency is coins; French remains sous. Internal `Run.sous` stays compatible. Press Start 2P is bundled locally with its OFL in `public/fonts/`; no external font request and no project license selection. The automatic time palette is deferred by the latest user direction. `src/ui/time.ts` is retained but unused by the interface.
+Node 22.23.2/npm 10.9.8. React 19.2.8, TypeScript 5.9.3, Vite 7.3.7; Capacitor core/Android/CLI 8.6.0. JDK 21, SDK 36, AGP 8.13.0, Kotlin 2.2.20, Health Connect stable 1.1.0. npm audit returned zero vulnerabilities after patch updates; no fresh clean-machine install claimed.
 
-## Verification
+Passed: TypeScript, thirteen behavioral tests, production build, Capacitor sync, Android `assembleDebug`, Android `lintDebug` (0 app errors, 5 warnings: newer dependency versions and template resources). Capacitor's own lint uses its upstream baseline; this is not a warning-free whole-toolchain claim. Earlier generated placeholder tests were removed rather than retained as bogus coverage.
 
-Node 22.23.2, npm 10.9.8; dependencies pinned with lockfile. Type checking, seven behavioral tests, and production build pass. Existing dependencies were previously installed offline; fresh online install and current advisory review remain pending.
+Browser checks in installed headless Chrome with temporary Playwright cover validated setup/conflicts, introduction, initial path width, HUD, unknown health, centered movement and progressive discovery, complete delivery/badge/reload, language/trait persistence, drag revisit, pinch gesture, 320–1280 px overflow, Escape/focus and reduced motion. Visually inspected screenshots. Current script: `/tmp/letmoro-browser/android-ui.cjs`; screenshots `/tmp/letmoro-android-map.png`, `/tmp/letmoro-android-menu.png`, `/tmp/letmoro-android-fr.png`. Tooling stays outside repo.
 
-The earlier socket/browser block no longer reproduces. Vite successfully served on 127.0.0.1:5174 (5173 was occupied). Headless installed Chrome with temporary Playwright outside the repository verified map geometry, 1 px path, no square overlap, initially empty characters, secret badge then unlock, complete delivery and settlement, reload persistence, sealed delivered letter, no page/dialog horizontal overflow at widths 320/390/768/1280, Escape closing with focus returned to menu, and no runtime errors. Mobile screenshots were visually inspected. Temporary browser script: `/tmp/letmoro-browser/redesign.cjs`; screenshots: `/tmp/letmoro-mobile-map.png` and `/tmp/letmoro-mobile-menu.png`. These are local verification artifacts, not repository dependencies. Physical Android and screen-reader validation remain pending.
+Debug APK: `android/app/build/outputs/apk/debug/app-debug.apk` (ignored). Temporary SDK `/tmp/letmoro-android-sdk` and Gradle cache `/tmp/letmoro-gradle`; ignored `android/local.properties` points to the temporary SDK. Build with JDK 21 and your own SDK path. Initial restricted Gradle attempt failed on `.android` cache writes; escalated rerun downloaded SDK components and succeeded.
 
-## Next
+`adb devices -l` detected no phone. Physical install, step permission/import, phone-only timing, screen readers, and native gestures remain unverified. See `docs/health-connect.md` for setup. No sensitive health data or credentials were used.
 
-See `docs/roadmap.md` for the ordered next steps. Prioritize actual mobile interaction, authored letters and opening decisions, first-act/refusal writing, then time-of-day design and Android hardware proof. Full campaign, traits, lives, skills, accounts, translations, Capacitor, Kotlin, and health import remain unimplemented. Missing health data must never mean zero steps. No health penalties before validated data and calendar rules.
+## Next required work
 
-## Terminal and Android checkpoint
+Prioritize actual S23 installation and source checks, then low-latency native sensor feedback with safe reconciliation. The 15-second aggregate channel is not instant. Real steps currently display but do not advance the simulated narrative, and never cost lives. Full health calendar/credit rules, trait mechanics, modes/lives, opened letters, return encounters, full campaign, accounts/authentication/sync and heart-rate feedback remain ahead. Accounts were discussed but no backend, provider, deployment, or secrets are configured.
 
-The HUD now has three fixed red life squares, a health step counter (`—` when unavailable), and a slow bounded Moro pulse respecting reduced motion. Menu pages have separate vertical navigation and visual text hierarchy. Health Connect Kotlin plugin, local permission rationale, and Capacitor 8.6.0 Android packaging compile successfully with JDK 21, SDK 36, AGP 8.13.0, Kotlin 2.2.20, and Health Connect 1.1.0. The temporary SDK/Gradle caches are outside the repository. Native logging is disabled and backup is disabled. Physical permission/import validation remains pending: `adb devices -l` showed no device. See `docs/health-connect.md`.
-
-Ten domain/health tests, TypeScript, build, Chrome HUD/pulse/reduced-motion/menu/journey/reload/responsive checks pass. npm audit returned zero vulnerabilities after updating Vite to 7.3.7 and transitive dependencies. The new browser script is `/tmp/letmoro-browser/terminal.cjs`.
-
-The user has now selected PWA plus a light Android wrapper for health access. Further requested work: coins bottom-left, centered Moro with moving discovered terrain, freely revisitable known paths and pinch zoom, matching underlined-square icon/initial path, daily-goal/mode/three-positive/three-negative setup, a terse stepped-fade introduction, French/English settings, grouped menu with pixel icons and settings at the bottom. Accounts and secure sync are desired architectural work; no hosted auth service or publication is authorized yet. Heartbeat synchronization remains future work.
+The balance appears in the lower-left HUD and opens its own detail view; it is not repeated below collections. A small yellow square marks the delivery office only after discovery.

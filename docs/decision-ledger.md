@@ -8,7 +8,7 @@ This ledger resolves important changes during the original design conversation. 
 | --- | --- |
 | Project name | Letmoro; formerly Step-up. Actual project folder renamed to `letmoro`. |
 | Protagonist | Moro, fixed name, unspecified gender. Appearance and traits are customizable. |
-| Language | All code, commits, documentation, and source text in English; selectable translations planned. Launch translation list remains open. |
+| Language | All code, commits, documentation, and source text in English; selectable French and English translations are the current scope. |
 | Visuals | Square pixels only in the world, different sizes/colors allowed, very abstract motion, no AI art. |
 | Theme | Latest revision: white square and white pixel text on black for this prototype; time-of-day behavior deferred. This supersedes the earlier active clock palette. |
 | Genre | Letter-delivery narrative adventure, quiet most of the time, discreet fantasy, earned full emotional range. |
@@ -70,4 +70,18 @@ The latest user direction supersedes the earlier decorated two-column interface:
 
 ## Terminal and live-status revision — 2026-11-05
 
-The user requests three red life squares at the upper left, a health step counter at the lower right, and a minimal terminal appearance. These are deliberate exceptions to the earlier counter-free main view. Moro should slowly vary opacity without disappearing; real-heartbeat synchronization is a possible later idea. Menu navigation must be separated and readable, closing uses a borderless cross, and headings/status/body text require visual hierarchy. Phone-only health testing is authorized; the selected Android route is Health Connect with local permissions, not a Google account login. No health penalties or automatic narrative credit are introduced by this read-only experiment.
+The user requests three red life squares at the upper left, a health step counter at the lower right, and a minimal terminal appearance. These are deliberate exceptions to the earlier counter-free main view. Moro should slowly vary opacity without disappearing; real-heartbeat synchronization is a possible later idea. Menu navigation must be separated and readable, closing uses a borderless cross, and headings/status/body text require visual hierarchy. Phone-only health testing is authorized; the selected Android step-import route is Health Connect with local permissions, not a Google account login. No health penalties or automatic narrative credit are introduced by this read-only experiment.
+
+## Onboarding, map, and platform revision — 2026-11-05
+
+The final platform decision is a direct Android application. A PWA was considered, then explicitly superseded; retain shared React UI, Capacitor Android, and Kotlin health access, with browser preview for development. Do not implement a Google account login as a substitute for Health Connect device permissions.
+
+Coins belong at the bottom left; health steps at the bottom right. Moro stays centered while the terrain moves. The initial path and square share the same width. The mark is a black square above a same-width thin black underline. Previously walked paths remain freely revisitable; undiscovered branches remain invisible. Pan/pinch navigation is needed as the known map grows. Sparse tiny square stones or grass may communicate motion. Return encounters can involve absent characters, notes, or witnesses; these are directions to author, not existing scenes.
+
+New runs ask for daily goal, difficulty, three positive and three negative compatible traits. Follow setup with a short stepped-fade “Meet Moro” and a few restrained lines about building a life, then the first objective. FR and EN are the current settings languages. Remove the menu caption and numbering, use restrained pixel icons, group records, and keep Settings at the bottom. The trial trait catalog and conflicts are draft content; setup is persisted but difficulty/traits do not affect mechanics yet.
+
+Near-instant physical movement is desired. Health Connect aggregate refresh alone cannot guarantee per-step latency; direct foreground sensor feedback and safe reconciliation remain a distinct next implementation. Heart-rate feedback and secure player accounts are future capabilities, without additional permissions, credentials, backend, or identity provider selected so far.
+
+## Balance and discovered office correction
+
+Do not repeat the balance beneath every collection. Keep it at the lower-left HUD with a dedicated detail view. Mark the discovered delivery office with a small yellow square, separated from Moro and the path. The user is preparing a USB S23 test; wait for readiness before installation.
