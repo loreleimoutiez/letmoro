@@ -2,5 +2,5 @@
 <resources>
     <string name="app_name">Letmoro</string>
     <string name="title_activity_main">Letmoro</string>
-    <string name="health_rationale">Letmoro — accès aux pas\n\nLetmoro lit le total des pas du jour dans Health Connect pour afficher votre activité. Seule la lecture des pas est demandée.\n\nDans ce prototype interne, ces données restent en mémoire sur cet appareil. Aucun envoi vers un serveur ni enregistrement d’un historique de santé. Les nouveaux pas deviennent des crédits de déplacement dans la sauvegarde locale. Aucune pénalité de vie automatique.\n\nVous pouvez retirer cet accès dans Health Connect à tout moment. Une absence de données ne signifie jamais zéro pas.</string>
+    <string name="health_rationale">Letmoro — accès aux pas\n\nLetmoro lit le total des pas du jour dans Health Connect pour afficher votre activité. Seule la lecture des pas est demandée à Health Connect. Un accès facultatif à l’activité physique permet un suivi plus rapide quand l’application est ouverte.\n\nLes totaux de pas du jour importés et les crédits de déplacement sont conservés dans la sauvegarde locale pour éviter de les compter deux fois. Aucun envoi vers un serveur. Aucune pénalité de vie automatique.\n\nVous pouvez retirer cet accès dans Health Connect à tout moment. Une absence de données ne signifie jamais zéro pas.</string>
 </resources>

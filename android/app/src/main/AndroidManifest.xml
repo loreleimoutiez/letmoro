@@ -3,6 +3,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.health.READ_STEPS" />
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
     <queries><package android:name="com.google.android.apps.healthdata" /></queries>
 
     <application
@@ -28,6 +29,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="letmoro" android:host="auth" android:path="/callback" />
+            </intent-filter>
         </activity>
 
         <activity android:name=".HealthRationaleActivity" android:exported="true">

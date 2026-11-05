@@ -7,6 +7,7 @@ public class MainActivity extends BridgeActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         registerPlugin(HealthStepsPlugin.class);
+        registerPlugin(SecureSessionPlugin.class);
         super.onCreate(savedInstanceState);
     }
 }
