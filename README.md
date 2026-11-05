@@ -1,67 +1,69 @@
 # Letmoro
 
-A quiet walking adventure about carrying other people's letters and finding a life of your own.
+A quiet Android walking adventure about delivering letters and finding a life of your own.
 
-Moro begins delivering letters to earn a living and build independence. Real-world steps are intended to support travel; personal decisions shape the story.
+## Status
 
-## Project status
+An internal Android build is available for device testing. This is not the complete first public campaign. The current story covers meeting Moro, a fictional street crossing, a job decision, one intact delivery and its settlement. The refusal route is a draft endpoint.
 
-An internal Android prologue with a browser development preview is implemented with **simulated steps only**. It includes a fictional street crossing, an explicit job choice, an intact delivery, the first settlement, a knowledge-limited journal, secret first-job badge, discovered records, and local saving. The mobile-first main view shows a borderless white Moro square and a 1 px path on black; three red life squares appear at the upper left, coins at the lower left, and health steps at the lower right. A compact menu holds story, collection, connection, and settings. A short refusal ending is a draft boundary, not the complete alternative campaign route.
+Implemented:
 
-This is not the first public campaign. Capacitor Android packaging and a read-only Kotlin Health Connect experiment are now present. Phone-only steps can be tested after installing an Android build and granting access; physical import is not yet verified. Fit3 import, life accounting, trait effects, skills, accounts, synchronization, and the full campaign remain unimplemented. Raw daily observations stay in memory. Newly observed steps after a session baseline become travel credits saved locally. No public release or license has been selected.
+- Minimal black/white pixel interface, centered borderless Moro, a discovered 1 px path, three fixed red life squares, coins and steps. No finger-drag travel; pinch changes zoom only.
+- Account creation/sign-in before game preferences: Supabase email/password, confirmation, recovery, sign-out, and Google OAuth through the system browser. Google and email are enabled on the configured test service; actual device email/OAuth round trips still need verification.
+- English by default, saved French/English preference, daily goal, difficulty descriptions and three compatible positive/negative traits. Mode and trait mechanics are not implemented yet.
+- Four short introduction screens explain walking and explicit choices. Small text sits above Moro, controls below. A fading “Walk…” cue follows. Settings can replay the introduction without resetting progress.
+- Health Connect daily aggregate import plus optional foreground Android step-detector events. Counter-sensor fallback may be slower. Foreground synchronization fallback runs every 3 seconds; this is not background tracking.
+- Quest progress as `current / required steps`. Existing daily activity may reveal a longer starting path, but the first quest starts only after the introduction and initial step connection. One accepted step equals one world CSS pixel at normal zoom; important choices still wait.
+- Local saves isolated by account, validated event replay, persistent step deduplication, hidden locked badges, a first-job pixel medal and an underlined-square app mark.
+- Temporary red **Reset game** control in Settings, with confirmation, clearing only the current account's local game. It is a testing utility, not production reboot rules.
+
+Full campaign, return encounters, opened-letter consequences, trait/mode mechanics, life penalties, account-wide rescue, cloud save synchronization, heart-rate feedback and time-of-day presentation remain ahead. No public release, push or project license has been selected.
 
 ## Development
 
-Requires Node.js 22.12 or later. Verified locally with Node.js 22.23.2 and npm 10.9.8. Dependencies are pinned in `package-lock.json`: React 19.2.8, TypeScript 5.9.3, Vite 7.3.7. Capacitor packages are pinned to 8.6.0. The dependency audit was refreshed during the Android work.
+Node.js 22.12+ and npm are required. Android uses JDK 21 and SDK 36. Dependencies are pinned in `package-lock.json`; Capacitor core/Android/CLI 8.6.0, React 19.2.8, TypeScript 5.9.3, Vite 7.3.7 and Supabase JS 2.119.0.
 
 ```sh
 npm ci
+cp .env.example .env.local
 npm run dev
 npm run check
 npm test
 npm run build
-npm run preview
+npm run android:build
 ```
 
-The development server listens at `http://127.0.0.1:5173`. Production assets are written to `dist/`. A lockfile supports reproducible installation; online installation on a fresh machine still needs verification.
+Put your Supabase project URL and **public publishable key** in ignored `.env.local`. Never put a Google client secret, service-role key or password in the app. Client public configuration is included in the compiled application by design. See [account setup](docs/auth.md).
 
-The UI and narrative draft are available in French and English. A new run asks for a daily goal, difficulty, and three compatible positive and negative traits, followed by a short introduction. Difficulty and trait effects are not active in this trial. Use Settings → Internal trial for simulated walking. No real walking is needed for the trial. Travel costs of 2% and 10% are temporary trial values. Stored steps never pass a personal decision automatically. The seven-goal reserve is implemented without production calendar accounting.
+Configure `JAVA_HOME` and `ANDROID_HOME`, or ignored `android/local.properties`. The APK is `android/app/build/outputs/apk/debug/app-debug.apk`. Browser preview is for development and cannot access Android health sensors. No PWA or service worker is shipped.
 
-Saves remain in this browser under `letmoro.internal-prologue.v1`. They contain the chosen goal, optional validated run setup, and simulated action history, not health records. Clearing browser storage removes them. Invalid or incompatible saves are kept until the player explicitly starts a replacement trial; unavailable storage produces a visible warning. There is no migration to a later campaign save yet.
+For native checks after synchronization:
+
+```sh
+cd android
+./gradlew :app:assembleDebug :app:lintDebug :app:testDebugUnitTest
+```
+
+## Data and validation
+
+Daily step checkpoints and game progress stay on the device, separated by authenticated account. The first authenticated account can claim an older local save once. Authentication tokens and PKCE verifiers use Android Keystore-backed AES-GCM encryption; passwords are never persisted. Browser preview sessions use session storage. Android backup/transfer and native logging are disabled. No game or health data is uploaded to Supabase; only authentication is connected.
+
+TypeScript, 24 JavaScript/TypeScript behavioral tests, 3 Kotlin unit tests, production build and Android compilation/lint pass. App lint retains non-blocking template/dependency/KTX suggestions. npm audit reported zero known advisories. Browser tests with synthetic native events and intercepted auth requests cover account gating, signup/sign-in/sign-out/recovery, Google PKCE launch/callback, quest baseline, live updates and local reset. These tests do not create real accounts or send emails. The user has confirmed installation and a displayed Health Connect daily count on S23; new live-sensor timing and actual auth email/OAuth flows still need device tests.
 
 ## Structure
 
-- `src/domain/`: deterministic progression and settlement, independent of platform APIs.
-- `src/content/`: English source narrative, French translation, and stable localization keys.
-- `src/adapters/`: versioned save serialization and validated event replay.
-- `src/ui/`: world camera, setup, pixel icons, and live step observation hook.
-- `src/main.tsx`, `src/style.css`: React interface and square-pixel world.
-- `tests/`: progression, reserve, settlement, save validation, and time-boundary tests.
+- `src/domain/`: deterministic story, map, profile rules and health credit reconciliation.
+- `src/content/`: English source and French translation.
+- `src/adapters/`: local account saves, auth storage and Android health boundaries.
+- `src/auth/`: validated public configuration, PKCE callback and account state.
+- `src/ui/`: entry/setup/account screens, pixel world and step observation hook.
+- `android/`: Capacitor shell, Kotlin health sensor bridge and encrypted session storage.
+- `tests/`: synthetic save, account isolation, auth boundary, health and progression checks.
 
-The current prototype uses white on black. The existing local-clock helper is retained and tested for future design work but does not control the interface. The locally bundled Press Start 2P font is by CodeMan38 and distributed under the [SIL Open Font License](public/fonts/OFL.txt); this dependency license does not select a license for Letmoro.
-
-Type checking, fourteen behavioral tests, and the production build pass. Chrome checks cover the complete journey, save reload, secret badge unlock, discovery records, sealed letters, 320–1280 px overflow, and Escape/focus return. Android APK compilation and lint pass (0 app errors, 5 warnings for newer dependency versions and template-generated resources). The first S23 run is confirmed and reported onboarding fixes. Detailed native accessibility and health-import checks remain pending.
+Press Start 2P is bundled locally with its [SIL Open Font License](public/fonts/OFL.txt). That dependency license does not license Letmoro itself. All artwork is authored geometric/vector code; no AI artwork is used.
 
 ## Documentation
 
-- [Product specification](docs/product.md)
-- [Narrative bible](docs/narrative.md)
-- [Architecture](docs/decisions/0001-architecture.md)
-- [Delivery plan](docs/roadmap.md)
-- [Contributing](CONTRIBUTING.md)
-- [Session handoff](docs/handoff.md)
-- [Decision ledger](docs/decision-ledger.md)
+[Product](docs/product.md) · [Narrative](docs/narrative.md) · [Architecture](docs/decisions/0001-architecture.md) · [Decisions](docs/decision-ledger.md) · [Roadmap](docs/roadmap.md) · [Health](docs/health-connect.md) · [Accounts](docs/auth.md) · [Handoff](docs/handoff.md)
 
-## Repository and license
-
-The user reserved [the GitHub repository](https://github.com/loreleimoutiez/letmoro). No push or publication has been authorized or performed. Git is initialized on `main` with local Conventional Commits. No remote is configured.
-
-No open-source license has been selected. Public visibility does not itself grant permission to reuse the code or narrative.
-
-## Android step experiment
-
-See [phone-only Health Connect setup](docs/health-connect.md) for build requirements, installation, permissions, and actual-phone checks. No Google login or watch is needed by Letmoro. The browser cannot access Health Connect. The HUD shows three fixed red life squares and an unknown-safe step count; the menu contains the step connection. Moro pulses slowly without disappearing and respects reduced motion. Menu navigation groups records in Collection and places Settings at the bottom, using pixel icons without numbering. Moro remains centered as the discovered path moves below; finger dragging never moves Moro or the camera. Pinch changes magnification only after the first journey. Return routes and encounters are not authored.
-
-The current target is an Android app, as explicitly selected after considering a PWA. Browser tooling remains for development only; no service worker or PWA install flow is shipped. The black underlined-square mark is authored in SVG/vector code, with a reproducible PNG generator in `scripts/icons.mjs`. No AI artwork is used.
-
-The balance appears in the lower-left HUD and opens its own detail view; it is not repeated below collections. A small yellow square marks the delivery office only after discovery.
+The supplied future GitHub repository is reserved; no remote or publication is configured. No open-source license has been chosen.

@@ -72,7 +72,7 @@ Count delivered letters explicitly. Track every entrusted letter and its fate: d
 
 Provide a catch-up summary, chronological personal story, letter collection, character records, and known locations. Preserve only player-known information in journal summaries. Show already encountered people at their last known location, not a hidden live location.
 
-The fictional map is independent of GPS. It reveals only observed paths, places, and people, using square pixels. A witnessed unexplored junction can have a short visible stub; unknown regions remain concealed. Support pan, zoom, and details through accessible companion controls.
+The fictional map is independent of GPS. It reveals only observed paths, places, and people, using square pixels. A witnessed unexplored junction can have a short visible stub; unknown regions remain concealed. Support zoom and accessible details. Manual panning does not move Moro; real steps drive travel.
 
 ## Campaign ambition
 
@@ -84,7 +84,7 @@ Every continuing major route must have depth and resolution, including refusal, 
 
 The visual direction is a minimal terminal: black, pixel text, spare separators, distinct headings and secondary text. The menu shows one vertical navigation list, then one selected page with a back control; closing uses a borderless cross with an accessible name. Moro has a slow 4.8-second opacity pulse, never below 48%, disabled by reduced-motion preference. Synchronizing with the player's heartbeat remains a future possibility, not implemented or permissioned.
 
-Three life squares are currently a fixed display; life accounting is not active. The Android experiment reads today's aggregate through Health Connect with read-steps permission only, refreshing every 15 seconds while visible and when returning. Data availability depends on the upstream source; exact real-time updates are not promised. Raw daily observations remain in memory; new increments become saved travel credits distinct from simulation. See `health-connect.md` for phone-only setup and validation.
+Three life squares are currently a fixed display; life accounting is not active. The Android experiment reads today's aggregate through Health Connect with read-steps permission only, refreshing every 15 seconds while visible and when returning. Data availability depends on the upstream source; exact real-time updates are not promised. Daily import checkpoints and travel credits are persisted locally and reconstructed together through save replay, preventing duplicate credit after restarting. See `health-connect.md` for phone-only setup and validation.
 
 ## Current Android entry and map
 
@@ -98,4 +98,24 @@ The balance appears in the lower-left HUD and opens its own detail view; it is n
 
 ## Onboarding readability
 
-Keep introduction text and its controls in a separate bounded area below the centered character and path. On short viewports this area scrolls internally instead of overlapping Moro. Display localized descriptions of all difficulty options before selection, with shared zero-day/data/recovery rules and an explicit prototype status. Descriptions explain the intended product without claiming that life loss, emergency pause, or rescue are already implemented.
+Keep small introduction text in a bounded area above the centered character, with confirmation controls below the path. On short viewports this area scrolls internally instead of overlapping Moro. Display localized descriptions of all difficulty options before selection, with shared zero-day/data/recovery rules and an explicit prototype status. Descriptions explain the intended product without claiming that life loss, emergency pause, or rescue are already implemented.
+
+## Daily crediting and visible movement
+
+One imported step advances one CSS world pixel at normal zoom, capped at the current explicit decision. Trial route lengths equal their goal-scaled step costs in pixels. The initial underline remains 24 px; observed travel extends it. Quest progress uses one current / required steps line; the daily total remains in the HUD and connection details.
+
+The first import records the current daily total; the first quest starts from the origin established after introduction and connection. Per-day/zone daily high-water marks are persisted together with credits through validated event replay. Repeated imports and downward corrections do not grant travel twice, including after restart or after spending reserve. A newly imported day credits its own total; time-zone changes conservatively rebaseline to avoid overlapping periods. These internal rules do not finalize production calendar or life accounting.
+
+The badge list is empty until something is earned; no locked-badge placeholder text. The first-job badge includes an outlined pixel medal. The logo’s square occupies 24×24 units centered in a 64×64 field, with an equal-width 3-unit underline below.
+
+## Account-first entry and quest origin — latest decision
+
+The account entry is the first screen, before gameplay preferences. It has a compact white underlined-square logo at the upper left, “letmoro” to its right, and spacing before the form. Email/password creation and login are supported through Supabase, along with Google in the system browser. Forgotten password is a text action directly below Password in login, not a navigation category. Owner-only provider setup is not part of a player's flow. English is the default; an explicitly selected French setting persists.
+
+After login, setup records goal, mode and three compatible traits of each sign. Four short introduction screens explain carrying the phone, walking/revealing paths and explicit choices, then the post-office objective. Text is smaller and above Moro; Continue/Skip are below. A stepped-fade “Walk…” prompt appears above Moro on entry and clears on movement or timeout.
+
+The first imported daily total can place Moro further along a visible starting path, but it does not complete the new quest. A persisted journey origin is established only after the introduction and step connection. The goal-scaled post-office distance is measured from that origin, beyond the crossing. Quest display is only `current / required steps`. Existing progress is preserved on migration. One accepted step remains one CSS world pixel at normal zoom.
+
+A foreground detector supplies low-latency events after optional physical activity permission, with counter fallback and 3-second visible Health Connect synchronization. Provider totals and live estimates are combined using a maximum rather than addition, then persistent high-water marks prevent replay. Source timing and all overlapping wearable cases are not yet hardware-verified. No life penalties run.
+
+Game progress and health checkpoints are local and separated by account. Supabase handles authentication only; no cloud game/health save exists. Session tokens and PKCE verifier use Android Keystore encryption. The temporary red Reset game action is kept in Settings with confirmation for internal testing; production reboot semantics remain separate. Player-facing trial labels and simulation controls are removed; documentation continues to state incomplete implementation honestly.

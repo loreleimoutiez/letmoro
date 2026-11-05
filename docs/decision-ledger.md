@@ -93,3 +93,23 @@ Latest correction: do not move the path by finger drag or manual return controls
 Phone detection initially showed Samsung MTP but no ADB. After the user enabled debugging, Samsung disappeared even from host `lsusb`; reconnection/data-mode assistance is pending. Do not claim physical install/import success.
 
 The internal step-credit experiment establishes a current-day/zone session baseline. Positive deltas above a session high-water mark add travel credits; equal, missing, or downward-corrected reads do not. Day/zone change and reload rebaseline without historical credit. Raw daily totals stay in memory; accepted increments are saved as health-source gameplay credits. This is trial behavior, not settled production calendar/offline reconciliation. Simulated-step buttons are development-browser-only and absent from the Android production build.
+
+## Daily import and map scale — 2026-11-05
+
+The user reported that Health Connect displayed a daily total while travel remained at zero. The old session-baseline rule caused this; it is superseded. Today’s steps now count on the first import. Per-day/zone high-water marks are stored atomically with narrative credits so reload, repeated reads, and spent travel cannot double-credit the same steps. Missing data does nothing and corrections do not reverse narrative events. Zone changes rebaseline conservatively. Legacy credits without dates are conservatively deducted from the first import and can under-credit when old credits span several days; this is a prototype migration limitation, not a production calendar rule.
+
+Map rule: one step equals one world CSS pixel at 1× zoom. Route lengths derive from their existing goal-scaled travel costs, and movement stops at explicit decisions. The office remains beyond the crossing. Today’s count and spendable travel reserve are labeled separately in Story.
+
+Hide locked badge entries entirely, without “secret badge” text. The earned first-job badge has a small square-pixel medal. The mark has a smaller centered square and a 3-unit underline of equal width in its 64-unit coordinate space, consistently rendered as SVG, PNG, and Android vector.
+
+Health permission rationale now accurately describes locally persisted daily checkpoints. No user-provided step total, pairing code, private network address, or imported health record is to be added as repository content; tests use independent synthetic observations.
+
+## Entry, rapid steps, accounts, and presentation — latest revision
+
+The previous “all imported steps immediately count toward the first quest” proposal is superseded. Existing daily activity may lengthen the initial path, while the first quest starts from a saved origin after both meeting Moro and connecting steps. Progress reads `0 / required steps`, with one CSS world pixel per accepted step. Remove the coin marker. Default to English while preserving explicit FR selection.
+
+Account creation/login now comes before preferences. Supabase Auth was selected and configured locally with public client values; the owner enabled email confirmation and Google and added the native callback. Provider settings are owner setup only, never required of players. Actual Google and email device round trips remain unverified. Game saves are separated per account locally, not synchronized to a backend. Never commit live project values, OAuth client secrets, tokens or user health records.
+
+Latest layout: smaller intro text above Moro, validation controls below, manual Continue rather than timed narrative progression, and a fading “Walk…” cue after the introduction. Account-page branding is a smaller white-on-black logo at upper left with “letmoro” on its right and added spacing below. Forgot password is only a clickable text action under Password in login. The auth logo is branding, distinct from the in-world character layout.
+
+Remove player-facing trial language and simulation controls, keeping a temporary red Reset game control in Settings with confirmation. Retain truthful internal-milestone documentation. Native foreground detector events and a slower counter fallback replace reliance on a 15-second poll; activity permission is separate from Health Connect. Accounts use PKCE and encrypted Android sessions. No publication, public license or contact with third parties was authorized.

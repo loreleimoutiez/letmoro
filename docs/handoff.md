@@ -1,48 +1,46 @@
 # Session handoff
 
-Updated on 2026-11-05. Internal Android milestone, not a public release.
+Updated 2026-11-05. Internal Android build 0.1.3 / versionCode 4; no public release.
 
-## Read first
+## Instructions and authorization
 
-Read `AGENTS.md`, `docs/decision-ledger.md`, `docs/product.md`, `docs/narrative.md`, `docs/decisions/0001-architecture.md`, and `docs/roadmap.md`. Respond in French; write artifacts in English. Latest user decisions override earlier proposals.
+Read `AGENTS.md`, product, narrative, decision ledger and roadmap before implementing. Respond in French; write code, comments, source narrative, documentation and Conventional Commits in English. French translation files are intentional. Latest user decisions override earlier proposals.
 
-## Workspace and authorization
+Workspace: `/home/lorelei/Documents/letmoro`. Local development, reversible fixes and local commits are authorized. No remote, push, public license, publication, contact with other people, or sub-agent delegation is authorized. Git writes can require escalation. Do not include health records, credentials, project-specific client values, pairing codes or device/network identifiers in Git. Actual public Supabase client values are in ignored `.env.local`; `.env.example` contains placeholders. Public configuration is embedded in the APK by design; server secrets never are.
 
-Project: `/home/lorelei/Documents/letmoro`. Git initialized with the existing configured identity; local Conventional Commits authorized on `main`. Git writes may require escalation. No remote, push, public license, publication, other-person contact, or sub-agent delegation authorized. Future supplied remote: `https://github.com/loreleimoutiez/letmoro.git`.
+## Settled direction
 
-Final platform selection: Android directly. The user briefly selected PWA plus Android, then explicitly replaced that with Android. Do not revive PWA work. Shared React UI, Capacitor packaging, Kotlin health access, browser preview for development. No service worker or PWA install flow.
+Direct Android app, React/TypeScript shared UI, Capacitor and Kotlin. Browser preview only, no PWA. Minimal square-pixel world, white borderless Moro on black, 1 px path, local pixel font, no AI artwork. Time-of-day design deferred. Moro has no specified gender. English default; explicit FR/EN preference persists.
 
-## Current implementation
+Account entry comes before preferences. Small white underlined-square logo at upper left, “letmoro” to its right, larger gap before form. Login/signup are tabs; Forgot password is an underlined text action directly below Password in login. Google sign-in uses the system browser. Owner provider setup is never a player requirement.
 
-- Internal simulated prologue: goal, seven-goal reserve, explicit job/refusal/delivery/settlement choices, 8 minus 2 minus 2 payment, event journal. Draft refusal endpoint, not a complete branch. Costs 2%/10% are trial values.
-- Versioned validated local saves; new optional mode and three-positive/three-negative profile round-trips through replay. Legacy saves without profile remain readable. Trait conflicts and exact counts validated. Modes and traits are recorded only; effects are not implemented.
-- FR/EN UI and narrative draft, persisted language setting. Source English with separate French translation. New-run goal/mode/trait setup, “Meet Moro” with stepped fade, brief user-paced lines, skip control, then first objective. Old saves are preserved, not forcibly replaced.
-- Terminal black/white view: borderless 24 px white Moro, same-width initial underline below, three fixed red life squares top-left, coins bottom-left, unknown-safe health steps bottom-right. Moro opacity 0.48–1 over 4.8 seconds, disabled with reduced motion. No clock palette yet.
-- Main menu: Story, Collection, Step connection, bottom-aligned Settings with pixel icons. No caption/numbering. Borderless cross. Collection groups letters, encounters, badges, journal. Secret first-job badge unlocks at acceptance. No authored letter opening or other badges yet.
-- Centered Moro and translating terrain. Progressively discovered trial geometry, visible crossing only once reached, sparse 2 px markers. No finger dragging or manual return controls. Pinch changes magnification only. Notes, witnesses, and step-driven return routes remain to author. No unknown branches rendered.
-- Underlined black square mark in SVG, Android vector and reproducible generated PNGs (`scripts/icons.mjs`); no AI artwork. Local Press Start 2P with OFL dependency license; no project license chosen.
-- Kotlin Health Connect plugin: read-steps permission, permission rationale in native EN/FR, today's aggregate with provider deduplication, null for empty/error/unavailable/denied. Foreground polling every 15 seconds and on focus/visibility return; corrected totals may decrease. Raw daily observations and cursor in memory; accepted health travel increments in local story saves. Native logging and backup/transfer disabled. No Google account login, cloud credentials, or heart-rate permission.
+Intro: four short screens explaining walking, discovery, waiting decisions and the first objective. Text is smaller and above Moro; Continue/Skip below. Manual reading pace except the initial short stepped fade. “Walk…” cue appears above Moro on arrival and clears on motion or timeout. No coin marker, no visible trial labels or simulation controls. Red temporary Reset game in Settings confirms before clearing the current account's local game; production reboot rules remain separate.
 
-## Verification and environment
+## Implemented
 
-Node 22.23.2/npm 10.9.8. React 19.2.8, TypeScript 5.9.3, Vite 7.3.7; Capacitor core/Android/CLI 8.6.0. JDK 21, SDK 36, AGP 8.13.0, Kotlin 2.2.20, Health Connect stable 1.1.0. npm audit returned zero vulnerabilities after patch updates; no fresh clean-machine install claimed.
+- Goal, difficulty descriptions, three compatible traits per sign; choices saved, mode/trait mechanics not implemented.
+- Prologue: fictional crossing, explicit work/refusal, intact delivery and 8 minus 2 minus 2 settlement. Refusal is only a draft endpoint. First public campaign must remain rich and complete.
+- Daily steps and coins HUD; three fixed red life squares. No life penalties. Missing data never means zero.
+- First daily import can lengthen the starting path. Saved `journeyOrigin` starts the quest after introduction and initial step connection; existing daily steps do not finish it. Progress is one `current / required steps` line. One accepted step equals one world CSS pixel; route effort remains trial 2%/10% of goal. Office lies beyond crossing. No drag/manual camera travel; pinch only zooms.
+- Health Connect aggregate with local day/zone key, persisted high-water marks and event replay. Corrections do not undo choices. Zone changes conservatively rebaseline; old undated credits are retained conservatively. Production calendar/correction policy remains open.
+- Optional ACTIVITY_RECOGNITION permission enables foreground step detector; counter fallback can be slower. Native events update UI directly, with 3-second visible provider refresh. Provider/live estimates are combined by maximum, never addition. Stop on pause/sign-out. Hardware/multi-source timing still needs validation.
+- Locked badges hidden, earned first-job medal, sealed-letter records, encountered characters only, event journal. No letter opening or authored return encounters yet. Smaller centered app mark with thicker underline in SVG/PNG/native vector.
+- Supabase email/password signup, confirmation, login/logout, recovery, PKCE native callback and Google browser OAuth. Public service settings verified email/Google enabled and confirmation required; user added callback and configured Google. No actual accounts/emails were created by agent tests. Actual Google/email round trips are not claimed verified.
+- Android Keystore AES-GCM session/PKCE storage; passwords never persisted; logging/backup/transfer disabled. Browser preview uses session storage. No service-role or Google client secret in app.
+- Account-isolated local saves and one-time legacy migration. Corrupt legacy data stays owned/preserved until explicit reset. No cloud game/health save or database profile tables.
 
-Passed: TypeScript, fourteen behavioral tests, production build, Capacitor sync, Android `assembleDebug`, Android `lintDebug` (0 app errors, 5 warnings: newer dependency versions and template resources). Capacitor's own lint uses its upstream baseline; this is not a warning-free whole-toolchain claim. Earlier generated placeholder tests were removed rather than retained as bogus coverage.
+## Verification and artifacts
 
-Browser checks in installed headless Chrome with temporary Playwright cover validated setup/conflicts, introduction, initial path width, HUD, unknown health, centered movement and progressive discovery, complete delivery/badge/reload, language/trait persistence, drag blocking, pinch gesture, 320–1280 px overflow, Escape/focus and reduced motion. Visually inspected screenshots. Current script: `/tmp/letmoro-browser/android-ui.cjs`; screenshots `/tmp/letmoro-android-map.png`, `/tmp/letmoro-android-menu.png`, `/tmp/letmoro-android-fr.png`. Tooling stays outside repo.
+Node 22.23.2/npm 10.9.8; React 19.2.8, TypeScript 5.9.3, Vite 7.3.7, Capacitor core/Android/CLI 8.6.0, App 8.1.2, Browser 8.0.5, Supabase JS 2.119.0. JDK 21, SDK 36, AGP 8.13.0, Kotlin 2.2.20, Health Connect 1.1.0.
 
-Debug APK: `android/app/build/outputs/apk/debug/app-debug.apk` (ignored). Temporary SDK `/tmp/letmoro-android-sdk` and Gradle cache `/tmp/letmoro-gradle`; ignored `android/local.properties` points to the temporary SDK. Build with JDK 21 and your own SDK path. Initial restricted Gradle attempt failed on `.android` cache writes; escalated rerun downloaded SDK components and succeeded.
+Passed: TypeScript; 24 JS/TS behavioral tests; 3 Kotlin live-total tests; browser tests with synthetic sensors and intercepted auth requests; production build; Android compilation/lint; npm audit with zero known advisories. App lint has 7 non-blocking dependency/template/KTX suggestions; upstream Capacitor uses its own baseline. No clean-machine installation or complete physical security review claimed.
 
-The user confirmed installing and opening the APK on S23 through the local download link. USB was unstable. Wi-Fi ADB pairing succeeded, but the connection service refused its confirmed port. No debugging connection is established. Health permission/import, phone-only timing, screen readers, and native gesture behavior remain unverified. See `docs/health-connect.md` for setup. No health records or long-lived credentials were used. The short-lived wireless pairing code was used interactively and was not written into project files.
+Current browser regression: `/tmp/letmoro-browser/live-auth.cjs`, external Playwright tooling only. It tests account gating, English default, walking intro, delayed quest origin, live events, email and Google mock flows, PKCE, password recovery and reset. Old scripts describe superseded layouts and need adaptation; do not treat their stale assertions as product requirements.
 
-## Next required work
+APK: `android/app/build/outputs/apk/debug/app-debug.apk` (ignored). Temporary SDK `/tmp/letmoro-android-sdk`, Gradle `/tmp/letmoro-gradle`; ignored `android/local.properties` points to that SDK. Use your own SDK/JDK setup on a fresh system. The APK is served from an isolated `/tmp/letmoro-phone-install` directory on a temporary local server, not from the repo. User opened a narrow PC firewall rule for downloads; close temporary access after testing ends.
 
-Prioritize actual S23 installation and source checks, then low-latency native sensor feedback with safe reconciliation. The 15-second aggregate channel is not instant. New steps since the first successful session read advance travel; reload/day/zone change creates a new baseline. Steps between app termination and the next first read are not credited. Real steps never cost lives. Full health calendar/credit rules, trait mechanics, modes/lives, opened letters, return encounters, full campaign, accounts/authentication/sync and heart-rate feedback remain ahead. Accounts were discussed but no backend, provider, deployment, or secrets are configured.
+The user confirmed installation and basic Health Connect count display on S23. USB disconnected repeatedly. Wi-Fi pairing succeeded but the debug connection port refused, so no device debugging session is established. Short-lived pairing code was interactive and never put in project files. New sensor timing, Google consent, email delivery, recovery callbacks, encrypted-session restore and native accessibility remain physical test tasks.
 
-The balance appears in the lower-left HUD and opens its own detail view; it is not repeated below collections. A small yellow square marks the delivery office only after discovery.
+## Next
 
-## First physical feedback and onboarding correction
-
-The user reported that introduction text overlapped Moro and that difficulty choices were unexplained. Introduction now occupies a bounded scrollable panel below the centered world, separated from Moro and the path even in landscape. Each mode has a localized visible description and associated radio description. Shared rules distinguish confirmed zero days from missed goals and missing data, and explain life recovery. A notice states that life loss, pause, and rescue are inactive in this trial. Removed the outdated claim that all steps are simulated from setup copy. Settings also explain the saved mode and let the player replay the introduction without replacing progress.
-
-The corrected Android update is version 0.1.1 / versionCode 2 with the same application ID and signing setup, preserving installed progress. Browser regression `/tmp/letmoro-browser/onboarding-fixes.cjs` verifies all three intro stages and mode explanations in both languages at 390×844, 320×568, and 740×360. Phone verification of this correction is still the user's next test. The APK is copied to the existing isolated temporary download directory after build; serve only that directory, never the repository or health data. Local firewall opening was performed by the user for the phone download; remove the temporary rule/server after testing is complete, without changing other firewall policy.
+See roadmap. First test the new account-first APK on S23, including activity permission/live movement, first-quest baseline and actual auth flows. Then production reconciliation/calendar rules, full narrative and trait/mode mechanics. Cloud saves, account deletion/export, heartbeat, full campaign and public licensing are not complete. No publication is authorized.
