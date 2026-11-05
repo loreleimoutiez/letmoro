@@ -64,6 +64,7 @@ test('records reveal only encountered people and earned badges, preserving seale
   assert.deepEqual(recordsFor(run).characters, []);
   assert.deepEqual(recordsFor(run).letters, []);
   assert.equal(recordsFor(run).badges[0].description, null);
+  assert.equal(recordsFor(run).badges[0].title, null);
   run = apply(apply(run, { type: 'steps', amount: 100 }), { type: 'cross' });
   assert.equal(recordsFor(run).characters.length, 1);
   assert.equal(recordsFor(apply(run, { type: 'rest' })).badges[0].description, null);

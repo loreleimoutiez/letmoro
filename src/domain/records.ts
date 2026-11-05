@@ -12,7 +12,7 @@ export function recordsFor(run: Run) {
       ...(happened('cross') ? [{ id: 'clerk', ...recordText.clerk }] : []),
       ...(happened('arrive') ? [{ id: 'recipient', ...recordText.recipient }] : []),
     ],
-    badges: [{ id: 'first-job', title: employed ? recordText.firstJob.title : recordText.secretBadge,
+    badges: [{ id: 'first-job', title: employed ? recordText.firstJob.title : null,
       description: employed ? recordText.firstJob.description : null }],
   };
 }

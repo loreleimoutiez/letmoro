@@ -11,7 +11,7 @@ export const prologue = {
     handover: { title: 'At the courtyard', place: 'The courtyard', text: '“For me? I thought it might come tomorrow.”', detail: 'Someone steps away from a windowsill. A space has already been cleared beside a cup. The envelope is still sealed; handing it over is Moro’s decision.' },
     settlement: { title: 'The first wages', place: 'The courtyard', text: '“There is the payment. And the contributions, of course.”', detail: 'A folded receipt accompanies the coins. Moro reads each line before putting anything away.' },
     complete: { title: 'Four coins of your own', place: 'The courtyard', text: 'The letter has arrived. The coins are real enough.', detail: 'Four coins will not buy a new life. They might buy the first small part of one. Moro stays a moment in the courtyard, with nothing left to carry.' },
-    rest: { title: 'A moment outside', place: 'Beside the delivery office', text: '“There will be another letter,” the clerk says.', detail: 'Moro sits on the low wall outside. From here, the street looks a little less unfamiliar. Taking time is also a beginning. This draft ends here; the full campaign must develop the route beyond refusing work.' },
+    rest: { title: 'A moment outside', place: 'Beside the delivery office', text: '“There will be another letter,” the clerk says.', detail: 'Moro sits on the low wall outside. From here, the street looks a little less unfamiliar. Taking time is also a beginning.' },
   } satisfies Record<Stage, { title: string; place: string; text: string; detail: string }>,
 };
 export const journalText: Record<string, string> = {

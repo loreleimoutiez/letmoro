@@ -8,7 +8,7 @@ export const scenesFr = {
   handover: { title: 'Dans la cour', place: 'La cour', text: '« Pour moi ? Je pensais qu’elle arriverait demain. »', detail: 'Une silhouette s’écarte de la fenêtre. Un espace attend déjà près d’une tasse. La lettre est encore scellée. À Moro de décider de la remettre.' },
   settlement: { title: 'Le premier salaire', place: 'La cour', text: '« Voici le paiement. Et les contributions, bien sûr. »', detail: 'Un reçu plié accompagne les pièces. Moro lit chaque ligne avant de tout ranger.' },
   complete: { title: 'Quatre sous à soi', place: 'La cour', text: 'La lettre est arrivée. Les pièces sont bien réelles.', detail: 'Quatre sous ne suffisent pas à acheter une nouvelle vie. Peut-être un tout petit morceau. Moro reste un instant dans la cour, sans rien à porter.' },
-  rest: { title: 'Un moment dehors', place: 'Près du bureau de livraison', text: '« Il y aura d’autres lettres. »', detail: 'Moro s’assoit sur le muret. La rue semble un peu moins inconnue. Prendre le temps, c’est aussi commencer. Cette branche du prototype s’arrête ici.' },
+  rest: { title: 'Un moment dehors', place: 'Près du bureau de livraison', text: '« Il y aura d’autres lettres. »', detail: 'Moro s’assoit sur le muret. La rue semble un peu moins inconnue. Prendre le temps, c’est aussi commencer.' },
 } satisfies Record<Stage, { title: string; place: string; text: string; detail: string }>;
 export const journalFr: Record<string, string> = {
   cross: 'Moro a traversé la rue fictive et découvert le bureau de livraison.',

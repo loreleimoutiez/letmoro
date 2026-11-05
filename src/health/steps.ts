@@ -1,8 +1,10 @@
+import { isHealthDayKey } from '../domain/health.ts';
 export type StepSnapshot = {
   status: 'unavailable' | 'permission-required' | 'ready' | 'empty' | 'error';
   count: number | null;
   checkedAt: string | null;
   dayKey?: string;
+  live?: boolean;
 };
 
 export function parseStepSnapshot(value: unknown): StepSnapshot {
@@ -11,9 +13,10 @@ export function parseStepSnapshot(value: unknown): StepSnapshot {
   if (!['unavailable', 'permission-required', 'ready', 'empty', 'error'].includes(String(data.status))) throw new Error('Invalid step status');
   if (data.status === 'ready' && (!Number.isSafeInteger(data.count) || Number(data.count) < 0)) throw new Error('Invalid step count');
   return {
+    live: data.live === true,
     status: data.status as StepSnapshot['status'],
     count: data.status === 'ready' ? data.count as number : null,
-    ...(typeof data.dayKey === 'string' && /^\d{4}-\d{2}-\d{2}\|[A-Za-z0-9_+:/-]+$/.test(data.dayKey) ? { dayKey: data.dayKey } : {}),
+    ...(isHealthDayKey(data.dayKey) ? { dayKey: data.dayKey } : {}),
     checkedAt: typeof data.checkedAt === 'string' ? data.checkedAt : null,
   };
 }

@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import type { PointerEvent } from 'react';
 import type { Run } from '../domain/prologue.ts';
-import { discoveredDistance } from '../domain/map.ts';
+import { discoveredDistance, routeGeometry } from '../domain/map.ts';
 
 export function World({ run, label }: { run: Run | null; label: string }) {
   const discovered = discoveredDistance(run);
+  const route = routeGeometry(run);
   const [zoom, setZoom] = useState(1);
   const pointers = useRef(new Map<number, { x: number; y: number }>());
   const previousPinch = useRef(0);
@@ -23,7 +24,7 @@ export function World({ run, label }: { run: Run | null; label: string }) {
     pointers.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
     const pinch = distance();
     // Pinch changes magnification only; dragging never moves Moro or the camera.
-    if (pinch && previousPinch.current && discovered > 160) {
+    if (pinch && previousPinch.current && discovered > route.office) {
       setZoom(value => Math.max(.5, Math.min(2, value * pinch / previousPinch.current)));
     }
     previousPinch.current = pinch;
@@ -32,9 +33,9 @@ export function World({ run, label }: { run: Run | null; label: string }) {
   return <div className="world" role="region" aria-label={label} onPointerDown={down} onPointerMove={move} onPointerUp={release} onPointerCancel={release}>
     <div className="terrain-origin"><div className="terrain" style={{ transform: `scale(${zoom}) translateX(${-discovered}px)` }}>
       <span className="discovered-path" style={{ width: discovered + 24, height: 1 / zoom }} />
-      {discovered >= 112 && <span className="crossing" style={{ width: 1 / zoom }} />}
-      {run?.events.some(event => event.type === 'cross') && <span className="post-office" />}
-      {[72, 136, 250, 410, 520].filter(x => x < discovered).map((x, index) => <span className="pebble" key={x} style={{ left: x, top: index % 2 ? 5 : -4 }} />)}
+      {discovered >= route.crossing && <span className="crossing" style={{ width: 1 / zoom, left: route.crossing }} />}
+      {run?.events.some(event => event.type === 'cross') && <span className="post-office" style={{ left: route.office - 6 }} />}
+      {Array.from({ length: Math.ceil(discovered / 96) }, (_, index) => 48 + index * 96).filter(x => x < discovered).map((x, index) => <span className="pebble" key={x} style={{ left: x, top: index % 2 ? 5 : -4 }} />)}
     </div></div>
     <span className="moro" />
   </div>;

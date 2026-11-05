@@ -1,4 +1,4 @@
-import { observeSteps } from '../src/health/credit.ts';
+import { creditSteps } from '../src/health/credit.ts';
 import { apply, createRun } from '../src/domain/prologue.ts';
 import { decodeSave, encodeSave } from '../src/adapters/save.ts';
 import { test } from 'node:test';
@@ -24,27 +24,65 @@ test('invalid health totals and malformed responses are rejected', () => {
   for (const data of [null, {}, { status: 'connected', count: 0 }]) assert.throws(() => parseStepSnapshot(data));
 });
 
-test('travel credits use a session baseline and never double-credit duplicate or corrected readings', () => {
-  const ready = (count: number, dayKey = '2026-11-05|Europe/Paris') => parseStepSnapshot({ status: 'ready', count, dayKey });
-  let credit = observeSteps(null, ready(1000));
-  assert.equal(credit.amount, 0);
-  credit = observeSteps(credit.cursor, ready(1012));
-  assert.equal(credit.amount, 12);
-  let run = apply(createRun(100), { type: 'steps', amount: credit.amount, source: 'health' });
-  assert.equal(run.walkedSteps, 12);
+const ready = (count: number, dayKey = '2026-11-05|Europe/Paris') => parseStepSnapshot({ status: 'ready', count, dayKey });
+
+test('first import places Moro on the path but starts the quest only after meeting', () => {
+  let run = creditSteps(createRun(5000), ready(37));
+  assert.equal(run.walkedSteps, 37);
+  assert.equal(run.reserve, 0);
+  run = apply(run, { type: 'start-journey' });
+  assert.equal(run.journeyOrigin, 37);
   assert.equal(run.simulatedSteps, 0);
-  assert.equal(run.reserve, 12);
-  for (const count of [1012, 1000, 1010]) {
-    const correction = observeSteps(credit.cursor, ready(count));
-    assert.equal(correction.amount, 0);
+  assert.equal(run.stage, 'street');
+  run = decodeSave(encodeSave(run));
+  assert.equal(creditSteps(run, ready(37)), run);
+  assert.equal(creditSteps(run, ready(30)), run);
+  const next = creditSteps(run, ready(42));
+  assert.equal(next.walkedSteps, 42);
+  assert.equal(next.reserve, 5);
+  assert.equal(next.events.length, run.events.length + 1);
+});
+
+test('spent steps remain spent on reload, errors and duplicate synchronization', () => {
+  let run = creditSteps(createRun(1000), ready(27));
+  run = apply(run, { type: 'start-journey' });
+  run = creditSteps(run, ready(54));
+  run = apply(run, { type: 'cross' });
+  assert.equal(run.reserve, 7);
+  run = decodeSave(encodeSave(run));
+  assert.equal(creditSteps(run, ready(54)).reserve, 7);
+  assert.equal(creditSteps(run, ready(40)).reserve, 7);
+  assert.equal(creditSteps(run, parseStepSnapshot({ status: 'error' })), run);
+  assert.equal(creditSteps(run, ready(58)).reserve, 11);
+});
+
+test('new days credit their own total; zone changes rebaseline without duplicating overlapping totals', () => {
+  let run = creditSteps(createRun(5000), ready(37));
+  run = creditSteps(run, ready(4, '2026-11-06|Europe/Paris'));
+  assert.equal(run.walkedSteps, 41);
+  run = creditSteps(run, ready(200, '2026-11-06|UTC'));
+  assert.equal(run.walkedSteps, 41);
+  run = decodeSave(encodeSave(run));
+  run = creditSteps(run, ready(203, '2026-11-06|UTC'));
+  assert.equal(run.walkedSteps, 44);
+  run = creditSteps(run, ready(15, '2026-11-06|Europe/Paris'));
+  assert.equal(run.walkedSteps, 44);
+});
+
+test('legacy health credits are retained and conservatively deducted from the first daily import', () => {
+  const old = apply(createRun(5000), { type: 'steps', amount: 12, source: 'health' });
+  const restored = decodeSave(encodeSave(old));
+  const migrated = creditSteps(restored, ready(37));
+  assert.equal(migrated.walkedSteps, 37);
+  assert.equal(migrated.reserve, 12);
+  assert.equal(creditSteps(decodeSave(encodeSave(migrated)), ready(37)).walkedSteps, 37);
+});
+
+test('health synchronization validates day keys and totals without interpreting missing data as zero', () => {
+  const run = createRun(100);
+  assert.equal(creditSteps(run, parseStepSnapshot({ status: 'ready', count: 3 })), run);
+  for (const [dayKey, total] of [['2026-99-99|UTC', 1], ['bad', 1], ['2026-11-05|UTC', -1], ['2026-11-05|UTC', 1.5]]) {
+    assert.throws(() => apply(run, { type: 'health-sync', dayKey: String(dayKey), total: Number(total) }));
   }
-  const next = observeSteps(credit.cursor, ready(1017));
-  assert.equal(next.amount, 5);
-  run = apply(run, { type: 'steps', amount: next.amount, source: 'health' });
-  assert.equal(run.walkedSteps, 17);
-  assert.deepEqual(decodeSave(encodeSave(run)), run);
-  assert.equal(observeSteps(next.cursor, ready(2, '2026-11-06|Europe/Paris')).amount, 0);
-  assert.equal(observeSteps(next.cursor, ready(1200, '2026-11-05|UTC')).amount, 0);
-  assert.equal(observeSteps(next.cursor, parseStepSnapshot({ status: 'error' })).amount, 0);
-  assert.equal(observeSteps(null, ready(1017)).amount, 0);
+  assert.equal(creditSteps(run, ready(0)).walkedSteps, 0);
 });

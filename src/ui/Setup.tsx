@@ -18,7 +18,7 @@ export function Setup({ text: t, start }: { text: typeof en; start: (goal: numbe
     <h1>{t.begin}</h1>
     <label htmlFor="goal">{t.goal}</label><input id="goal" type="number" min="1" max="100000" step="1" required value={goal} onChange={event => setGoal(event.target.value)} />
     <fieldset className="difficulty"><legend>{t.difficulty}</legend>
-      <p className="muted">{t.modeTrialNote}</p>
+      <p className="muted">{t.modeStatusNote}</p>
       {modes.map(item => <label className="mode-option" key={item}>
         <input type="radio" name="mode" value={item} checked={mode === item} aria-labelledby={`mode-${item}-title`} aria-describedby={`mode-${item}-description`} onChange={() => setMode(item)} />
         <span className="mode-copy"><span id={`mode-${item}-title`} className="mode-title">{t[item]}</span><span id={`mode-${item}-description`} className="mode-description">{t.modeDescriptions[item]}</span></span>
@@ -31,6 +31,6 @@ export function Setup({ text: t, start }: { text: typeof en; start: (goal: numbe
       const blocked = !checked && (selected.length >= 3 || incompatible(kind === 'positive' ? next : positive, kind === 'negative' ? next : negative));
       return <label key={trait}><input type="checkbox" checked={checked} disabled={blocked} onChange={() => change(next)} />{t.traits[trait]}</label>;
     })}</div></fieldset>)}
-    <p className="muted">{t.setupNote}</p><button type="submit" disabled={!valid}>{t.begin}</button>
+    <button type="submit" disabled={!valid}>{t.begin}</button>
   </form>;
 }

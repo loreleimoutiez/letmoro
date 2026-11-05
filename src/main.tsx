@@ -7,43 +7,52 @@ import { prologue, journalText } from './content/prologue.en.ts';
 import { scenesFr, journalFr } from './content/prologue.fr.ts';
 import { en, fr } from './content/ui.ts';
 import type { Locale } from './content/ui.ts';
-import { decodeSave, encodeSave, SAVE_KEY } from './adapters/save.ts';
+import { loadAccountRun, saveAccountRun, resetAccountRun } from './adapters/account-save.ts';
 import { recordsFor } from './domain/records.ts';
 import { useSteps } from './ui/useSteps.ts';
 import { supportsHealth, openHealthSettings } from './adapters/health.ts';
 import { PixelIcon } from './ui/PixelIcon.tsx';
 import { Setup } from './ui/Setup.tsx';
 import { World } from './ui/World.tsx';
-import { observeSteps } from './health/credit.ts';
-import type { StepCursor } from './health/credit.ts';
+import { creditSteps } from './health/credit.ts';
+import { Account } from './ui/Account.tsx';
+import { useAccount } from './auth/useAccount.ts';
 import './style.css';
 
-function initial(): { run: Run | null; unreadable: boolean } {
-  try { const raw = localStorage.getItem(SAVE_KEY); return { run: raw ? decodeSave(raw) : null, unreadable: false }; }
-  catch { return { run: null, unreadable: true }; }
-}
 function initialLocale(): Locale {
   try { const stored = localStorage.getItem('letmoro.locale.v1'); if (stored === 'fr' || stored === 'en') return stored; } catch { /* Locale can stay in memory. */ }
-  return navigator.language.startsWith('fr') ? 'fr' : 'en';
+  return 'en';
 }
-type Page = 'menu' | 'story' | 'collection' | 'steps' | 'settings' | 'trial' | 'coins';
+type Page = 'menu' | 'story' | 'collection' | 'steps' | 'settings' | 'coins' | 'account';
 type Collection = 'letters' | 'characters' | 'badges' | 'journal';
 function App() {
-  const health = useSteps();
-  const creditCursor = useRef<StepCursor | null>(null);
-  const [loaded] = useState(initial);
-  const [run, setRun] = useState(loaded.run);
+  const account = useAccount();
+  const [run, setRun] = useState<Run | null>(null);
+  const [gameOwner, setGameOwner] = useState<string | null>(null);
+  const health = useSteps(run?.healthLedger, Boolean(account.user) && gameOwner === account.user?.id && !account.recovery);
   const [locale, setLocale] = useState<Locale>(initialLocale);
-  const [warning, setWarning] = useState<'loadError' | 'saveError' | 'settingsError' | null>(loaded.unreadable ? 'loadError' : null);
+  const [warning, setWarning] = useState<'loadError' | 'saveError' | 'settingsError' | null>(null);
   const [resetting, setResetting] = useState(false);
   const [page, setPage] = useState<Page>('menu');
   const [collection, setCollection] = useState<Collection>('letters');
+  const [walkCue, setWalkCue] = useState(false);
   const [intro, setIntro] = useState<number | null>(null);
   const dialog = useRef<HTMLDialogElement>(null);
   const introFocus = useRef<HTMLHeadingElement>(null);
   const t = locale === 'fr' ? fr : en;
+  const userId = account.user?.id ?? null;
+  useEffect(() => {
+    if (!userId) { setRun(null); setGameOwner(null); return; }
+    try { setRun(loadAccountRun(userId)); setWarning(null); }
+    catch { setRun(null); setWarning('loadError'); }
+    setGameOwner(userId);
+    setPage('menu');
+    setIntro(null);
+    setWalkCue(false);
+  }, [userId]);
+  useEffect(() => { if (account.recovery) { setPage('account'); dialog.current?.showModal(); } }, [account.recovery]);
   useEffect(() => { document.documentElement.lang = locale; }, [locale]);
-  useEffect(() => { if (!loaded.run) dialog.current?.showModal(); }, [loaded]);
+  useEffect(() => { if (account.user && gameOwner === account.user.id && !run && !dialog.current?.open) dialog.current?.showModal(); }, [account.user, run, gameOwner]);
   useEffect(() => { if (dialog.current?.open) dialog.current.querySelector<HTMLElement>('h1, h2')?.focus(); }, [page, collection]);
   useEffect(() => {
     if (intro === null) return;
@@ -53,17 +62,24 @@ function App() {
     return () => clearTimeout(timer);
   }, [intro]);
   const store = useCallback((next: Run) => {
+    if (!userId || gameOwner !== userId) return;
     setRun(next);
-    try { localStorage.setItem(SAVE_KEY, encodeSave(next)); setWarning(null); }
+    try { saveAccountRun(userId, next); setWarning(null); }
     catch { setWarning('saveError'); }
-  }, []);
+  }, [userId, gameOwner]);
   useEffect(() => {
-    if (!run) { creditCursor.current = null; return; }
-    const credit = observeSteps(creditCursor.current, health.snapshot);
-    creditCursor.current = credit.cursor;
-    if (credit.amount > 0) store(apply(run, { type: 'steps', amount: credit.amount, source: 'health' }));
-    // Session cursor is independent of narrative choices and is never serialized.
-  }, [health.snapshot, run, store]);
+    if (!run || !account.user || gameOwner !== userId) return;
+    const next = creditSteps(run, health.snapshot);
+    if (next !== run) store(next);
+    else if (intro === null && run.journeyOrigin === undefined && run.healthKey) store(apply(run, { type: 'start-journey' }));
+  }, [health.snapshot, run, store, intro, account.user, gameOwner, userId]);
+  useEffect(() => {
+    if (!walkCue) return;
+    const timer = window.setTimeout(() => setWalkCue(false), 7000);
+    return () => clearTimeout(timer);
+  }, [walkCue]);
+  useEffect(() => { if (run && run.reserve > 0) setWalkCue(false); }, [run]);
+  function finishIntro() { setIntro(null); setWalkCue(true); }
   function act(action: Action) { if (run) store(apply(run, action)); }
   function open(page: Page) { setPage(page); dialog.current?.showModal(); }
   function begin(goal: number, profile: Profile) { store(createRun(goal, profile)); dialog.current?.close(); setIntro(0); }
@@ -78,19 +94,23 @@ function App() {
   const healthStatus = { ready: t.connected, empty: t.empty, 'permission-required': t.permission, error: t.error, unavailable: t.disconnected }[health.snapshot.status];
   const format = (value: number) => value.toLocaleString(locale);
   const language = <label className="language">{t.language}<select value={locale} onChange={event => chooseLocale(event.target.value as Locale)}><option value="fr">Français</option><option value="en">English</option></select></label>;
+  if (!account.initialized) return <main className="arrival-loading"><span className="loading-square" /></main>;
+  if (!account.user || account.recovery) return <main className="account-arrival"><Account locale={locale} user={account.user} recovery={account.recovery} completeRecovery={account.completeRecovery} callbackFailed={account.failed} googleAvailable={account.googleAvailable} landing /></main>;
+  if (gameOwner !== userId) return <main className="arrival-loading"><span className="loading-square" /></main>;
   return <main>
     {run && <World run={run} label={`${t.world} ${scene!.place}`} />}
     {run && intro === null && <>
       <div className="lives" role="img" aria-label={t.lives}><i /><i /><i /></div>
-      <button className="coin-counter" onClick={() => open('coins')} aria-label={`${run.sous} ${t.coins}`}><span className="coin-pixel" aria-hidden="true" />{format(run.sous)}<span className="step-label">{t.coins}</span></button>
+      <button className="coin-counter" onClick={() => open('coins')} aria-label={`${run.sous} ${t.coins}`}>{format(run.sous)}<span className="step-label">{t.coins}</span></button>
       <button className="step-counter" onClick={() => open('steps')} aria-label={`${health.snapshot.count === null ? t.unknownSteps : format(health.snapshot.count)} ${t.steps}`}><span className="step-value">{health.snapshot.count === null ? '—' : format(health.snapshot.count)}</span><span className="step-label">{t.steps}</span></button>
       <button className="menu-button" aria-label={t.menu} aria-haspopup="dialog" onClick={() => open('menu')}><span aria-hidden="true" className="menu-icon" /></button>
     </>}
-    {intro !== null && <section className="introduction" aria-live="polite"><h1 ref={introFocus} tabIndex={-1} key={intro} className={intro === 0 ? 'meet-moro' : ''}>{[t.meet, t.intro1, t.intro2][intro]}</h1><div className="intro-actions"><button onClick={() => setIntro(intro < 2 ? intro + 1 : null)}>{t.next}</button><button className="back-button" onClick={() => setIntro(null)}>{t.skip}</button></div></section>}
+    {intro !== null && <section className="introduction" aria-live="polite"><div className="intro-copy"><h1 ref={introFocus} tabIndex={-1} key={intro} className={intro === 0 ? 'meet-moro' : ''}>{[t.meet, t.intro1, t.intro2, t.intro3][intro]}</h1></div><div className="intro-actions"><button onClick={() => { if (intro < 3) setIntro(intro + 1); else finishIntro(); }}>{t.next}</button><button className="back-button" onClick={finishIntro}>{t.skip}</button></div></section>}
+    {walkCue && intro === null && <p className="walk-cue">{t.walkCue}</p>}
     {warning && <p role="alert" className="warning">{t[warning]}</p>}
     <dialog ref={dialog} aria-label={t.menu} onClick={event => { if (event.target === event.currentTarget && run) dialog.current?.close(); }}>
-      <div className="menu-head">{page !== 'menu' && run ? <button className="back-button" onClick={() => setPage('menu')}><PixelIcon name="back" />{t.back}</button> : <span />}{run && <button className="close-button" onClick={() => dialog.current?.close()} aria-label={t.close}><span aria-hidden="true">×</span></button>}</div>
-      {!run ? <>{language}<Setup text={t} start={begin} /></> : <>
+      <div className="menu-head">{page !== 'menu' && (run || page === 'account') ? <button className="back-button" onClick={() => setPage('menu')}><PixelIcon name="back" />{t.back}</button> : <span />}{run && <button className="close-button" onClick={() => dialog.current?.close()} aria-label={t.close}><span aria-hidden="true">×</span></button>}</div>
+      {page === 'account' ? <Account locale={locale} user={account.user} recovery={account.recovery} completeRecovery={account.completeRecovery} callbackFailed={account.failed} googleAvailable={account.googleAvailable} /> : !run ? <>{language}<Setup text={t} start={begin} /></> : <>
         {page === 'menu' && <nav className="menu-list" aria-label={t.menu}>
           <button onClick={() => setPage('story')}><PixelIcon name="story" />{t.story}<span aria-hidden="true">&gt;</span></button>
           <button onClick={() => setPage('collection')}><PixelIcon name="collection" />{t.collection}<span aria-hidden="true">&gt;</span></button>
@@ -99,7 +119,7 @@ function App() {
         </nav>}
         {page === 'story' && <section className="story" aria-labelledby="scene-title"><div aria-live="polite" aria-atomic="true"><h1 id="scene-title" tabIndex={-1}>{scene!.title}</h1><p className="lead">{scene!.text}</p><p>{scene!.detail}</p></div>
           {run.stage === 'settlement' && <dl className="receipt">{[[t.deliveryPay, '+8'], [t.deduction1, '−2'], [t.deduction2, '−2'], [t.net, '4']].map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value} {t.coins}</dd></div>)}</dl>}
-          <div className="actions">{traveling && <><p>{t.needed}: {format(travelCost(run))} · {t.reserve}: {format(run.reserve)}</p><progress aria-label={t.reserve} value={Math.min(run.reserve, travelCost(run))} max={travelCost(run)} /><button disabled={run.reserve < travelCost(run)} onClick={() => act({ type: run.stage === 'street' ? 'cross' : 'arrive' })}>{run.stage === 'street' ? t.cross : t.arrive}</button></>}
+          <div className="actions">{traveling && <><p className="quest-progress">{format(Math.min(run.reserve, travelCost(run)))} / {format(travelCost(run))} {t.steps}</p><button disabled={run.reserve < travelCost(run)} onClick={() => act({ type: run.stage === 'street' ? 'cross' : 'arrive' })}>{run.stage === 'street' ? t.cross : t.arrive}</button></>}
             {run.stage === 'job' && <><button onClick={() => act({ type: 'accept' })}>{t.accept}</button><button onClick={() => act({ type: 'rest' })}>{t.rest}</button></>}
             {run.stage === 'handover' && <button onClick={() => act({ type: 'deliver' })}>{t.deliver}</button>}
             {run.stage === 'settlement' && <button onClick={() => act({ type: 'settle' })}>{t.settle}</button>}
@@ -110,17 +130,15 @@ function App() {
           <h2>{t[collection]}</h2>
           {collection === 'letters' && records!.letters.map(letter => <article key={letter.id}><h3>{t.courtyardLetter}</h3><p className="status-tag">{run.delivered ? t.intact : t.carried}</p><p className="muted">{t.unopened}</p></article>)}
           {collection === 'characters' && records!.characters.map(person => <article key={person.id}><h3>{person.id === 'clerk' ? t.clerk : t.recipient}</h3><p>{person.id === 'clerk' ? t.office : t.courtyard}</p></article>)}
-          {collection === 'badges' && records!.badges.map(badge => <article key={badge.id}><h3>{badge.description ? t.firstJob : t.secret}</h3>{badge.description && <p>{t.badgeDescription}</p>}</article>)}
-          {collection === 'journal' && <ol>{run.events.filter(event => event.type !== 'steps').map((event, index) => <li key={index}>{journals[event.type]}</li>)}</ol>}
+          {collection === 'badges' && records!.badges.filter(badge => badge.description !== null).map(badge => <article key={badge.id}><h3 className="badge-title"><PixelIcon name="medal" />{t.firstJob}</h3><p>{t.badgeDescription}</p></article>)}
+          {collection === 'journal' && <ol>{run.events.filter(event => event.type !== 'steps' && event.type !== 'health-sync' && event.type !== 'start-journey').map((event, index) => <li key={index}>{journals[event.type]}</li>)}</ol>}
         </section>}
         {page === 'coins' && <section><h1 tabIndex={-1}>{t.coins}</h1><p className="stat-value">{format(run.sous)}<span className="stat-unit"> {t.coins}</span></p></section>}
         {page === 'steps'  && <section><h1 tabIndex={-1}>{t.healthTitle}</h1><p className="stat-value">{health.snapshot.count === null ? '—' : format(health.snapshot.count)}<span className="stat-unit"> {t.today}</span></p><p className="status-tag">{healthStatus}</p><p>{supportsHealth ? t.healthNative : t.healthWeb}</p><p className="muted">{t.healthNote}</p>{health.snapshot.checkedAt && <p className="muted">{t.checked}: {new Date(health.snapshot.checkedAt).toLocaleTimeString(locale)}</p>}
-          {supportsHealth && <div className="actions"><button disabled={health.busy} onClick={() => { void health.refresh(true); }}>{t.connect}</button><button disabled={health.busy} onClick={() => { void health.refresh(); }}>{t.refresh}</button><button onClick={() => { void openHealthSettings().catch(() => setWarning('settingsError')); }}>{t.manage}</button></div>}
+          {supportsHealth && <div className="actions"><button disabled={health.busy} onClick={() => { void health.refresh(true); }}>{health.snapshot.status === 'ready' && !health.snapshot.live ? t.enableLive : t.connect}</button><button disabled={health.busy} onClick={() => { void health.refresh(); }}>{t.refresh}</button><button onClick={() => { void openHealthSettings().catch(() => setWarning('settingsError')); }}>{t.manage}</button></div>}
         </section>}
-        {page === 'settings' && <section><h1 tabIndex={-1}>{t.settings}</h1>{language}{run.profile && <><h2>{t.difficulty}</h2><p>{t[run.profile.mode]}</p><p>{t.modeDescriptions[run.profile.mode]}</p><p className="muted">{t.modeTrialNote}</p><h2>{t.positive}</h2><p>{run.profile.positive.map(trait => t.traits[trait as keyof typeof t.traits]).join(' · ')}</p><h2>{t.negative}</h2><p>{run.profile.negative.map(trait => t.traits[trait as keyof typeof t.traits]).join(' · ')}</p></>}<div className="actions"><button onClick={() => { dialog.current?.close(); setIntro(0); }}>{t.replayIntro}</button><button onClick={() => setPage('trial')}>{t.trial}</button></div></section>}
-        {page === 'trial' && <section><h1 tabIndex={-1}>{t.trial}</h1><p>{format(run.simulatedSteps)} {t.steps} {t.simulated} · {t.reserve}: {format(run.reserve)}</p><div className="actions">{import.meta.env.DEV && !supportsHealth && <><button onClick={() => act({ type: 'steps', amount: Math.max(1, Math.ceil(run.goal * .002)) })}>{t.simulate} +{Math.max(1, Math.ceil(run.goal * .002))}</button><button onClick={() => act({ type: 'steps', amount: run.goal })}>{t.simulateGoal}</button></>}</div>
-          {resetting ? <><p>{t.confirm}</p><button onClick={() => { store(createRun(run.goal, run.profile)); setResetting(false); }}>{t.replace}</button><button onClick={() => setResetting(false)}>{t.keep}</button></> : <button onClick={() => setResetting(true)}>{t.restart}</button>}
-        </section>}
+        {page === 'settings' && <section><h1 tabIndex={-1}>{t.settings}</h1>{language}{run.profile && <><h2>{t.difficulty}</h2><p>{t[run.profile.mode]}</p><p>{t.modeDescriptions[run.profile.mode]}</p><p className="muted">{t.modeStatusNote}</p><h2>{t.positive}</h2><p>{run.profile.positive.map(trait => t.traits[trait as keyof typeof t.traits]).join(' · ')}</p><h2>{t.negative}</h2><p>{run.profile.negative.map(trait => t.traits[trait as keyof typeof t.traits]).join(' · ')}</p></>}<div className="actions"><button onClick={() => { dialog.current?.close(); setIntro(0); }}>{t.replayIntro}</button><button onClick={() => setPage('account')}>{t.account}</button><button className="reset-button" onClick={() => setResetting(true)}>{t.resetApp}</button></div>{resetting && <div className="reset-confirm"><p>{t.resetConfirm}</p><button className="reset-button" onClick={() => { try { resetAccountRun(account.user!.id); } catch { setWarning('saveError'); return; } setRun(null); setIntro(null); setResetting(false); setPage('menu'); }}>{t.resetApp}</button><button onClick={() => setResetting(false)}>{t.cancel}</button></div>}</section>}
+
       </>}
     </dialog>
   </main>;
