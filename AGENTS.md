@@ -8,7 +8,7 @@ Read `docs/handoff.md`, `docs/product.md`, `docs/narrative.md`, and `docs/decisi
 - Use React and TypeScript for shared web/mobile UI, Vite for the web build, Capacitor for Android, and Kotlin for native health access. The exact dependencies and versions still need selection and validation.
 - Isolate domain logic, narrative content, health adapters, persistence, and UI. Plan versioning and localization from the start.
 - Moro has no specified gender. Use naturally gender-neutral writing, including translations.
-- World visuals are square pixels only, with restrained abstraction and no AI artwork. Readable text and accessible controls are allowed. Theme follows local time in real time; there is no fixed dark default.
+- World visuals are square pixels only, with restrained abstraction and no AI artwork. Readable text and accessible controls are allowed. The current prototype uses white on black; time-of-day presentation is deferred by the latest user decision.
 - Fit3 is a step source through the phone, not a promised native narrative platform. Validate real data import before implementing punitive health rules. Never equate missing data with zero steps.
 - The first public campaign must be rich and complete. An internal prototype is an implementation milestone, not the promised public release.
 - Do not ask again about settled preferences. Ask focused questions as unresolved rules become relevant, while continuing independent authorized work.

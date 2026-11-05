@@ -29,4 +29,15 @@ Build resilient versioned persistence, account synchronization, migrations and b
 
 ## Implementation checkpoint — 2026-11-05
 
-The internal simulated prologue, versioned local save format, deterministic progression tests, and clock-based theme are implemented. Type checking, six behavioral tests, and the production build pass. Browser verification remains blocked by sandbox socket restrictions; Git initialization and commits are blocked by read-only `.git`. See the handoff for exact limitations. The full first campaign and Android/health stages remain ahead.
+The internal simulated prologue and validated local saves are implemented. The mobile-first revision centers the borderless white square above a 1 px path on black, with locally bundled pixel text and a modal menu for story and records. First-job badge discovery is derived from validated saved events. English currency reads coins. Clock presentation is deferred. Git is initialized and local commits are possible; publication remains unauthorized.
+
+Type checking, seven behavioral tests, production build, and Chrome responsive journey checks pass. Screen-reader, physical Android, clean online install, and dependency advisory review remain pending.
+
+## Immediate next steps
+
+1. Refine mobile story interaction and map travel feedback without adding persistent map prose; check pixel rendering, large text, touch use, and screen-reader behavior on actual devices.
+2. Author letter contents and deliberate opening choices, including trust consequences; expand secret badge definitions as milestones are authored. The current letter only supports intact delivery.
+3. Outline the complete campaign and develop the refusal branch, cast, and first act before expanding the map.
+4. Specify time-of-day palettes and transitions, including borderless black Moro in daylight; keep this prototype dark until that design is agreed.
+5. Establish Capacitor/Android packaging and validate real S23/Fit3 data import with an isolated Kotlin bridge before health penalties.
+6. Complete clean-install and dependency security checks before public distribution. Calendar and reserve boundary decisions remain necessary before production step accounting.

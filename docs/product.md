@@ -16,7 +16,9 @@ Status: agreed direction, with unresolved details explicitly listed in the roadm
 
 The world consists exclusively of square pixels, potentially of different sizes and colors. Moro and other characters are single squares. Paths and locations use square pixels, without figurative icons, circles, or detailed illustrations. Abstract, restrained firefly-like pixel motion is welcome.
 
-Readable text and ordinary accessible UI remain available around the world. No AI artwork. The theme follows the device's local time in real time, including while the app remains open and when it resumes. It is not dark by default. Exact transition hours and palette remain to be tuned; location and watch access are unnecessary for a clock-based theme. Day/night presentation must not silently advance narrative time.
+The current prototype is mobile first, with a pure black background, white pixel text, and Moro as a borderless white square. The eventual black-square presentation and time-of-day behavior will be designed later. The earlier automatic clock palette is deferred, not active. Use a locally bundled 8-bit-style font and accessible semantic controls.
+
+The main view contains only Moro, a thin 1 CSS px discovered path below the square with no overlap, and a menu control. No title, name, description, scenery decoration, counters, or story prose appears on the map. The menu contains story choices, letters and opened status, encountered characters, earned badges, currency, and the journal. Characters remain empty until encountered. Badges hide their titles and descriptions until earned. The first badge is earned by accepting the first job; its satirical description marks becoming visible to society through employment. Only that badge is authored so far. Trial simulation controls remain in a separate menu section.
 
 ## Character and narrative agency
 
@@ -58,7 +60,7 @@ Reboot resets gameplay progress, money, skills, relationships, home, and cosmeti
 
 ## Economy and skills
 
-Currency uses the creator's deliberate spelling: `1 sous`, `2 sous`, including English source text. The first delivery earns 8 sous, followed by two unexpected deductions of 2 sous each; take-home pay is 4 sous. Do not reveal the deduction in onboarding before the first settlement.
+Currency is `sous` in French and `coins` in English. The legacy internal `sous` field remains compatible with existing saves. The first delivery earns 8 sous, followed by two unexpected deductions of 2 sous each; take-home pay is 4 sous. Do not reveal the deduction in onboarding before the first settlement.
 
 Money supports appearance customization, a home, and meaningful narrative spending. Avoid ongoing real-time bills while the player is absent. Refusing delivery can cost income but must open worthwhile alternatives rather than make the campaign unplayable.
 

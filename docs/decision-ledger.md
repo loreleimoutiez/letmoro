@@ -10,7 +10,7 @@ This ledger resolves important changes during the original design conversation. 
 | Protagonist | Moro, fixed name, unspecified gender. Appearance and traits are customizable. |
 | Language | All code, commits, documentation, and source text in English; selectable translations planned. Launch translation list remains open. |
 | Visuals | Square pixels only in the world, different sizes/colors allowed, very abstract motion, no AI art. |
-| Theme | Follows time of day in real time. Earlier dark-default and manual-toggle proposals are superseded; override settings are not currently agreed. |
+| Theme | Latest revision: white square and white pixel text on black for this prototype; time-of-day behavior deferred. This supersedes the earlier active clock palette. |
 | Genre | Letter-delivery narrative adventure, quiet most of the time, discreet fantasy, earned full emotional range. |
 | Motivation | Earn a living, independence, stability, and meaning after an unspecified difficult past. |
 | Origin | A shared motivation is fixed; whether separate selectable origins remain necessary is unresolved. Do not invent a contradictory backstory. |
@@ -30,7 +30,7 @@ This ledger resolves important changes during the original design conversation. 
 | Emergency pause | Entire game frozen until manual return; lives, progress, and streak preserved; archives readable. |
 | Final rescue | Once for the entire account, standard mode only; original run goal reached in one complete day; return with one life. |
 | Reboot | Only archives persist. No permanent XP, skills, money, or cosmetic advantages have been approved. |
-| Currency | `sous`, including `1 sous`. First gross pay 8, two deductions of 2, net 4; surprise revealed at settlement. |
+| Currency | `sous` in French, `coins` in English. First gross pay 8, two deductions of 2, net 4; surprise revealed at settlement. |
 | Political route | M le Maudit / M the Accursed can become central antagonist; opposition is optional. |
 | Romance | Several deep optional routes with importance comparable to political content. |
 | Private-life route | Building a life and choosing personal projects supports players pursuing neither politics nor romance. |
@@ -63,3 +63,7 @@ This ledger resolves important changes during the original design conversation. 
 - Decide when the one-day rescue begins, whether the player can decline it, when account usage is consumed, and how interrupted data import is resolved.
 - Separate narrative progression, current daily goal, original run goal, and travel reserve; define changes without retroactive exploits or lost progress.
 - Alternative accessible effort measurement for people whose movement is not counted as steps requires research and user decisions.
+
+## Interface revision — 2026-11-05
+
+The latest user direction supersedes the earlier decorated two-column interface: mobile-first map, borderless Moro square, black background, white pixel typography, a 1 CSS px path below Moro without overlap, and no visible map prose or counters. Story and records move into an openable menu. Encountered characters start empty. Badge names and descriptions stay secret until unlocked; accepting the first job earns the first badge. The other badges and readable letter contents are not authored yet. English currency is now coins; French remains sous. Time-of-day design is postponed.

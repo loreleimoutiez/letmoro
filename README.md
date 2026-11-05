@@ -6,7 +6,7 @@ Moro begins delivering letters to earn a living and build independence. Real-wor
 
 ## Project status
 
-An internal browser prologue is implemented with **simulated steps only**. It includes a fictional street crossing, an explicit job choice, an intact delivery, the first settlement, a knowledge-limited journal, and local saving. A short refusal ending is a draft boundary, not the complete alternative campaign route.
+An internal browser prologue is implemented with **simulated steps only**. It includes a fictional street crossing, an explicit job choice, an intact delivery, the first settlement, a knowledge-limited journal, secret first-job badge, discovered records, and local saving. The mobile-first main view shows a borderless white Moro square and a 1 px path on black; story, records, coins, and simulation controls live in a modal menu. A short refusal ending is a draft boundary, not the complete alternative campaign route.
 
 This is not the first public campaign. Android, Capacitor packaging, Kotlin health access, Fit3 import, lives, traits, skills, accounts, synchronization, translations, and the full campaign are not implemented. No real health data is read. No public release or license has been selected.
 
@@ -38,7 +38,9 @@ Saves remain in this browser under `letmoro.internal-prologue.v1`. They contain 
 - `src/main.tsx`, `src/style.css`: React interface and square-pixel world.
 - `tests/`: progression, reserve, settlement, save validation, and time-boundary tests.
 
-The theme follows local time and refreshes while open and on focus/resume. Transition hours are provisional. Narrative time is independent of the clock. Semantic controls, visible keyboard focus, a skip link, responsive layout, and reduced-motion handling are included; browser and assistive-technology verification remains pending.
+The current prototype uses white on black. The existing local-clock helper is retained and tested for future design work but does not control the interface. The locally bundled Press Start 2P font is by CodeMan38 and distributed under the [SIL Open Font License](public/fonts/OFL.txt); this dependency license does not select a license for Letmoro.
+
+Type checking, seven behavioral tests, and the production build pass. Chrome checks cover the complete journey, save reload, secret badge unlock, discovery records, sealed letters, 320–1280 px overflow, and Escape/focus return. Screen-reader and physical Android checks remain pending.
 
 ## Documentation
 
@@ -52,6 +54,6 @@ The theme follows local time and refreshes while open and on focus/resume. Trans
 
 ## Repository and license
 
-The user reserved [the GitHub repository](https://github.com/loreleimoutiez/letmoro). No push or publication has been authorized or performed. The current workspace's `.git` directory is read-only and is not an initialized repository, so no local commit exists yet.
+The user reserved [the GitHub repository](https://github.com/loreleimoutiez/letmoro). No push or publication has been authorized or performed. Git is initialized on `main` with local Conventional Commits. No remote is configured.
 
 No open-source license has been selected. Public visibility does not itself grant permission to reuse the code or narrative.

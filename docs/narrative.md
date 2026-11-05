@@ -22,7 +22,7 @@ Romantic arcs are optional, deliberate, and as developed as political arcs. Frie
 
 The territories are ruled by M the Accursed. Increasing taxes combine understated satire with concrete local effects. First settlement:
 
-| Item | Sous |
+| Item | Coins |
 | --- | ---: |
 | Delivery | +8 |
 | Road maintenance contribution | -2 |
