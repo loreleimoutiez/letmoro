@@ -33,10 +33,16 @@ Browser checks in installed headless Chrome with temporary Playwright cover vali
 
 Debug APK: `android/app/build/outputs/apk/debug/app-debug.apk` (ignored). Temporary SDK `/tmp/letmoro-android-sdk` and Gradle cache `/tmp/letmoro-gradle`; ignored `android/local.properties` points to the temporary SDK. Build with JDK 21 and your own SDK path. Initial restricted Gradle attempt failed on `.android` cache writes; escalated rerun downloaded SDK components and succeeded.
 
-`adb devices -l` detected no phone. Physical install, step permission/import, phone-only timing, screen readers, and native gestures remain unverified. See `docs/health-connect.md` for setup. No sensitive health data or credentials were used.
+The user confirmed installing and opening the APK on S23 through the local download link. USB was unstable. Wi-Fi ADB pairing succeeded, but the connection service refused its confirmed port. No debugging connection is established. Health permission/import, phone-only timing, screen readers, and native gesture behavior remain unverified. See `docs/health-connect.md` for setup. No health records or long-lived credentials were used. The short-lived wireless pairing code was used interactively and was not written into project files.
 
 ## Next required work
 
 Prioritize actual S23 installation and source checks, then low-latency native sensor feedback with safe reconciliation. The 15-second aggregate channel is not instant. New steps since the first successful session read advance travel; reload/day/zone change creates a new baseline. Steps between app termination and the next first read are not credited. Real steps never cost lives. Full health calendar/credit rules, trait mechanics, modes/lives, opened letters, return encounters, full campaign, accounts/authentication/sync and heart-rate feedback remain ahead. Accounts were discussed but no backend, provider, deployment, or secrets are configured.
 
 The balance appears in the lower-left HUD and opens its own detail view; it is not repeated below collections. A small yellow square marks the delivery office only after discovery.
+
+## First physical feedback and onboarding correction
+
+The user reported that introduction text overlapped Moro and that difficulty choices were unexplained. Introduction now occupies a bounded scrollable panel below the centered world, separated from Moro and the path even in landscape. Each mode has a localized visible description and associated radio description. Shared rules distinguish confirmed zero days from missed goals and missing data, and explain life recovery. A notice states that life loss, pause, and rescue are inactive in this trial. Removed the outdated claim that all steps are simulated from setup copy. Settings also explain the saved mode and let the player replay the introduction without replacing progress.
+
+The corrected Android update is version 0.1.1 / versionCode 2 with the same application ID and signing setup, preserving installed progress. Browser regression `/tmp/letmoro-browser/onboarding-fixes.cjs` verifies all three intro stages and mode explanations in both languages at 390×844, 320×568, and 740×360. Phone verification of this correction is still the user's next test. The APK is copied to the existing isolated temporary download directory after build; serve only that directory, never the repository or health data. Local firewall opening was performed by the user for the phone download; remove the temporary rule/server after testing is complete, without changing other firewall policy.

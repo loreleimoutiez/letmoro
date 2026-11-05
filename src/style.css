@@ -86,11 +86,18 @@ fieldset label { display: flex; align-items: center; gap: 10px; min-height: 44px
 fieldset input { width: 18px; min-height: 18px; height: 18px; flex-shrink: 0; margin: 0; accent-color: #fff; }
 fieldset label:has(input:disabled) { color: #777; }
 .trait-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
-.introduction { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; margin: 0; background: transparent; text-align: center; }
-.introduction h1 { font-size: clamp(14px, 4vw, 20px); max-width: 500px; margin-top: 140px; line-height: 2.2; }
+.introduction { position: fixed; top: calc(50svh + 32px); bottom: 0; left: 0; right: 0; display: flex; flex-direction: column; align-items: center; gap: 24px; padding: 16px 24px max(24px, env(safe-area-inset-bottom)); margin: 0; overflow-y: auto; background: #000; text-align: center; }
+.introduction h1 { font-size: clamp(14px, 4vw, 20px); max-width: 500px; margin: 0; flex-shrink: 0; line-height: 2.2; }
 .meet-moro { animation: intro-fade 3.6s steps(5, end) forwards; }
 @keyframes intro-fade { 0%, 45% { opacity: 1; } 100% { opacity: 0; } }
-.intro-actions { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 24px; }
+.intro-actions { display: flex; flex-direction: column; align-items: center; gap: 12px; margin: 0; flex-shrink: 0; }
 @media (min-width: 480px) { .trait-grid { grid-template-columns: 1fr 1fr; } }
 @media (prefers-reduced-motion: reduce) { .terrain { transition: none; } .meet-moro { animation: none; } }
 .post-office { position: absolute; left: 154px; top: -56px; width: 12px; height: 12px; background: #ffe05c; }
+
+.difficulty .mode-option { align-items: flex-start; padding: 16px 12px; margin-block: 12px; border: 1px solid #444; }
+.difficulty .mode-option:has(input:checked) { border-color: #fff; }
+.mode-option input { margin-top: 2px; }
+.mode-copy { display: grid; gap: 12px; min-width: 0; }
+.mode-title { color: #fff; line-height: 2; }
+.mode-description { color: #bcbcbc; font-size: 9px; line-height: 2.2; }

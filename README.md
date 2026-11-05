@@ -40,7 +40,7 @@ Saves remain in this browser under `letmoro.internal-prologue.v1`. They contain 
 
 The current prototype uses white on black. The existing local-clock helper is retained and tested for future design work but does not control the interface. The locally bundled Press Start 2P font is by CodeMan38 and distributed under the [SIL Open Font License](public/fonts/OFL.txt); this dependency license does not select a license for Letmoro.
 
-Type checking, fourteen behavioral tests, and the production build pass. Chrome checks cover the complete journey, save reload, secret badge unlock, discovery records, sealed letters, 320–1280 px overflow, and Escape/focus return. Android APK compilation and lint pass (0 app errors, 5 warnings for newer dependency versions and template-generated resources). Screen-reader and physical Android checks remain pending.
+Type checking, fourteen behavioral tests, and the production build pass. Chrome checks cover the complete journey, save reload, secret badge unlock, discovery records, sealed letters, 320–1280 px overflow, and Escape/focus return. Android APK compilation and lint pass (0 app errors, 5 warnings for newer dependency versions and template-generated resources). The first S23 run is confirmed and reported onboarding fixes. Detailed native accessibility and health-import checks remain pending.
 
 ## Documentation
 

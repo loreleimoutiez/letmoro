@@ -95,3 +95,7 @@ Moro stays in the viewport center as known terrain translates beneath the square
 The app mark is an underlined black square on white, matching the initial world geometry in inverse colors. Accounts/authentication and heartbeat synchronization are planned work. The app currently has neither a backend nor account credentials. Health Connect uses local Android authorization.
 
 The balance appears in the lower-left HUD and opens its own detail view; it is not repeated below collections. A small yellow square marks the delivery office only after discovery.
+
+## Onboarding readability
+
+Keep introduction text and its controls in a separate bounded area below the centered character and path. On short viewports this area scrolls internally instead of overlapping Moro. Display localized descriptions of all difficulty options before selection, with shared zero-day/data/recovery rules and an explicit prototype status. Descriptions explain the intended product without claiming that life loss, emergency pause, or rescue are already implemented.

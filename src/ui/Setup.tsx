@@ -17,7 +17,14 @@ export function Setup({ text: t, start }: { text: typeof en; start: (goal: numbe
   }}>
     <h1>{t.begin}</h1>
     <label htmlFor="goal">{t.goal}</label><input id="goal" type="number" min="1" max="100000" step="1" required value={goal} onChange={event => setGoal(event.target.value)} />
-    <fieldset><legend>{t.difficulty}</legend>{modes.map(item => <label key={item}><input type="radio" name="mode" value={item} checked={mode === item} onChange={() => setMode(item)} />{t[item]}</label>)}</fieldset>
+    <fieldset className="difficulty"><legend>{t.difficulty}</legend>
+      <p className="muted">{t.modeTrialNote}</p>
+      {modes.map(item => <label className="mode-option" key={item}>
+        <input type="radio" name="mode" value={item} checked={mode === item} aria-labelledby={`mode-${item}-title`} aria-describedby={`mode-${item}-description`} onChange={() => setMode(item)} />
+        <span className="mode-copy"><span id={`mode-${item}-title`} className="mode-title">{t[item]}</span><span id={`mode-${item}-description`} className="mode-description">{t.modeDescriptions[item]}</span></span>
+      </label>)}
+      <p className="muted">{t.modeRules}</p>
+    </fieldset>
     {([['positive', positiveTraits, positive, setPositive, t.positive], ['negative', negativeTraits, negative, setNegative, t.negative]] as const).map(([kind, traits, selected, change, title]) => <fieldset key={kind}><legend>{title} · {selected.length}/3</legend><div className="trait-grid">{traits.map(trait => {
       const checked = selected.includes(trait);
       const next = toggle(selected, trait);
