@@ -19,6 +19,20 @@ Passed: TypeScript, 24 behavioral tests, 3 native reconciliation tests, browser 
 - Define mode switching, pause boundaries, rescue activation/failure, goal changes and reserve rebalance. Do not invent finalized policies or equate missing data with zero.
 - Validate fresh installation and physical encrypted-session failure handling. Remove temporary reset and local download access before public distribution.
 
+## Lives, death, emergency pause, rescue, and reboot
+
+These are explicit implementation milestones, not active features. Follow the [dedicated rules and implementation plan](lives-and-reboot.md):
+
+1. Validate day finalization and confirmed-zero data.
+2. Implement weekly rest consumption, life loss and three-day life recovery.
+3. Implement persisted emergency pause and guarded resumption.
+4. Implement death and final-life outcomes, retaining the final-loss mode.
+5. Implement the single account-wide Standard rescue with server-side idempotency and full-day challenge rules.
+6. Implement production reboot with archive retention and gameplay reset, preserving consumed rescue rights.
+7. Validate localized UI and the full behavioral matrix before enabling health penalties.
+
+The temporary red Reset game action is not production reboot and must never reset account-wide rescue usage. Unresolved calendar, mode, pause and rescue boundaries are listed in the dedicated plan; do not silently settle them in code.
+
 ## Narrative and production
 
 - Write the full act/cast structure, first act and substantial refusal/private-life routes. Author letters, deliberate opening choices and consequences, return notes/witnesses and endings.

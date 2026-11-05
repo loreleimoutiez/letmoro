@@ -18,7 +18,7 @@ The world consists exclusively of square pixels, potentially of different sizes 
 
 The current prototype is mobile first, with a pure black background, white pixel text, and Moro as a borderless white square. The initial path is the same width as Moro. The eventual black-square presentation and time-of-day behavior will be designed later. The earlier automatic clock palette is deferred, not active. Use a locally bundled 8-bit-style font and accessible semantic controls.
 
-The main view contains only Moro, a thin 1 CSS px discovered path below the square with no overlap, a menu control, three red life squares at the upper left, and today’s health step count at the lower right. Unavailable counts display an em dash. Coins are displayed at the lower left. No title, name, description, or story prose appears on the map. The menu contains Story, Collection (letters, encountered characters, badges and journal), step connection, and bottom-aligned Settings. Characters remain empty until encountered. Badges hide their titles and descriptions until earned. The first badge is earned by accepting the first job; its satirical description marks becoming visible to society through employment. Only that badge is authored so far. Trial simulation controls remain in a separate menu section.
+The main view contains only Moro, a thin 1 CSS px discovered path below the square with no overlap, a menu control, three red life squares at the upper left, and today’s health step count at the lower right. Unavailable counts display an em dash. Coins are displayed at the lower left. No title, name, description, or story prose appears on the map. The menu contains Story, Collection (letters, encountered characters, badges and journal), step connection, and bottom-aligned Settings. Characters remain empty until encountered. Badges hide their titles and descriptions until earned. The first badge is earned by accepting the first job; its satirical description marks becoming visible to society through employment. Only that badge is authored so far. Player-facing simulation controls have been removed; a temporary reset remains in Settings for testing.
 
 ## Character and narrative agency
 
@@ -56,6 +56,8 @@ In standard mode, the account's single exceptional rescue requires reaching the 
 
 Modes may change in either direction with no exclusive hard-mode reward. The mode active when the last life is lost determines its resolution; switching afterward cannot bypass it. Switching must not refresh rest allowances or resurrect a lost run; the detailed accounting policy is pending.
 
+Implementation sequence, unresolved boundaries and acceptance tests are tracked in [Lives and reboot](lives-and-reboot.md). These mechanics are not active yet.
+
 Reboot resets gameplay progress, money, skills, relationships, home, and cosmetics. Player archives remain. Rescue is the explicit exception that restores the existing run.
 
 ## Economy and skills
@@ -84,7 +86,7 @@ Every continuing major route must have depth and resolution, including refusal, 
 
 The visual direction is a minimal terminal: black, pixel text, spare separators, distinct headings and secondary text. The menu shows one vertical navigation list, then one selected page with a back control; closing uses a borderless cross with an accessible name. Moro has a slow 4.8-second opacity pulse, never below 48%, disabled by reduced-motion preference. Synchronizing with the player's heartbeat remains a future possibility, not implemented or permissioned.
 
-Three life squares are currently a fixed display; life accounting is not active. The Android experiment reads today's aggregate through Health Connect with read-steps permission only, refreshing every 15 seconds while visible and when returning. Data availability depends on the upstream source; exact real-time updates are not promised. Daily import checkpoints and travel credits are persisted locally and reconstructed together through save replay, preventing duplicate credit after restarting. See `health-connect.md` for phone-only setup and validation.
+Three life squares are currently a fixed display; life accounting is not active. The Android experiment reads today's aggregate through Health Connect with read-steps permission only, with foreground sensor events and a 3-second visible refresh fallback. Data availability depends on the upstream source; exact real-time updates are not promised. Daily import checkpoints and travel credits are persisted locally and reconstructed together through save replay, preventing duplicate credit after restarting. See `health-connect.md` for phone-only setup and validation.
 
 ## Current Android entry and map
 
@@ -92,7 +94,7 @@ The user explicitly selected direct Android delivery after considering a PWA. Br
 
 Moro stays in the viewport center as known terrain translates beneath the square. Initial underline: 24 px, the same width as Moro. The first small route progressively reveals a crossing; a few 2 px markers provide movement cues. Dragging and manual camera traversal are disabled by the latest user decision. A growing map supports pinch magnification without movement. No unknown route is rendered. Step-driven return routes and interaction with changed inhabitants, notes, and witnesses require authored scenes and domain events.
 
-The app mark is an underlined black square on white, matching the initial world geometry in inverse colors. Accounts/authentication and heartbeat synchronization are planned work. The app currently has neither a backend nor account credentials. Health Connect uses local Android authorization.
+The app mark is an underlined black square on white, matching the initial world geometry in inverse colors. Supabase account authentication is implemented; cloud game saves and heartbeat synchronization remain planned work. Health Connect uses local Android authorization.
 
 The balance appears in the lower-left HUD and opens its own detail view; it is not repeated below collections. A small yellow square marks the delivery office only after discovery.
 

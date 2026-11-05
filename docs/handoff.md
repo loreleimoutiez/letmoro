@@ -43,4 +43,4 @@ The user confirmed installation and basic Health Connect count display on S23. U
 
 ## Next
 
-See roadmap. First test the new account-first APK on S23, including activity permission/live movement, first-quest baseline and actual auth flows. Then production reconciliation/calendar rules, full narrative and trait/mode mechanics. Cloud saves, account deletion/export, heartbeat, full campaign and public licensing are not complete. No publication is authorized.
+See roadmap and `docs/lives-and-reboot.md` for the explicit implementation sequence, agreed rules, unresolved boundaries and required tests for life loss/recovery, emergency pause, death, account rescue and production reboot. These mechanics remain unimplemented; the temporary local reset is separate. First test the new account-first APK on S23, including activity permission/live movement, first-quest baseline and actual auth flows. Then production reconciliation/calendar rules, full narrative and trait/mode mechanics. Cloud saves, account deletion/export, heartbeat, full campaign and public licensing are not complete. No publication is authorized.

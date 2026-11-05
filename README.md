@@ -64,6 +64,6 @@ Press Start 2P is bundled locally with its [SIL Open Font License](public/fonts/
 
 ## Documentation
 
-[Product](docs/product.md) · [Narrative](docs/narrative.md) · [Architecture](docs/decisions/0001-architecture.md) · [Decisions](docs/decision-ledger.md) · [Roadmap](docs/roadmap.md) · [Health](docs/health-connect.md) · [Accounts](docs/auth.md) · [Handoff](docs/handoff.md)
+[Product](docs/product.md) · [Narrative](docs/narrative.md) · [Architecture](docs/decisions/0001-architecture.md) · [Decisions](docs/decision-ledger.md) · [Roadmap](docs/roadmap.md) · [Health](docs/health-connect.md) · [Accounts](docs/auth.md) · [Lives and reboot](docs/lives-and-reboot.md) · [Handoff](docs/handoff.md)
 
 The supplied future GitHub repository is reserved; no remote or publication is configured. No open-source license has been chosen.
