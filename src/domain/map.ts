@@ -9,6 +9,3 @@ export function discoveredDistance(run: Run | null): number {
   if (run.stage === 'job' || run.stage === 'rest') return 160;
   return 560;
 }
-export function clampVisit(position: number, discovered: number) {
-  return Math.max(0, Math.min(discovered, position));
-}

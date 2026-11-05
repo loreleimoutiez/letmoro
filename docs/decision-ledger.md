@@ -85,3 +85,11 @@ Near-instant physical movement is desired. Health Connect aggregate refresh alon
 ## Balance and discovered office correction
 
 Do not repeat the balance beneath every collection. Keep it at the lower-left HUD with a dedicated detail view. Mark the discovered delivery office with a small yellow square, separated from Moro and the path. The user is preparing a USB S23 test; wait for readiness before installation.
+
+## Step-only movement supersedes manual revisiting — 2026-11-05
+
+Latest correction: do not move the path by finger drag or manual return controls. Only real steps drive production Android movement; pinch is magnification only. The office marker lies beyond the crossed intersection, not on it. Geometry places the intersection at 112 and the office at 160 trial units, with the office revealed only after the explicit crossing.
+
+Phone detection initially showed Samsung MTP but no ADB. After the user enabled debugging, Samsung disappeared even from host `lsusb`; reconnection/data-mode assistance is pending. Do not claim physical install/import success.
+
+The internal step-credit experiment establishes a current-day/zone session baseline. Positive deltas above a session high-water mark add travel credits; equal, missing, or downward-corrected reads do not. Day/zone change and reload rebaseline without historical credit. Raw daily totals stay in memory; accepted increments are saved as health-source gameplay credits. This is trial behavior, not settled production calendar/offline reconciliation. Simulated-step buttons are development-browser-only and absent from the Android production build.

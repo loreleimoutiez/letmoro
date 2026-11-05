@@ -8,7 +8,7 @@ Moro begins delivering letters to earn a living and build independence. Real-wor
 
 An internal Android prologue with a browser development preview is implemented with **simulated steps only**. It includes a fictional street crossing, an explicit job choice, an intact delivery, the first settlement, a knowledge-limited journal, secret first-job badge, discovered records, and local saving. The mobile-first main view shows a borderless white Moro square and a 1 px path on black; three red life squares appear at the upper left, coins at the lower left, and health steps at the lower right. A compact menu holds story, collection, connection, and settings. A short refusal ending is a draft boundary, not the complete alternative campaign route.
 
-This is not the first public campaign. Capacitor Android packaging and a read-only Kotlin Health Connect experiment are now present. Phone-only steps can be tested after installing an Android build and granting access; physical import is not yet verified. Fit3 import, life accounting, trait effects, skills, accounts, synchronization, and the full campaign remain unimplemented. Real step observations stay in memory and do not affect the simulated story. No public release or license has been selected.
+This is not the first public campaign. Capacitor Android packaging and a read-only Kotlin Health Connect experiment are now present. Phone-only steps can be tested after installing an Android build and granting access; physical import is not yet verified. Fit3 import, life accounting, trait effects, skills, accounts, synchronization, and the full campaign remain unimplemented. Raw daily observations stay in memory. Newly observed steps after a session baseline become travel credits saved locally. No public release or license has been selected.
 
 ## Development
 
@@ -40,7 +40,7 @@ Saves remain in this browser under `letmoro.internal-prologue.v1`. They contain 
 
 The current prototype uses white on black. The existing local-clock helper is retained and tested for future design work but does not control the interface. The locally bundled Press Start 2P font is by CodeMan38 and distributed under the [SIL Open Font License](public/fonts/OFL.txt); this dependency license does not select a license for Letmoro.
 
-Type checking, thirteen behavioral tests, and the production build pass. Chrome checks cover the complete journey, save reload, secret badge unlock, discovery records, sealed letters, 320–1280 px overflow, and Escape/focus return. Android APK compilation and lint pass (0 app errors, 5 warnings for newer dependency versions and template-generated resources). Screen-reader and physical Android checks remain pending.
+Type checking, fourteen behavioral tests, and the production build pass. Chrome checks cover the complete journey, save reload, secret badge unlock, discovery records, sealed letters, 320–1280 px overflow, and Escape/focus return. Android APK compilation and lint pass (0 app errors, 5 warnings for newer dependency versions and template-generated resources). Screen-reader and physical Android checks remain pending.
 
 ## Documentation
 
@@ -60,7 +60,7 @@ No open-source license has been selected. Public visibility does not itself gran
 
 ## Android step experiment
 
-See [phone-only Health Connect setup](docs/health-connect.md) for build requirements, installation, permissions, and actual-phone checks. No Google login or watch is needed by Letmoro. The browser cannot access Health Connect. The HUD shows three fixed red life squares and an unknown-safe step count; the menu contains the step connection. Moro pulses slowly without disappearing and respects reduced motion. Menu navigation groups records in Collection and places Settings at the bottom, using pixel icons without numbering. Moro remains centered as the discovered path moves below; only known path positions are reachable by dragging. Pinch zoom becomes available after the first journey. Revisiting changes map position, not narrative events; return encounters are not authored.
+See [phone-only Health Connect setup](docs/health-connect.md) for build requirements, installation, permissions, and actual-phone checks. No Google login or watch is needed by Letmoro. The browser cannot access Health Connect. The HUD shows three fixed red life squares and an unknown-safe step count; the menu contains the step connection. Moro pulses slowly without disappearing and respects reduced motion. Menu navigation groups records in Collection and places Settings at the bottom, using pixel icons without numbering. Moro remains centered as the discovered path moves below; finger dragging never moves Moro or the camera. Pinch changes magnification only after the first journey. Return routes and encounters are not authored.
 
 The current target is an Android app, as explicitly selected after considering a PWA. Browser tooling remains for development only; no service worker or PWA install flow is shipped. The black underlined-square mark is authored in SVG/vector code, with a reproducible PNG generator in `scripts/icons.mjs`. No AI artwork is used.
 

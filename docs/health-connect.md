@@ -1,6 +1,6 @@
 # Phone-only Health Connect trial
 
-This is an internal Android read-only experiment. No watch, Google sign-in, cloud account, or server is required by Letmoro. Real observations do not advance the simulated story or change lives yet. Physical-device import remains to be verified.
+This is an internal Android read-only experiment. No watch, Google sign-in, cloud account, or server is required by Letmoro. Newly observed steps advance trial travel after a session baseline; no life penalties apply. Physical-device import remains to be verified.
 
 ## Build and install
 
@@ -29,7 +29,7 @@ If the provider needs installation or an update, use Android Settings/Google Pla
 
 Kotlin uses Health Connect's `aggregate` with `StepsRecord.COUNT_TOTAL` over local midnight to now, allowing the provider to deduplicate sources. Every read recalculates the current local date and zone. The TypeScript boundary validates nonnegative safe integers, preserves unknown states, and accepts corrected totals that decrease. The UI prevents overlapping reads and skips hidden-page polling. It clears the displayed value on read failure or revoked access.
 
-Only the current observation is kept in memory. No health totals, credentials, or imported records enter browser storage, narrative saves, logs, Git, or a server. Android app backup is disabled. Permission rationale is available through Health Connect. A future production integration needs reconciled event crediting and calendar policy before real steps can affect travel, rest, recovery, or life loss.
+Raw daily totals and the session cursor stay in memory. Accepted incremental travel credits enter the local narrative save, distinguished from simulated steps. No daily health history, credentials, or imported raw records enter Git, logs, or a server. Android app backup is disabled. Permission rationale is available through Health Connect. Production still needs durable reconciliation and calendar policy before offline crediting, rest, recovery, or life loss.
 
 ## Device validation checklist
 
@@ -48,6 +48,12 @@ Moro's current opacity pulse is decorative: 4.8 seconds, opacity 0.48–1.0, dis
 
 ## Current build validation
 
-A debug APK was built successfully with `assembleDebug`; `lintDebug` reports no app errors and five non-blocking warnings about newer dependency versions and generated template resources. TypeScript, thirteen domain/save/profile/map/health tests, production build, and Chrome UI checks pass. Android compilation uses a local SDK 36; no connected phone was detected, so actual health permission and data import are unverified.
+A debug APK was built successfully with `assembleDebug`; `lintDebug` reports no app errors and five non-blocking warnings about newer dependency versions and generated template resources. TypeScript, fourteen domain/save/profile/map/health tests, production build, and Chrome UI checks pass. Android compilation uses a local SDK 36; no connected phone was detected, so actual health permission and data import are unverified.
 
 The user selected a direct Android app, superseding the PWA proposal. Near-instant step-by-step movement still needs a foreground Android sensor channel with explicit reconciliation. The current Health Connect channel refreshes every 15 seconds and must not be described as instant. No heart-rate access or Google OAuth client is configured. Account authentication is separate future work.
+
+## Session travel crediting (internal trial)
+
+Keep the app session running for this test. The first valid aggregate establishes the baseline without crediting the day's earlier activity. Later positive increases above the greatest already observed total add travel credits. Duplicate reads, errors, empty results, and downward corrections add nothing and never reverse story choices. Date/zone changes and a restarted process establish a new baseline. This trial does not credit steps taken between process termination and its next first reading. Durable background/offline reconciliation remains future work.
+
+Daily raw totals/cursor are not persisted. Accepted increments enter local game progress with source `health`; simulated increments have a separate counter. Health Connect handles upstream aggregation and deduplication. Simulation buttons are development-browser-only and excluded from the Android production build. Finger dragging and manual map return controls are disabled. Pinch changes scale only. The yellow office lies beyond the intersection and appears after crossing.

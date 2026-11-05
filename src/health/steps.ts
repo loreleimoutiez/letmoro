@@ -2,6 +2,7 @@ export type StepSnapshot = {
   status: 'unavailable' | 'permission-required' | 'ready' | 'empty' | 'error';
   count: number | null;
   checkedAt: string | null;
+  dayKey?: string;
 };
 
 export function parseStepSnapshot(value: unknown): StepSnapshot {
@@ -12,6 +13,7 @@ export function parseStepSnapshot(value: unknown): StepSnapshot {
   return {
     status: data.status as StepSnapshot['status'],
     count: data.status === 'ready' ? data.count as number : null,
+    ...(typeof data.dayKey === 'string' && /^\d{4}-\d{2}-\d{2}\|[A-Za-z0-9_+:/-]+$/.test(data.dayKey) ? { dayKey: data.dayKey } : {}),
     checkedAt: typeof data.checkedAt === 'string' ? data.checkedAt : null,
   };
 }

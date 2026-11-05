@@ -40,6 +40,7 @@ class HealthStepsPlugin : Plugin() {
 
     private fun result(status: String, count: Long? = null): JSObject = JSObject().apply {
         put("status", status)
+        put("dayKey", "${LocalDate.now()}|${ZoneId.systemDefault().id}")
         put("count", count ?: org.json.JSONObject.NULL)
         put("checkedAt", Instant.now().toString())
     }

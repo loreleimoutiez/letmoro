@@ -65,7 +65,7 @@ article { border-color: #333; margin-block: 28px; padding-block: 16px; }
 .terrain-origin { position: absolute; left: 50%; top: 50%; }
 .terrain { position: relative; transform-origin: 0 0; transition: transform 350ms steps(12, end); }
 .discovered-path { position: absolute; left: -12px; top: 0; height: 1px; background: #fff; }
-.crossing { position: absolute; left: 160px; top: -24px; width: 1px; height: 49px; background: #fff; }
+.crossing { position: absolute; left: 112px; top: -24px; width: 1px; height: 49px; background: #fff; }
 .pebble { position: absolute; width: 2px; height: 2px; background: #888; }
 .coin-counter { position: fixed; left: max(24px, env(safe-area-inset-left)); bottom: max(20px, env(safe-area-inset-bottom)); border: 0; display: flex; align-items: center; gap: 8px; padding-inline: 0 12px; }
 .coin-pixel { width: 6px; height: 6px; background: currentColor; }
@@ -91,8 +91,6 @@ fieldset label:has(input:disabled) { color: #777; }
 .meet-moro { animation: intro-fade 3.6s steps(5, end) forwards; }
 @keyframes intro-fade { 0%, 45% { opacity: 1; } 100% { opacity: 0; } }
 .intro-actions { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 24px; }
-.map-access { position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; opacity: 0; }
-.map-access:focus-within { opacity: 1; }
 @media (min-width: 480px) { .trait-grid { grid-template-columns: 1fr 1fr; } }
 @media (prefers-reduced-motion: reduce) { .terrain { transition: none; } .meet-moro { animation: none; } }
 .post-office { position: absolute; left: 154px; top: -56px; width: 12px; height: 12px; background: #ffe05c; }

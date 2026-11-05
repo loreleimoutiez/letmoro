@@ -31,7 +31,7 @@ Build resilient versioned persistence, account synchronization, migrations and b
 
 The internal simulated prologue and validated local saves are implemented. The mobile-first revision centers the borderless white square above a 1 px path on black, with locally bundled pixel text and a modal menu for story and records. First-job badge discovery is derived from validated saved events. English currency reads coins. Clock presentation is deferred. Git is initialized and local commits are possible; publication remains unauthorized.
 
-Type checking, thirteen behavioral tests, production build, and Chrome responsive journey checks pass. Screen-reader, physical Android, clean online install, and dependency advisory review remain pending.
+Type checking, fourteen behavioral tests, production build, and Chrome responsive journey checks pass. Screen-reader, physical Android, clean online install, and dependency advisory review remain pending.
 
 ## Immediate next steps
 
@@ -47,9 +47,9 @@ The terminal revision adds a fixed three-life HUD, an unknown-safe health counte
 ## Updated immediate priority
 
 1. Install the compiled Android test APK on S23 and verify step permission, phone-only import, denial/revocation, and delayed updates. No device was attached during development. A watch is not necessary to start.
-2. Add low-latency foreground step-sensor feedback, then explicitly reconcile it with Health Connect totals so neither corrections nor overlapping sources can duplicate travel. Current 15-second aggregate polling is not instant, and real health steps do not advance story yet.
+2. Add low-latency foreground step-sensor feedback, then explicitly reconcile it with Health Connect totals so neither corrections nor overlapping sources can duplicate travel. Current 15-second aggregate polling is not instant. A conservative session baseline now credits new observed increments to travel.
 3. Continue the profile draft into actual trait-dependent decisions and modes after required calendar/health rules are settled. The validated six-trait setup and difficulty are currently saved choices only.
-4. Author opened letters and consequences, notes/witnesses on return, and complete refusal/private-life routes. Current free revisiting moves the map camera without replaying the story.
+4. Author opened letters and consequences, notes/witnesses on return, and complete refusal/private-life routes. Manual revisiting is superseded: travel must be driven by real steps.
 5. Validate FR/EN wording, native accessibility, pinch gestures, and the introduction on physical Android. The prototype now groups the menu and includes localized draft content.
 6. Design secure accounts and sync only after selecting backend/authentication ownership and privacy policy. Never embed client secrets in the app. No hosted deployment or provider selection has been made.
 

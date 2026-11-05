@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { parseProfile } from '../src/domain/profile.ts';
 import { apply, createRun } from '../src/domain/prologue.ts';
 import { encodeSave, decodeSave } from '../src/adapters/save.ts';
-import { clampVisit, discoveredDistance } from '../src/domain/map.ts';
+import { discoveredDistance } from '../src/domain/map.ts';
 
 const profile = { mode: 'standard', positive: ['patient', 'curious', 'kind'], negative: ['stubborn', 'timid', 'proud'] };
 test('run setup requires exactly three unique compatible traits on each side and a valid mode', () => {
@@ -21,14 +21,11 @@ test('setup survives event replay while old saves without setup remain readable'
   const corrupt = JSON.parse(encodeSave(run)); corrupt.profile.positive = ['patient'];
   assert.throws(() => decodeSave(JSON.stringify(corrupt)));
 });
-test('map starts with no traveled distance, reveals progressively and clamps revisits without changing the story', () => {
+test('map starts with no traveled distance and reveals progressively without skipping story choices', () => {
   let run = createRun(1000);
   assert.equal(discoveredDistance(run), 0);
   run = apply(run, { type: 'steps', amount: 10 });
   assert.equal(discoveredDistance(run), 80);
-  assert.equal(clampVisit(-10, 80), 0);
-  assert.equal(clampVisit(500, 80), 80);
-  assert.equal(clampVisit(40, 80), 40);
   assert.equal(run.reserve, 10);
   assert.equal(run.stage, 'street');
   run = apply(apply(run, { type: 'steps', amount: 10 }), { type: 'cross' });

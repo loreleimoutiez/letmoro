@@ -1,4 +1,4 @@
-import { StrictMode, useEffect, useRef, useState } from 'react';
+import { StrictMode, useCallback, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { apply, createRun, travelCost } from './domain/prologue.ts';
 import type { Action, Run } from './domain/prologue.ts';
@@ -14,6 +14,8 @@ import { supportsHealth, openHealthSettings } from './adapters/health.ts';
 import { PixelIcon } from './ui/PixelIcon.tsx';
 import { Setup } from './ui/Setup.tsx';
 import { World } from './ui/World.tsx';
+import { observeSteps } from './health/credit.ts';
+import type { StepCursor } from './health/credit.ts';
 import './style.css';
 
 function initial(): { run: Run | null; unreadable: boolean } {
@@ -28,6 +30,7 @@ type Page = 'menu' | 'story' | 'collection' | 'steps' | 'settings' | 'trial' | '
 type Collection = 'letters' | 'characters' | 'badges' | 'journal';
 function App() {
   const health = useSteps();
+  const creditCursor = useRef<StepCursor | null>(null);
   const [loaded] = useState(initial);
   const [run, setRun] = useState(loaded.run);
   const [locale, setLocale] = useState<Locale>(initialLocale);
@@ -49,11 +52,18 @@ function App() {
     const timer = window.setTimeout(() => setIntro(1), 3600);
     return () => clearTimeout(timer);
   }, [intro]);
-  function store(next: Run) {
+  const store = useCallback((next: Run) => {
     setRun(next);
     try { localStorage.setItem(SAVE_KEY, encodeSave(next)); setWarning(null); }
     catch { setWarning('saveError'); }
-  }
+  }, []);
+  useEffect(() => {
+    if (!run) { creditCursor.current = null; return; }
+    const credit = observeSteps(creditCursor.current, health.snapshot);
+    creditCursor.current = credit.cursor;
+    if (credit.amount > 0) store(apply(run, { type: 'steps', amount: credit.amount, source: 'health' }));
+    // Session cursor is independent of narrative choices and is never serialized.
+  }, [health.snapshot, run, store]);
   function act(action: Action) { if (run) store(apply(run, action)); }
   function open(page: Page) { setPage(page); dialog.current?.showModal(); }
   function begin(goal: number, profile: Profile) { store(createRun(goal, profile)); dialog.current?.close(); setIntro(0); }
@@ -69,7 +79,7 @@ function App() {
   const format = (value: number) => value.toLocaleString(locale);
   const language = <label className="language">{t.language}<select value={locale} onChange={event => chooseLocale(event.target.value as Locale)}><option value="fr">Français</option><option value="en">English</option></select></label>;
   return <main>
-    {run && <World run={run} locale={locale} label={`${t.world} ${scene!.place}`} />}
+    {run && <World run={run} label={`${t.world} ${scene!.place}`} />}
     {run && intro === null && <>
       <div className="lives" role="img" aria-label={t.lives}><i /><i /><i /></div>
       <button className="coin-counter" onClick={() => open('coins')} aria-label={`${run.sous} ${t.coins}`}><span className="coin-pixel" aria-hidden="true" />{format(run.sous)}<span className="step-label">{t.coins}</span></button>
@@ -108,7 +118,7 @@ function App() {
           {supportsHealth && <div className="actions"><button disabled={health.busy} onClick={() => { void health.refresh(true); }}>{t.connect}</button><button disabled={health.busy} onClick={() => { void health.refresh(); }}>{t.refresh}</button><button onClick={() => { void openHealthSettings().catch(() => setWarning('settingsError')); }}>{t.manage}</button></div>}
         </section>}
         {page === 'settings' && <section><h1 tabIndex={-1}>{t.settings}</h1>{language}{run.profile && <><h2>{t.difficulty}</h2><p>{t[run.profile.mode]}</p><h2>{t.positive}</h2><p>{run.profile.positive.map(trait => t.traits[trait as keyof typeof t.traits]).join(' · ')}</p><h2>{t.negative}</h2><p>{run.profile.negative.map(trait => t.traits[trait as keyof typeof t.traits]).join(' · ')}</p></>}<button onClick={() => setPage('trial')}>{t.trial}</button></section>}
-        {page === 'trial' && <section><h1 tabIndex={-1}>{t.trial}</h1><p>{format(run.simulatedSteps)} {t.steps} {t.simulated} · {t.reserve}: {format(run.reserve)}</p><div className="actions"><button onClick={() => act({ type: 'steps', amount: Math.max(1, Math.ceil(run.goal * .002)) })}>{t.simulate} +{Math.max(1, Math.ceil(run.goal * .002))}</button><button onClick={() => act({ type: 'steps', amount: run.goal })}>{t.simulateGoal}</button></div>
+        {page === 'trial' && <section><h1 tabIndex={-1}>{t.trial}</h1><p>{format(run.simulatedSteps)} {t.steps} {t.simulated} · {t.reserve}: {format(run.reserve)}</p><div className="actions">{import.meta.env.DEV && !supportsHealth && <><button onClick={() => act({ type: 'steps', amount: Math.max(1, Math.ceil(run.goal * .002)) })}>{t.simulate} +{Math.max(1, Math.ceil(run.goal * .002))}</button><button onClick={() => act({ type: 'steps', amount: run.goal })}>{t.simulateGoal}</button></>}</div>
           {resetting ? <><p>{t.confirm}</p><button onClick={() => { store(createRun(run.goal, run.profile)); setResetting(false); }}>{t.replace}</button><button onClick={() => setResetting(false)}>{t.keep}</button></> : <button onClick={() => setResetting(true)}>{t.restart}</button>}
         </section>}
       </>}
