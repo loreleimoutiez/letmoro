@@ -19,8 +19,8 @@ for (const size of [192, 512]) {
   for (let y = 0; y < size; y++) {
     rows[y * (1 + size * 3)] = 0;
     for (let x = 0; x < size; x++) {
-      const square = x >= size / 4 && x < size * 3 / 4 && y >= size * 3 / 16 && y < size * 11 / 16;
-      const underline = x >= size / 4 && x < size * 3 / 4 && y >= Math.floor(size * 3 / 4) && y < Math.floor(size * 3 / 4) + Math.max(1, size / 64);
+      const square = x >= size * 5 / 16 && x < size * 11 / 16 && y >= size * 5 / 16 && y < size * 11 / 16;
+      const underline = x >= size * 5 / 16 && x < size * 11 / 16 && y >= Math.floor(size * 3 / 4) && y < Math.floor(size * 3 / 4) + Math.max(1, size * 3 / 64);
       if (square || underline) rows.fill(0, y * (1 + size * 3) + 1 + x * 3, y * (1 + size * 3) + 4 + x * 3);
     }
   }
