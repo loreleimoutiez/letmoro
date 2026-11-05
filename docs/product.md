@@ -18,7 +18,7 @@ The world consists exclusively of square pixels, potentially of different sizes 
 
 The current prototype is mobile first, with a pure black background, white pixel text, and Moro as a borderless white square. The eventual black-square presentation and time-of-day behavior will be designed later. The earlier automatic clock palette is deferred, not active. Use a locally bundled 8-bit-style font and accessible semantic controls.
 
-The main view contains only Moro, a thin 1 CSS px discovered path below the square with no overlap, and a menu control. No title, name, description, scenery decoration, counters, or story prose appears on the map. The menu contains story choices, letters and opened status, encountered characters, earned badges, currency, and the journal. Characters remain empty until encountered. Badges hide their titles and descriptions until earned. The first badge is earned by accepting the first job; its satirical description marks becoming visible to society through employment. Only that badge is authored so far. Trial simulation controls remain in a separate menu section.
+The main view contains only Moro, a thin 1 CSS px discovered path below the square with no overlap, a menu control, three red life squares at the upper left, and today’s health step count at the lower right. Unavailable counts display an em dash. No title, name, description, scenery decoration, or story prose appears on the map. The menu contains story choices, letters and opened status, encountered characters, earned badges, currency, and the journal. Characters remain empty until encountered. Badges hide their titles and descriptions until earned. The first badge is earned by accepting the first job; its satirical description marks becoming visible to society through employment. Only that badge is authored so far. Trial simulation controls remain in a separate menu section.
 
 ## Character and narrative agency
 
@@ -79,3 +79,9 @@ The fictional map is independent of GPS. It reveals only observed paths, places,
 A complete, substantial first campaign is required, not just a public prologue. Planning target: six to eight weeks at moderate activity, prologue, five acts, personalized epilogue, roughly four regions, twenty places, ten to fifteen recurring characters, thirty to forty authored letters, and 150–200 scenes across all routes. Validate these targets through writing and playtests.
 
 Every continuing major route must have depth and resolution, including refusal, non-romance, and non-political routes. Early death can shorten a run. Additional content may be downloaded independently of application binaries, with offline caching and compatibility checks. No promise of an infinitely authored story.
+
+## Terminal presentation and phone step trial — 2026-11-05
+
+The visual direction is a minimal terminal: black, pixel text, spare separators, distinct headings and secondary text. The menu shows one vertical navigation list, then one selected page with a back control; closing uses a borderless cross with an accessible name. Moro has a slow 4.8-second opacity pulse, never below 48%, disabled by reduced-motion preference. Synchronizing with the player's heartbeat remains a future possibility, not implemented or permissioned.
+
+Three life squares are currently a fixed display; life accounting is not active. The Android experiment reads today's aggregate through Health Connect with read-steps permission only, refreshing every 15 seconds while visible and when returning. Data availability depends on the upstream source; exact real-time updates are not promised. Real health observations remain in memory, separate from simulated story progress. See `health-connect.md` for phone-only setup and validation.

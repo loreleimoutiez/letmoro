@@ -42,3 +42,31 @@ ol { padding-left: 24px; } li { margin-block: 16px; }
 .warning { position: fixed; bottom: 0; padding: 16px; margin: 0; background: #000; border-top: 1px solid #fff; width: 100%; }
 .reset button { margin-block: 8px; }
 @media (min-width: 640px) { dialog { padding: 32px; } }
+/* A quiet terminal: square geometry, sparse rules, distinct text levels. */
+.moro { animation: moro-pulse 4.8s ease-in-out infinite; }
+@keyframes moro-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .48; } }
+.lives { position: fixed; top: max(32px, env(safe-area-inset-top)); left: max(24px, env(safe-area-inset-left)); display: flex; gap: 8px; }
+.lives i { width: 10px; height: 10px; background: #ff4040; }
+.step-counter { position: fixed; right: max(24px, env(safe-area-inset-right)); bottom: max(20px, env(safe-area-inset-bottom)); display: flex; align-items: baseline; gap: 10px; border: 0; padding: 8px 0 8px 12px; }
+.step-value { font-size: 14px; } .step-label { font-size: 9px; color: #aaa; }
+dialog { border-color: #555; padding: 24px; }
+.menu-head { border-bottom: 1px solid #333; padding-bottom: 12px; margin-bottom: 20px; }
+.menu-caption { color: #999; font-size: 10px; }
+.close-button { border: 0; width: 44px; height: 44px; padding: 0; font: 30px/1 monospace; }
+.menu-list { display: flex; flex-direction: column; gap: 8px; margin-block: 16px; }
+.menu-list button { flex: none; display: grid; grid-template-columns: 30px 1fr 12px; align-items: center; gap: 12px; text-align: left; border: 0; border-bottom: 1px solid #222; padding: 16px 8px; }
+.menu-number { color: #777; font-size: 9px; }
+.menu-arrow { color: #aaa; }
+.back-button { border: 0; color: #aaa; padding-left: 0; font-size: 10px; }
+h1, h2 { font-size: 16px; line-height: 1.8; margin: 28px 0 24px; }
+h3 { font-size: 12px; color: #fff; margin: 12px 0 16px; }
+p, li, dt { color: #bcbcbc; font-size: 10px; line-height: 2.4; }
+.lead { color: #fff; font-size: 12px; border-left: 2px solid #fff; padding-left: 16px; margin-block: 28px; }
+.muted { color: #999; font-size: 9px; }
+.status-tag { display: inline-block; color: #ddd; font-size: 9px; border-left: 2px solid #777; padding-left: 12px; }
+.stat-value { font-size: clamp(24px, 8vw, 36px); color: #fff; margin-block: 32px; }
+.stat-unit { font-size: 10px; color: #aaa; }
+article { border-color: #333; margin-block: 28px; padding-block: 16px; }
+.receipt { font-size: 10px; } .receipt div:last-child { border-top: 1px solid #555; padding-top: 16px; }
+.actions button { width: 100%; text-align: left; font-size: 10px; }
+@media (prefers-reduced-motion: reduce) { .moro { animation: none; opacity: 1; } }

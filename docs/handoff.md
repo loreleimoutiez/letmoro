@@ -29,3 +29,11 @@ The earlier socket/browser block no longer reproduces. Vite successfully served 
 ## Next
 
 See `docs/roadmap.md` for the ordered next steps. Prioritize actual mobile interaction, authored letters and opening decisions, first-act/refusal writing, then time-of-day design and Android hardware proof. Full campaign, traits, lives, skills, accounts, translations, Capacitor, Kotlin, and health import remain unimplemented. Missing health data must never mean zero steps. No health penalties before validated data and calendar rules.
+
+## Terminal and Android checkpoint
+
+The HUD now has three fixed red life squares, a health step counter (`—` when unavailable), and a slow bounded Moro pulse respecting reduced motion. Menu pages have separate vertical navigation and visual text hierarchy. Health Connect Kotlin plugin, local permission rationale, and Capacitor 8.6.0 Android packaging compile successfully with JDK 21, SDK 36, AGP 8.13.0, Kotlin 2.2.20, and Health Connect 1.1.0. The temporary SDK/Gradle caches are outside the repository. Native logging is disabled and backup is disabled. Physical permission/import validation remains pending: `adb devices -l` showed no device. See `docs/health-connect.md`.
+
+Ten domain/health tests, TypeScript, build, Chrome HUD/pulse/reduced-motion/menu/journey/reload/responsive checks pass. npm audit returned zero vulnerabilities after updating Vite to 7.3.7 and transitive dependencies. The new browser script is `/tmp/letmoro-browser/terminal.cjs`.
+
+The user has now selected PWA plus a light Android wrapper for health access. Further requested work: coins bottom-left, centered Moro with moving discovered terrain, freely revisitable known paths and pinch zoom, matching underlined-square icon/initial path, daily-goal/mode/three-positive/three-negative setup, a terse stepped-fade introduction, French/English settings, grouped menu with pixel icons and settings at the bottom. Accounts and secure sync are desired architectural work; no hosted auth service or publication is authorized yet. Heartbeat synchronization remains future work.

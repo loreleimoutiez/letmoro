@@ -31,7 +31,7 @@ Build resilient versioned persistence, account synchronization, migrations and b
 
 The internal simulated prologue and validated local saves are implemented. The mobile-first revision centers the borderless white square above a 1 px path on black, with locally bundled pixel text and a modal menu for story and records. First-job badge discovery is derived from validated saved events. English currency reads coins. Clock presentation is deferred. Git is initialized and local commits are possible; publication remains unauthorized.
 
-Type checking, seven behavioral tests, production build, and Chrome responsive journey checks pass. Screen-reader, physical Android, clean online install, and dependency advisory review remain pending.
+Type checking, ten behavioral tests, production build, and Chrome responsive journey checks pass. Screen-reader, physical Android, clean online install, and dependency advisory review remain pending.
 
 ## Immediate next steps
 
@@ -39,5 +39,7 @@ Type checking, seven behavioral tests, production build, and Chrome responsive j
 2. Author letter contents and deliberate opening choices, including trust consequences; expand secret badge definitions as milestones are authored. The current letter only supports intact delivery.
 3. Outline the complete campaign and develop the refusal branch, cast, and first act before expanding the map.
 4. Specify time-of-day palettes and transitions, including borderless black Moro in daylight; keep this prototype dark until that design is agreed.
-5. Establish Capacitor/Android packaging and validate real S23/Fit3 data import with an isolated Kotlin bridge before health penalties.
+5. Build and physically validate the new Capacitor/Kotlin read-only Health Connect experiment on S23, initially without a watch. Check source delays, permissions, corrections and midnight before connecting imported steps to travel or life rules.
 6. Complete clean-install and dependency security checks before public distribution. Calendar and reserve boundary decisions remain necessary before production step accounting.
+
+The terminal revision adds a fixed three-life HUD, an unknown-safe health counter, reduced-motion-aware Moro pulse, vertical menu navigation, and clearer text hierarchy. Android read-only bridge and phone-only instructions are in `docs/health-connect.md`; this is separate from production health accounting.
