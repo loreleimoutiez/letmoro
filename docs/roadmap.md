@@ -67,3 +67,10 @@ No APK build now, per user. Internal toolbar implemented in source; reset/replay
 Source now supports reversible cardinal travel, officially authorized branches, remembered encounter markers, adaptive map zoom and label culling. Local private text adds two neighborhood visits and optional multi-day unpaid errands with required return travel. Basic respect and three letter-action badges are visible only after unlock. This supersedes the earlier statements that all return travel and neighborhood writing were pending.
 
 Next narrative work: expand recurring conversations, subsequent paid letters and contextual consequences; continue the privately authored arc outline. Before scaling toward a real year, design campaign-driven topology, per-letter identities and event compaction beyond the current replay limit. The five-arc campaign, full skill mechanics and physical Android gesture validation remain incomplete. No APK now. Cloud activation still requires the real migration/setup.
+
+
+## Current life/calendar and arrival checkpoint
+
+Implemented in source: health invitation before Walk, no numeric zoom with proportional Moro, sparse pebbles, a continuing return road, detour-aware remaining-distance reminder, repeated unaccepted work offer, and newest-first timestamped journal. The life/rest/recovery reducer, fixed-zone calendar, 24-hour grace, late corrections and zero-life guard are implemented with internal fictional-day tools. The new native historical reader/controller is present but real penalties default off until physical validation. Pause, account rescue and production reboot were explicitly deferred by the user while this milestone is implemented.
+
+Next external actions: connect the discovered Supabase integration to apply the already-authorized initial migration; compile/test the new historical native path when the Android SDK/toolchain and physical-test phase are available. No APK now. The skill tree's political/relational/personal scope is recorded privately; only the root is implemented. Full campaign, persistent multi-letter system and remaining skill mechanics remain ahead.

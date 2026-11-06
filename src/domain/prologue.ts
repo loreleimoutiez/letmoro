@@ -1,27 +1,33 @@
 import { advanceNavigation, atPlace, authorizeRoute, enableNavigation, questReady, selectDirection } from './navigation.ts';
 import type { Direction, Navigation, Neighborhood } from './navigation.ts';
+import { beginLifeCalendar, initialLives, recordLifeDay } from './lives.ts';
+import type { LifeState, LifeDay } from './lives.ts';
 import { healthChanges } from './health.ts';
 import { parseProfile } from './profile.ts';
 import type { Profile } from './profile.ts';
-export const CONTENT_VERSION = 'prologue-2';
+export const CONTENT_VERSION = 'prologue-3';
 export const stages = ['street', 'job', 'delivery', 'handover', 'settlement', 'complete', 'rest', 'failed', 'neighborhood', 'square', 'workshop', 'errand', 'errand-return'] as const;
 export type Stage = typeof stages[number];
-export type Action =
+type ActionData =
   | { type: 'start-journey' }
+  | { type: 'begin-life-accounting'; startedAt: string; zone: string }
+  | { type: 'life-day'; day: LifeDay }
   | { type: 'choose-direction'; direction: Direction }
   | { type: 'choose-place' | 'meet-place'; place: Neighborhood }
   | { type: 'reply'; reply: 'listen' | 'help' }
-  | { type: 'enable-navigation' | 'continue-neighborhood' | 'explore-neighborhood' | 'finish-conversation' | 'return-to-offer' | 'inspect' | 'finish-errand' }
+  | { type: 'extend-return-path' | 'resume-help' | 'enable-navigation' | 'continue-neighborhood' | 'explore-neighborhood' | 'finish-conversation' | 'return-to-offer' | 'inspect' | 'finish-errand' }
   | { type: 'test-coins'; amount: number }
   | { type: 'ask'; topic: 'work' | 'pay' | 'directions' }
   | { type: 'health-sync'; dayKey: string; total: number }
   | { type: 'steps'; amount: number; source?: 'health' }
   | { type: 'cross' | 'accept' | 'rest' | 'arrive' | 'deliver' | 'settle' | 'reconsider' | 'open-letter' | 'destroy-letter' | 'report-loss' };
+export type Action = ActionData & { readonly at?: string };
 export interface Run {
+  readonly life: LifeState;
   readonly navigation?: Navigation;
   readonly destination?: Neighborhood;
   readonly replies: readonly string[];
-  readonly errand?: { from: Neighborhood };
+  readonly errand?: { from: Neighborhood; inspected?: boolean };
   readonly completedErrands: readonly Neighborhood[];
   readonly letterOpened: boolean;
   readonly letterDestroyed: boolean;
@@ -41,15 +47,34 @@ export interface Run {
 }
 export function createRun(goal: number, profile?: Profile): Run {
   if (!Number.isSafeInteger(goal) || goal < 1 || goal > 100000) throw new Error('Invalid daily goal');
-  return { ...(profile ? { profile: parseProfile(profile) } : {}), goal, replies: [], completedErrands: [], letterOpened: false, letterDestroyed: false, discussed: [], stage: 'street', reserve: 0, simulatedSteps: 0, walkedSteps: 0, healthLedger: {}, sous: 0, delivered: 0, events: [] };
+  return { ...(profile ? { profile: parseProfile(profile) } : {}), goal, life: initialLives(), replies: [], completedErrands: [], letterOpened: false, letterDestroyed: false, discussed: [], stage: 'street', reserve: 0, simulatedSteps: 0, walkedSteps: 0, healthLedger: {}, sous: 0, delivered: 0, events: [] };
 }
 // Trial ratios only; production travel balance and goal changes are undecided.
 export function travelCost(run: Run): number {
   return Math.max(1, Math.ceil(run.goal * (run.stage === 'street' ? 0.02 : 0.1)));
 }
 export function apply(run: Run, action: Action): Run {
+  if (run.life.lives === 0 && !['health-sync', 'life-day', 'begin-life-accounting'].includes(action.type)) throw new Error('Run has ended');
   let changes: Partial<Run>;
   switch (action.type) {
+    case 'begin-life-accounting':
+      if (run.life.calendar) throw new Error('Life accounting already initialized');
+      changes = { life: beginLifeCalendar(action.startedAt, action.zone) };
+      break;
+    case 'life-day': {
+      const life = recordLifeDay(run.life, action.day, run.goal, run.profile?.mode ?? 'free');
+      if (life === run.life) return run;
+      changes = { life };
+      break;
+    }
+    case 'extend-return-path':
+      if (!run.navigation || run.navigation.openRetreat) throw new Error('Return path already extended');
+      changes = { navigation: { ...run.navigation, openRetreat: true, authorized: [...run.navigation.authorized, 'outskirts'] } };
+      break;
+    case 'resume-help':
+      if (!run.errand || ['street', 'job', 'delivery', 'handover', 'settlement', 'errand', 'errand-return'].includes(run.stage)) throw new Error('Help cannot resume now');
+      changes = { stage: run.errand.inspected ? 'errand-return' : 'errand' };
+      break;
     case 'enable-navigation':
       if (run.navigation) throw new Error('Navigation already enabled');
       changes = enableNavigation(run);
@@ -82,7 +107,7 @@ export function apply(run: Run, action: Action): Run {
     }
     case 'inspect':
       if (run.stage !== 'errand' || !questReady(run)) throw new Error('Inspection unavailable');
-      changes = { stage: 'errand-return' };
+      changes = { stage: 'errand-return', errand: { ...run.errand!, inspected: true } };
       break;
     case 'finish-errand':
       if (run.stage !== 'errand-return' || !run.errand || !questReady(run)) throw new Error('Return unavailable');
@@ -106,6 +131,7 @@ export function apply(run: Run, action: Action): Run {
       break;
     case 'health-sync':
       changes = healthChanges(run, action.dayKey, action.total);
+      if (run.life.lives === 0) changes = { ...changes, reserve: run.reserve };
       break;
     case 'steps':
       if (!Number.isSafeInteger(action.amount) || action.amount < 1 || (action.source !== 'health' && action.amount > 100000) ||
@@ -152,11 +178,14 @@ export function apply(run: Run, action: Action): Run {
     default: throw new Error('Unknown action');
   }
   const next = { ...run, ...changes, events: [...run.events, action] };
-  return ['steps', 'health-sync', 'choose-direction', 'choose-place', 'accept', 'reply'].includes(action.type) ? advanceNavigation(next) : next;
+  return next.life.lives > 0 && ['steps', 'health-sync', 'choose-direction', 'choose-place', 'accept', 'reply'].includes(action.type) ? advanceNavigation(next) : next;
 }
 export function isAction(value: unknown): value is Action {
   if (!value || typeof value !== 'object') return false;
   const item = value as Record<string, unknown>;
+  if (item.at !== undefined && (typeof item.at !== 'string' || !/^\d{4}-\d{2}-\d{2}T/.test(item.at) || !Number.isFinite(Date.parse(item.at)))) return false;
+  if (item.type === 'begin-life-accounting') return typeof item.startedAt === 'string' && typeof item.zone === 'string';
+  if (item.type === 'life-day') return Boolean(item.day && typeof item.day === 'object');
   if (item.type === 'choose-direction') return ['north', 'east', 'south', 'west'].includes(String(item.direction));
   if (item.type === 'choose-place' || item.type === 'meet-place') return ['square', 'workshop'].includes(String(item.place));
   if (item.type === 'reply') return ['listen', 'help'].includes(String(item.reply));
@@ -164,5 +193,5 @@ export function isAction(value: unknown): value is Action {
   if (item.type === 'ask') return ['work', 'pay', 'directions'].includes(String(item.topic));
   if (item.type === 'health-sync') return typeof item.dayKey === 'string' && typeof item.total === 'number';
   return item.type === 'steps' ? typeof item.amount === 'number' && (item.source === undefined || item.source === 'health') :
-    ['enable-navigation', 'continue-neighborhood', 'explore-neighborhood', 'finish-conversation', 'return-to-offer', 'inspect', 'finish-errand', 'start-journey', 'cross', 'accept', 'rest', 'arrive', 'deliver', 'settle', 'reconsider', 'open-letter', 'destroy-letter', 'report-loss'].includes(String(item.type));
+    ['extend-return-path', 'resume-help', 'enable-navigation', 'continue-neighborhood', 'explore-neighborhood', 'finish-conversation', 'return-to-offer', 'inspect', 'finish-errand', 'start-journey', 'cross', 'accept', 'rest', 'arrive', 'deliver', 'settle', 'reconsider', 'open-letter', 'destroy-letter', 'report-loss'].includes(String(item.type));
 }

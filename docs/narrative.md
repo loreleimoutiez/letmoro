@@ -61,3 +61,10 @@ The approved opening neighborhood and cast live in the ignored local opening pac
 The ignored opening pack now contains two neighborhood conversations following either the first delivery outcome or refusal. Each offers listening and optional unpaid help, with explicit outward/return effort and no real-time deadline. Current consequences include recorded knowledge, a promise, observations, completion, and a later recipient encounter that recalls only witnessed/reported letter outcomes. Further social arcs, mystery development, romances and political/private-life campaign resolutions remain to author.
 
 The vertical private tree marks these branches playable and keeps all five campaign arcs planned. Asking for details replaces rather than adds to initial choices. Encounter history supplies map memory; it is not hidden live world state. Basic respect and three first-letter-action badges are implemented, with future skill/badge entries absent until earned/authored. Current dialogue content is still an authoring draft rather than a finished first arc.
+
+
+## Wider skill agency and return-road direction — 2026-11-06
+
+Skills are not limited to employment. The optional political arc may develop toward rebellion, demonstrations, calls for a general strike and attempts to change the ruling system. Its prerequisites and consequences must involve inhabitants, alliances and world state, not a skill that automatically guarantees support or success. Preserve equally substantive relational/personal/professional routes and explicit major commitments. The private `skills-tree.txt` records planned directions; only Basic respect is implemented and visible.
+
+The road past the original arrival now supports continuing travel; additional/complementary narrative there is still to author. Visiting the office again can reopen an unaccepted job offer without deleting a promised unpaid errand. No additional employment is introduced. Journal timestamps concern actual recorded actions, not invented dates for past content.

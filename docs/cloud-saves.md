@@ -12,7 +12,7 @@ After applying and verifying the migration, set `VITE_CLOUD_SAVES=true` in ignor
 
 Each account has one versioned snapshot. Its payload is the validated event-replay save, including profile, goal, decisions, letter outcomes, test changes, currency and delivery history, and daily health aggregate/checkpoint events used to avoid duplicate step credit. The selected language is stored alongside the payload. These daily counts/day keys are health-related data; enabling synchronization uploads them as part of progress. No raw sensor stream, GPS, password, session token or private narrative manuscript is uploaded in a game save. Supabase Auth already owns identity/account information separately.
 
-The snapshot covers currently persisted gameplay and language. Intro playback position, permissions, live sensor readings and temporary UI state are not synchronized. Future campaign archives, rescue rights, export/deletion and retention policies still need their own design and implementation; this single snapshot does not implement those systems.
+The snapshot covers currently persisted gameplay and language, including fixed-zone life calendar/day observations and action timestamps when present. Intro playback position, permissions, live sensor readings and temporary UI state are not synchronized. Future campaign archives, rescue rights, export/deletion and retention policies still need their own design and implementation; this single snapshot does not implement those systems.
 
 ## Reconciliation
 
@@ -30,3 +30,8 @@ The snapshot covers currently persisted gameplay and language. Intro playback po
 `npm test` covers reconciliation, canonical fingerprints and test-action replay. Browser regression uses synthetic users and intercepted HTTP to cover uploads, restores, offline retry, explicit conflicts, local backup and reset. [SQL tests](../supabase/tests/player_saves.sql) exercise RLS, anonymous denial, owner validation, stale revisions and reset tombstones in an isolated test database; fixtures roll back.
 
 The database policies and function follow [Supabase row security](https://supabase.com/docs/guides/database/postgres/row-level-security) and [database functions](https://supabase.com/docs/guides/database/functions). Applying this migration is necessary before enabling the client; writing these files alone does not create a live backup.
+
+
+## Requested deployment status — 2026-11-06
+
+The user explicitly authorized applying the migration. No admin credential, database URL, authenticated CLI or connected Supabase tool was available. Plugin discovery found a Supabase integration and offered it, but the last confirmed state is not installed/connected. The existing SQL is still the required initial migration; generic JSONB payloads already support the new life/timestamp events without a second schema change. Do not enable cloud flags or claim deployment until project identity is verified and that migration is actually applied. No personal records or credentials were queried to work around this missing connection.

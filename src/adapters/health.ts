@@ -6,6 +6,7 @@ interface HealthStepsPlugin {
   addListener(name: 'stepUpdate', listener: (snapshot: unknown) => void): Promise<{ remove: () => Promise<void> }>;
   startLiveSteps(options: { request: boolean; minimumTotal: number }): Promise<unknown>;
   stopLiveSteps(): Promise<void>;
+  readClosedDays(options: { from: string; zone: string; recheck: string[] }): Promise<unknown>;
   readToday(): Promise<unknown>;
   requestAccess(): Promise<unknown>;
   openSettings(): Promise<void>;
@@ -30,3 +31,7 @@ export async function listenToSteps(listener: (snapshot: StepSnapshot) => void) 
 }
 
 export async function stopLiveSteps() { if (supportsHealth) await native.stopLiveSteps(); }
+
+export async function readClosedStepDays(from: string, zone: string, recheck: string[] = []): Promise<unknown> {
+  return supportsHealth ? native.readClosedDays({ from, zone, recheck }) : { status: 'unavailable', days: [] };
+}

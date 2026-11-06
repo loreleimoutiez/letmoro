@@ -147,3 +147,16 @@ The user requests that asking for details temporarily hide initial choices; retu
 Add a minimal cardinal direction selector, disabling nonexistent or not officially authorized routes, while preserving step-funded movement and mid-route returns. Fix mobile/browser zoom. Implement actual narrative choices beyond the first letter. Award first-delivery, first-opening and first-destruction badges with authored localized copy. The skill tree starts at Basic respect after work acceptance, with a small unlock notice; future skills remain entirely concealed.
 
 Implemented source and local private text now support this opening slice, including two neighborhood conversations and unpaid long errands. This does not finish an arc or the year-long campaign. No new APK, publication or cloud activation is authorized by these changes. See navigation and handoff for verification.
+
+
+## Health arrival, calendar confirmation and continuing return path — 2026-11-06
+
+Latest user direction: invite Health Connect connection before the main Walk cue when access is not already available; allow an explicit later connection. Remove the zoom percentage; Moro scales proportionally with terrain. Restore sparse square pebbles. Returning to the post office after exploring must present an unaccepted employment offer again. Walking backward continues beyond arrival rather than ending at a synthetic boundary. A new return-path narrative branch may be authored later.
+
+Show unobtrusive remaining steps to the next quest choice both on the map and in Story, accounting for detours and reversals. Journal becomes an unnumbered minimal table with newest recorded events first and real local date/time for new events; old events without dates stay undated.
+
+The user confirmed a 24-hour synchronization margin, protected incomplete/unknown days, correction of lives after late data, Monday rest renewal and a fixed per-run time zone. Implement life loss/rest/recovery first; pause/rescue/reboot remain separate. Historical input is implemented but real penalties stay gated until phone validation. See lives-and-reboot for precise implemented safeguards.
+
+Skill progression serves political, relational, professional and personal routes. An advanced optional political arc may enable rebellion, demonstrations, a general strike and attempts to change the ruling power. These remain authored future commitments with contextual consequences, never automatic initiatives or visible locked placeholders. Only Basic respect is currently implemented.
+
+The user explicitly requests applying the Supabase migration. An appropriate Supabase integration was discovered and suggested, but it is not installed/connected in the last confirmed state. Local configuration contains only public client settings, no admin connection. No remote migration has been performed; authorization to apply the prepared migration persists once a valid project connection is available.

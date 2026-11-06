@@ -31,3 +31,14 @@ Test: grant/deny/revoke physical and Health Connect access; foreground walking; 
 USB was unstable and Wi-Fi debugging did not connect after pairing. The temporary local download directory must contain APKs only; no health files, auth values, device addresses or pairing codes belong in the repository.
 
 References: [Android motion sensors](https://developer.android.com/develop/sensors-and-location/sensors/sensors_motion), [phone step recording](https://support.google.com/android/answer/16786157?hl=en), [Health Connect reads](https://developer.android.com/health-and-fitness/health-connect/read-data), [Samsung integration](https://developer.samsung.com/health/health-connect-faq.html).
+
+
+## Arrival and completed-day accounting — 2026-11-06
+
+The app now invites a connection before the map/Walk cue when no authorized connection is detected. Permission is requested only after the user presses Connect; already authorized ready/empty states skip the gate. Browser preview can continue without health access. Revoking access never creates zero-step days.
+
+`readClosedDays` is a new native source method. It reads complete date ranges in the run's fixed zone, after 24 actual hours of grace, and preserves absent/inaccessible metrics as unknown. It reads a recent window and rotates through older recorded dates to pick up late corrections without adding a new permission. Read failures cannot erase an already confirmed daily total. The data is used only for day accounting, not duplicate travel credit.
+
+`VITE_LIFE_RULES` defaults false until this new historical method is physically verified. Internal day controls and mocked-native browser checks exercise the reducer and bridge protocol; they do not validate real historical Samsung/Fit3 data. Kotlin/Android compilation was not run and no new APK was produced. Existing today's-step hardware confirmation does not establish reliability of this new historical path. See [life accounting](lives-and-reboot.md).
+
+The rationale now explains daily history, local checkpoints and optional account backup. With cloud backup enabled, persisted daily totals/checkpoints and life events are part of the player's snapshot; passwords/tokens are excluded. No actual health observations were added to this repository.

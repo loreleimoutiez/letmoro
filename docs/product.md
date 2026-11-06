@@ -56,7 +56,7 @@ In standard mode, the account's single exceptional rescue requires reaching the 
 
 Modes may change in either direction with no exclusive hard-mode reward. The mode active when the last life is lost determines its resolution; switching afterward cannot bypass it. Switching must not refresh rest allowances or resurrect a lost run; the detailed accounting policy is pending.
 
-Implementation sequence, unresolved boundaries and acceptance tests are tracked in [Lives and reboot](lives-and-reboot.md). These mechanics are not active yet.
+Implementation sequence, unresolved boundaries and acceptance tests are tracked in [Lives and reboot](lives-and-reboot.md). Life/rest/recovery now have a tested source reducer and internal-day tools; real penalties await historical-data validation. Pause/rescue/production reboot are not active yet.
 
 Reboot resets gameplay progress, money, skills, relationships, home, and cosmetics. Player archives remain. Rescue is the explicit exception that restores the existing run.
 
@@ -66,7 +66,7 @@ Currency is `sous` in French and `coins` in English. The legacy internal `sous` 
 
 Money supports appearance customization, a home, and meaningful narrative spending. Avoid ongoing real-time bills while the player is absent. Refusing delivery can cost income but must open worthwhile alternatives rather than make the campaign unplayable.
 
-XP and demonstrated effort unlock a square-pixel skill tree. Skills enable options and practical advantages. Pixel color and understated rendering can be customized; an XP-linked glow is a candidate, not an approved balancing rule.
+XP, demonstrated effort and authored choices are intended to unlock a square-pixel skill tree across personal, relational, professional and political life. Skills enable options and practical advantages. Pixel color and understated rendering can be customized; an XP-linked glow is a candidate, not an approved balancing rule.
 
 ## Records and discovery
 
@@ -86,7 +86,7 @@ Every continuing major route must have depth and resolution, including refusal, 
 
 The visual direction is a minimal terminal: black, pixel text, spare separators, distinct headings and secondary text. The menu shows one vertical navigation list, then one selected page with a back control; closing uses a borderless cross with an accessible name. Moro has a slow 4.8-second opacity pulse, never below 48%, disabled by reduced-motion preference. Synchronizing with the player's heartbeat remains a future possibility, not implemented or permissioned.
 
-Three life squares are currently a fixed display; life accounting is not active. The Android experiment reads today's aggregate through Health Connect with read-steps permission only, with foreground sensor events and a 3-second visible refresh fallback. Data availability depends on the upstream source; exact real-time updates are not promised. Daily import checkpoints and travel credits are persisted locally and reconstructed together through save replay, preventing duplicate credit after restarting. See `health-connect.md` for phone-only setup and validation.
+Life squares now reflect persisted day accounting in source; real historical processing remains opt-in pending phone validation. The Android experiment reads today's aggregate through Health Connect with read-steps permission only, with foreground sensor events and a 3-second visible refresh fallback. Data availability depends on the upstream source; exact real-time updates are not promised. Daily import checkpoints and travel credits are persisted locally and reconstructed together through save replay, preventing duplicate credit after restarting. See `health-connect.md` for phone-only setup and validation.
 
 ## Current Android entry and map
 
@@ -162,3 +162,16 @@ Latest implementation: details temporarily replace initial conversation choices,
 Character markers record actual meetings: hollow colored square at the latest encountered place, small colored traces at prior distinct places. They never claim a live position. Discovered building/place labels appear above their hollow squares when space permits. Wheel, pinch, keyboard and buttons zoom from the beginning; the percentage control fits known paths or returns to 100%.
 
 First delivery/opening/destruction each unlock a localized badge. Accepting the postal job unlocks the Basic respect skill root, a brief notice and a journal record. Other skills and unearned badges have no visible placeholders. No extra numerical skill effects have been implemented. Existing saves migrate through a versioned replay event. See navigation documentation for movement/reserve semantics and validation limits. No new APK is authorized or produced.
+
+
+## Arrival, readable progress and fixed-zone lives — 2026-11-06
+
+Before entering the main map after the introduction, invite Health Connect connection if permission is absent. Existing ready/empty authorized connections skip the invitation. The user can connect later; unavailable data remains unknown. Delay the Walk cue until leaving this gate. Browser preview explains that real health access needs Android. Explain that daily totals are part of progress and synchronize only when account backup is enabled.
+
+No numeric zoom percentage is shown. Fit/reset uses a small square control; Moro and its clearance scale with the world around the path anchor. Sparse deterministic square pebbles appear only beside walked intervals. The continuing westward route can extend past the arrival and imported approach without an artificial stop; authored intersections still stop. An unaccepted postal offer reappears on physically reaching the office, preserving any promised errand for later resumption.
+
+Remaining steps use route distance from actual position to the pending choice, including backtracking and detours. Show one discreet map line and retain the reminder in Story. Journal is an unnumbered, newest-first two-column table; new actions have real timestamps localized on display. Do not fabricate dates for legacy entries.
+
+The user confirmed 24 hours after a full local day's end before accounting, a fixed time zone per run, Monday rest renewal, protection of incomplete/unknown days and retrospective life corrections. Life loss/rest/recovery are implemented and testable with fictional days; historical native import is source-complete but validation-gated. The first day is protected and legacy runs start accounting at upgrade. At zero, gameplay stops while records remain accessible. Standard rescue, pause and production reboot are deferred by the user's selected scope.
+
+The hidden skill tree is intended for all major routes. Advanced political choices may include demonstrations, general-strike calls, rebellion and attempts to replace the ruling power, with explicit commitments and consequences. This is a narrative direction, not a currently implemented political simulation; root-only discovery remains unchanged.

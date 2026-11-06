@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { apply, createRun } from '../src/domain/prologue.ts';
-import { availableDirections, currentNode, positionOn, questReady, worldGraph } from '../src/domain/navigation.ts';
+import { availableDirections, currentNode, positionOn, questReady, worldGraph, remainingQuestSteps } from '../src/domain/navigation.ts';
 import { decodeSave, encodeSave } from '../src/adapters/save.ts';
 import { encounterMarkers, knownPlaces } from '../src/domain/encounters.ts';
 import { recordsFor } from '../src/domain/records.ts';
@@ -160,4 +160,47 @@ test('zoom supports early travel, bounded pinch ratios and wheel movement in bot
   assert(wheelZoom(1, -120) > 1);
   assert.equal(wheelZoom(MIN_ZOOM, 100000), MIN_ZOOM);
   assert.equal(wheelZoom(MAX_ZOOM, -100000), MAX_ZOOM);
+});
+
+test('extended return travel continues through arrival and beyond, with distance increasing on a detour', () => {
+  let run = apply(start(), { type: 'extend-return-path' });
+  run = apply(run, { type: 'steps', amount: 12 });
+  run = apply(run, { type: 'choose-direction', direction: 'west' });
+  run = apply(run, { type: 'steps', amount: 112 });
+  assert.equal(run.navigation!.edge, 'outskirts');
+  assert.equal(run.navigation!.offset, 100);
+  assert.equal(run.navigation!.heading, 1);
+  assert.equal(positionOn(run, run.navigation!).x, -100);
+  assert.equal(remainingQuestSteps(run), 120);
+  run = apply(run, { type: 'steps', amount: 1000 });
+  assert.equal(run.navigation!.offset, 1100);
+  assert.equal(remainingQuestSteps(run), 1120);
+  assert.deepEqual(decodeSave(encodeSave(run)), run);
+  run = apply(apply(run, { type: 'choose-direction', direction: 'east' }), { type: 'steps', amount: 1120 });
+  assert.equal(currentNode(run), 'office');
+  assert.equal(remainingQuestSteps(run), 0);
+});
+
+test('return extension crosses an imported approach without consuming its distance twice', () => {
+  let run = apply(createRun(1000), { type: 'health-sync', dayKey: '2026-01-01|UTC', total: 400 });
+  run = apply(apply(apply(run, { type: 'start-journey' }), { type: 'enable-navigation' }), { type: 'extend-return-path' });
+  run = apply(apply(run, { type: 'choose-direction', direction: 'west' }), { type: 'steps', amount: 450 });
+  assert.equal(run.navigation!.edge, 'outskirts');
+  assert.equal(run.navigation!.offset, 50);
+  assert.equal(positionOn(run, run.navigation!).x, -450);
+  assert.equal(remainingQuestSteps(run), 470);
+  run = apply(apply(run, { type: 'choose-direction', direction: 'east' }), { type: 'steps', amount: 470 });
+  assert.equal(currentNode(run), 'office');
+  assert.equal(run.reserve, 0);
+});
+
+test('returning to the employer shows the original offer again even during an exploration intention', () => {
+  let run = apply(apply(apply(apply(start(), { type: 'extend-return-path' }), { type: 'steps', amount: 20 }), { type: 'cross' }), { type: 'rest' });
+  run = apply(apply(run, { type: 'explore-neighborhood' }), { type: 'choose-place', place: 'square' });
+  run = apply(run, { type: 'steps', amount: 100 });
+  run = apply(apply(run, { type: 'choose-direction', direction: 'south' }), { type: 'steps', amount: 100 });
+  assert.equal(currentNode(run), 'office');
+  assert.equal(run.stage, 'job');
+  assert.equal(recordsFor(run).skills.length, 0);
+  assert.equal(apply(run, { type: 'accept' }).stage, 'delivery');
 });

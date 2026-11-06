@@ -24,9 +24,13 @@ import { TestToolbar, internalTools } from './ui/TestToolbar.tsx';
 import { useCloudSave } from './ui/useCloudSave.ts';
 import { decodeSave } from './adapters/save.ts';
 import type { CloudSnapshot } from './adapters/cloud-save.ts';
-import { atPlace, currentNode, questReady } from './domain/navigation.ts';
+import { atPlace, currentNode, questReady, remainingQuestSteps } from './domain/navigation.ts';
 import type { CharacterId } from './domain/encounters.ts';
-import { journalCopy, sceneCopy } from './content/presentation.ts';
+import { sceneCopy } from './content/presentation.ts';
+import { HealthArrival } from './ui/HealthArrival.tsx';
+import { Journal } from './ui/Journal.tsx';
+import { useLifeDays } from './ui/useLifeDays.ts';
+import { LifeDetails } from './ui/LifeDetails.tsx';
 import './style.css';
 
 function initialLocale(): Locale {
@@ -37,14 +41,20 @@ type Page = 'menu' | 'story' | 'collection' | 'steps' | 'settings' | 'coins' | '
 type Collection = 'letters' | 'characters' | 'badges' | 'journal';
 function App() {
   const account = useAccount();
+  const currentUser = useRef<string | null>(account.user?.id ?? null); currentUser.current = account.user?.id ?? null;
   const [run, setRun] = useState<Run | null>(null);
+  const currentRun = useRef<Run | null>(run); currentRun.current = run;
   const [gameOwner, setGameOwner] = useState<string | null>(null);
+  const currentOwner = useRef(gameOwner); currentOwner.current = gameOwner;
+  const getRun = useCallback((expectedOwner?: string) => expectedOwner && (currentOwner.current !== expectedOwner || currentUser.current !== expectedOwner) ? null : currentRun.current, []);
   const health = useSteps(run?.healthLedger, Boolean(account.user) && gameOwner === account.user?.id && !account.recovery);
   const [locale, setLocale] = useState<Locale>(initialLocale);
   const [warning, setWarning] = useState<'loadError' | 'saveError' | 'settingsError' | null>(null);
   const [page, setPage] = useState<Page>('menu');
   const [collection, setCollection] = useState<Collection>('letters');
   const [skillNotice, setSkillNotice] = useState(false);
+  const [healthDismissed, setHealthDismissed] = useState(false);
+  const [awaitingWalk, setAwaitingWalk] = useState(false);
   const [walkCue, setWalkCue] = useState(false);
   const [intro, setIntro] = useState<number | null>(null);
   const dialog = useRef<HTMLDialogElement>(null);
@@ -58,7 +68,7 @@ function App() {
     setGameOwner(userId);
     setPage('menu');
     setIntro(null);
-    setWalkCue(false); setSkillNotice(false);
+    setWalkCue(false); setSkillNotice(false); setHealthDismissed(false); setAwaitingWalk(false);
   }, [userId]);
   useEffect(() => { if (account.recovery) { setPage('account'); dialog.current?.showModal(); } }, [account.recovery]);
   useEffect(() => { document.documentElement.lang = locale; }, [locale]);
@@ -72,8 +82,8 @@ function App() {
     return () => clearTimeout(timer);
   }, [intro]);
   const store = useCallback((next: Run) => {
-    if (!userId || gameOwner !== userId) return;
-    setRun(next);
+    if (!userId || gameOwner !== userId || currentUser.current !== userId || currentOwner.current !== userId) return;
+    currentRun.current = next; setRun(next);
     try { saveAccountRun(userId, next); setWarning(null); }
     catch { setWarning('saveError'); }
   }, [userId, gameOwner]);
@@ -82,19 +92,27 @@ function App() {
     const restored = snapshot.payload === null ? null : decodeSave(snapshot.payload);
     if (restored) saveAccountRun(userId, restored); else resetAccountRun(userId);
     localStorage.setItem('letmoro.locale.v1', snapshot.locale);
-    setRun(restored); setLocale(snapshot.locale); setIntro(null);
+    currentRun.current = restored; setRun(restored); setLocale(snapshot.locale); setIntro(null);
     dialog.current?.close();
   }, [userId]);
   const cloud = useCloudSave(userId, Boolean(userId && gameOwner === userId && !account.recovery && warning !== 'loadError'), run, locale, restoreCloud);
   useEffect(() => {
     if (!run || !account.user || gameOwner !== userId || cloud.status === 'loading' || cloud.status === 'conflict') return;
-    const next = creditSteps(run, health.snapshot);
+    let next = run;
+    if (!next.life.calendar) { const now = new Date().toISOString(); next = apply(next, { type: 'begin-life-accounting', startedAt: now, zone: Intl.DateTimeFormat().resolvedOptions().timeZone, at: now }); }
+    next = creditSteps(next, health.snapshot);
+    if (next.life.lives > 0) {
+      if (intro === null && next.journeyOrigin === undefined && next.healthKey) next = apply(next, { type: 'start-journey' });
+      if (intro === null && !next.navigation && (next.journeyOrigin !== undefined || next.simulatedSteps > 0 || next.stage !== 'street')) next = apply(next, { type: 'enable-navigation' });
+      if (next.navigation && !next.navigation.openRetreat) next = apply(next, { type: 'extend-return-path' });
+    }
     if (next !== run) store(next);
-    else if (intro === null && run.journeyOrigin === undefined && run.healthKey) store(apply(run, { type: 'start-journey' }));
   }, [health.snapshot, run, store, intro, account.user, gameOwner, userId, cloud.status]);
+  const healthConnected = health.snapshot.status === 'ready' || health.snapshot.status === 'empty';
+  const lifeHistory = useLifeDays(userId && gameOwner === userId ? userId : null, run?.life.calendar, healthConnected, getRun, store);
   useEffect(() => {
-    if (run && intro === null && !run.navigation && (run.journeyOrigin !== undefined || run.simulatedSteps > 0 || run.stage !== 'street')) store(apply(run, { type: 'enable-navigation' }));
-  }, [run, intro, store]);
+    if (healthConnected && !healthDismissed) { setHealthDismissed(true); if (awaitingWalk) { setWalkCue(true); setAwaitingWalk(false); } }
+  }, [healthConnected, healthDismissed, awaitingWalk]);
   useEffect(() => {
     if (!skillNotice) return;
     const timer = window.setTimeout(() => setSkillNotice(false), 7000);
@@ -106,14 +124,15 @@ function App() {
     return () => clearTimeout(timer);
   }, [walkCue]);
   useEffect(() => { if (run && run.reserve > 0) setWalkCue(false); }, [run]);
-  function finishIntro() { setIntro(null); setWalkCue(true); }
-  function act(action: Action) { if (run) { store(apply(run, action)); if (action.type === 'accept') setSkillNotice(true); } }
+  function finishIntro() { setIntro(null); if (currentRun.current?.life.lives === 0) return; if (healthConnected || healthDismissed) setWalkCue(true); else setAwaitingWalk(true); }
+  function leaveHealthGate() { setHealthDismissed(true); if (awaitingWalk) { setWalkCue(true); setAwaitingWalk(false); } }
+  function act(action: Action) { const latest = currentRun.current; if (latest && (latest.life.lives > 0 || action.type === 'life-day')) { store(apply(latest, { ...action, at: new Date().toISOString() })); if (action.type === 'accept') setSkillNotice(true); } }
   function open(page: Page) { setPage(page); dialog.current?.showModal(); }
   function restart() {
     try { localStorage.setItem(`letmoro.cloud.v1.${account.user!.id}.reset`, '1'); resetAccountRun(account.user!.id); } catch { setWarning('saveError'); return; }
-    setRun(null); setIntro(null); setSkillNotice(false); setPage('menu');
+    currentRun.current = null; setRun(null); setIntro(null); setSkillNotice(false); setPage('menu');
   }
-  function begin(goal: number, profile: Profile) { setSkillNotice(false); store(createRun(goal, profile)); dialog.current?.close(); setIntro(0); }
+  function begin(goal: number, profile: Profile) { setSkillNotice(false); const now = new Date().toISOString(); store(apply(createRun(goal, profile), { type: 'begin-life-accounting', startedAt: now, zone: Intl.DateTimeFormat().resolvedOptions().timeZone, at: now })); dialog.current?.close(); setIntro(0); }
   function chooseLocale(value: Locale) {
     setLocale(value);
     try { localStorage.setItem('letmoro.locale.v1', value); } catch { setWarning('saveError'); }
@@ -124,6 +143,7 @@ function App() {
   const sceneText = run && scene ? sceneCopy(run, scene.text, t, content) : undefined;
   const node = run?.navigation ? currentNode(run) : undefined;
   const readyChoice = Boolean(run && (questReady(run) || (run.stage === 'errand-return' && atPlace(run, run.errand?.from === 'square' ? 'garden' : 'gate'))));
+  const remaining = run ? remainingQuestSteps(run) : undefined;
   const journals = locale === 'fr' ? journalFr : journalText;
   const healthStatus = { ready: t.connected, empty: t.empty, 'permission-required': t.permission, error: t.error, unavailable: t.disconnected }[health.snapshot.status];
   const format = (value: number) => value.toLocaleString(locale);
@@ -132,17 +152,20 @@ function App() {
   if (!account.user || account.recovery) return <main className="account-arrival"><Account locale={locale} user={account.user} recovery={account.recovery} completeRecovery={account.completeRecovery} callbackFailed={account.failed} googleAvailable={account.googleAvailable} landing /></main>;
   if (cloud.status === 'loading' && gameOwner === userId && !run && warning !== 'loadError') return <main className="arrival-loading"><span className="loading-square" /></main>;
   if (gameOwner !== userId) return <main className="arrival-loading"><span className="loading-square" /></main>;
+  if (run && intro === null && !healthDismissed && !healthConnected) return <HealthArrival text={t} snapshot={health.snapshot} initialized={health.initialized} busy={health.busy} supported={supportsHealth} connect={() => { void health.refresh(true); }} continueGame={leaveHealthGate} />;
   return <main className={internalTools ? 'internal-preview' : undefined}>
-    {run && <World run={run} label={`${t.world} ${node ? t.places[node] : t.onPath}`} text={t} content={content} act={act} controls={intro === null} choiceVisible={readyChoice} />}
+    {run && <World run={run} label={`${t.world} ${node ? t.places[node] : t.onPath}`} text={t} content={content} act={act} controls={intro === null && run.life.lives > 0} choiceVisible={readyChoice} />}
     {run && intro === null && <>
-      <div className="lives" role="img" aria-label={t.lives}><i /><i /><i /></div>
+      <div className="lives" role="img" aria-label={`${run.life.lives} / 3 ${t.lifeWord}`}>{Array.from({ length: 3 }, (_, index) => <i key={index} className={index >= run.life.lives ? 'lost' : undefined} />)}</div>
       {!internalTools && <button className="coin-counter" onClick={() => open('coins')} aria-label={`${run.sous} ${t.coins}`}>{format(run.sous)}<span className="step-label">{t.coins}</span></button>}
       {!internalTools && <button className="step-counter" onClick={() => open('steps')} aria-label={`${health.snapshot.count === null ? t.unknownSteps : format(health.snapshot.count)} ${t.steps}`}><span className="step-value">{health.snapshot.count === null ? '—' : format(health.snapshot.count)}</span><span className="step-label">{t.steps}</span></button>}
       <button className="menu-button" aria-label={t.menu} aria-haspopup="dialog" onClick={() => open('menu')}><span aria-hidden="true" className="menu-icon" /></button>
     </>}
     {intro !== null && <section className="introduction" aria-live="polite"><div className="intro-copy"><h1 ref={introFocus} tabIndex={-1} key={intro} className={intro === 0 ? 'meet-moro' : ''}>{[t.meet, t.intro1, t.intro2, t.intro3][intro]}</h1></div><div className="intro-actions"><button onClick={() => { if (intro < 3) setIntro(intro + 1); else finishIntro(); }}>{t.next}</button><button className="back-button" onClick={finishIntro}>{t.skip}</button></div></section>}
-    {run && intro === null && readyChoice && <section className="world-choice" aria-label={t.story}><p aria-live="polite">{sceneText}</p>{skillNotice && <p className="muted" role="status">{t.skillsUnlocked}</p>}<QuestActions run={run} text={t} content={content} act={act} locale={locale} /></section>}
+    {run && run.life.lives > 0 && intro === null && readyChoice && <section className="world-choice" aria-label={t.story}><p aria-live="polite">{sceneText}</p>{skillNotice && <p className="muted" role="status">{t.skillsUnlocked}</p>}<QuestActions run={run} text={t} content={content} act={act} locale={locale} /></section>}
+    {run && run.life.lives === 0 && <aside className="run-ended" role="alert"><p>{t.lifeEnded}</p></aside>}
     {skillNotice && intro === null && !readyChoice && <p className="skill-notice" role="status">{t.skillsUnlocked}</p>}
+    {run && run.life.lives > 0 && intro === null && remaining !== undefined && remaining > 0 && <p className="remaining-steps" role="status">{format(remaining)} {t.stepsRemaining}</p>}
     {walkCue && !readyChoice && intro === null && <p className="walk-cue">{t.walkCue}</p>}
     {run && intro === null && internalTools && <TestToolbar run={run} text={t} count={health.snapshot.count} act={act} restart={restart} intro={() => setIntro(0)} />}
     {cloud.status === 'conflict' && <aside className="cloud-conflict" role="alert"><p>{t.cloudConflict}</p><button onClick={() => { void cloud.resolve(true); }}>{t.keepDevice}</button><button onClick={() => { void cloud.resolve(false); }}>{t.keepCloud}</button></aside>}
@@ -169,14 +192,14 @@ function App() {
             return <article key={person.id}><span className="character-square" aria-hidden="true" style={{ background: character?.color ?? '#fff' }} /><h3>{character?.name ?? (person.id === 'clerk' ? t.clerk : person.id === 'recipient' ? t.recipient : t.knownCharacter)}</h3><p>{character?.role ?? t.places[person.lastKnownPlace]}</p><p className="muted">{t.lastSeen} · {t.places[person.lastKnownPlace]}</p></article>;
           })}</div>}
           {collection === 'badges' && records!.badges.filter(badge => badge.description !== null).map(badge => <article key={badge.id}><h3 className="badge-title"><PixelIcon name="medal" />{t.badgeText[badge.id as keyof typeof t.badgeText].title}</h3><p>{t.badgeText[badge.id as keyof typeof t.badgeText].description}</p></article>)}
-          {collection === 'journal' && <ol>{run.events.filter(event => event.type !== 'steps' && event.type !== 'health-sync' && event.type !== 'start-journey' && event.type !== 'test-coins' && event.type !== 'enable-navigation').map((event, index) => <li key={index}>{journalCopy(event, t, journals, content)}{event.type === 'accept' && <p>{t.skillsUnlocked}</p>}</li>)}</ol>}
+          {collection === 'journal' && <Journal run={run} text={t} locale={locale} original={journals} content={content} />}
         </section>}
         {page === 'skills' && records!.skills.length > 0 && <section><h1 tabIndex={-1}>{t.skills}</h1><p>{t.skillsUnlocked}</p><div className="skill-root"><span aria-hidden="true" /><h2>{t.basicRespect}</h2><p>{t.basicRespectDescription}</p></div></section>}
         {page === 'coins' && <section><h1 tabIndex={-1}>{t.coins}</h1><p className="stat-value">{format(run.sous)}<span className="stat-unit"> {t.coins}</span></p></section>}
         {page === 'steps'  && <section><h1 tabIndex={-1}>{t.healthTitle}</h1><p className="stat-value">{health.snapshot.count === null ? '—' : format(health.snapshot.count)}<span className="stat-unit"> {t.today}</span></p><p className="status-tag">{healthStatus}</p><p>{supportsHealth ? t.healthNative : t.healthWeb}</p><p className="muted">{t.healthNote}</p>{health.snapshot.checkedAt && <p className="muted">{t.checked}: {new Date(health.snapshot.checkedAt).toLocaleTimeString(locale)}</p>}
           {supportsHealth && <div className="actions"><button disabled={health.busy} onClick={() => { void health.refresh(true); }}>{health.snapshot.status === 'ready' && !health.snapshot.live ? t.enableLive : t.connect}</button><button disabled={health.busy} onClick={() => { void health.refresh(); }}>{t.refresh}</button><button onClick={() => { void openHealthSettings().catch(() => setWarning('settingsError')); }}>{t.manage}</button></div>}
         </section>}
-        {page === 'settings' && <section><h1 tabIndex={-1}>{t.settings}</h1>{language}<p role="status">{t.cloudStates[cloud.status]}</p>{cloud.status === 'offline' && <button onClick={cloud.retry}>{t.retryCloud}</button>}{run.profile && <><h2>{t.difficulty}</h2><p>{t[run.profile.mode]}</p><p>{t.modeDescriptions[run.profile.mode]}</p><p className="muted">{t.modeStatusNote}</p><h2>{t.positive}</h2><p>{run.profile.positive.map(trait => t.traits[trait as keyof typeof t.traits]).join(' · ')}</p><h2>{t.negative}</h2><p>{run.profile.negative.map(trait => t.traits[trait as keyof typeof t.traits]).join(' · ')}</p></>}<div className="actions"><button onClick={() => setPage('account')}>{t.account}</button></div></section>}
+        {page === 'settings' && <section><h1 tabIndex={-1}>{t.settings}</h1>{language}<LifeDetails run={run} text={t} historyStatus={lifeHistory} /><p role="status">{t.cloudStates[cloud.status]}</p>{cloud.status === 'offline' && <button onClick={cloud.retry}>{t.retryCloud}</button>}{run.profile && <><h2>{t.difficulty}</h2><p>{t[run.profile.mode]}</p><p>{t.modeDescriptions[run.profile.mode]}</p><p className="muted">{t.modeStatusNote}</p><h2>{t.positive}</h2><p>{run.profile.positive.map(trait => t.traits[trait as keyof typeof t.traits]).join(' · ')}</p><h2>{t.negative}</h2><p>{run.profile.negative.map(trait => t.traits[trait as keyof typeof t.traits]).join(' · ')}</p></>}<div className="actions"><button onClick={() => setPage('account')}>{t.account}</button></div></section>}
 
       </>}
     </dialog>

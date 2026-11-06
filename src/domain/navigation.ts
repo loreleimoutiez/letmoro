@@ -2,15 +2,16 @@ import type { Run } from './prologue.ts';
 
 export const directions = ['north', 'east', 'south', 'west'] as const;
 export type Direction = typeof directions[number];
-export type Place = 'start' | 'approach' | 'office' | 'courtyard' | 'square' | 'workshop' | 'garden' | 'gate';
+export type Place = 'start' | 'approach' | 'office' | 'courtyard' | 'square' | 'workshop' | 'garden' | 'gate' | 'outskirts';
 export type Neighborhood = 'square' | 'workshop';
-export type EdgeId = 'approach' | 'street' | 'courtyard' | 'square' | 'workshop' | 'garden' | 'gate';
+export type EdgeId = 'approach' | 'street' | 'courtyard' | 'square' | 'workshop' | 'garden' | 'gate' | 'outskirts';
 export interface Point { x: number; y: number }
 export interface Edge { id: EdgeId; from: Place; to: Place; length: number; direction: Direction }
 export interface Navigation {
   readonly edge: EdgeId;
   readonly offset: number;
   readonly heading: 1 | -1 | null;
+  readonly openRetreat?: boolean;
   readonly lastHeading?: 1 | -1;
   readonly authorized: readonly EdgeId[];
   readonly walked: Readonly<Partial<Record<EdgeId, Readonly<{ min: number; max: number }>>>>;
@@ -20,7 +21,9 @@ export function worldGraph(run: Run) {
   const cost = (ratio: number) => Math.max(1, Math.ceil(run.goal * ratio));
   const street = cost(.02), courtyard = cost(.1), square = cost(.35), workshop = cost(.5), long = cost(2);
   const origin = run.journeyOrigin ?? (run.healthKey ? run.walkedSteps : 0);
+  const retreat = Math.max(run.goal, (run.navigation?.walked.outskirts?.max ?? 0) + run.goal, run.navigation?.edge === 'outskirts' ? run.navigation.offset + run.goal : 0);
   const places: Record<Place, Point> = {
+    outskirts: { x: -origin - retreat, y: 0 },
     approach: { x: -origin, y: 0 }, start: { x: 0, y: 0 }, office: { x: street, y: 0 },
     courtyard: { x: street, y: -courtyard }, square: { x: street - square, y: -courtyard },
     workshop: { x: street + workshop, y: -courtyard }, garden: { x: street - square, y: -courtyard - long }, gate: { x: street + workshop, y: -courtyard - long },
@@ -32,6 +35,7 @@ export function worldGraph(run: Run) {
     { id: 'workshop', from: 'courtyard', to: 'workshop', length: workshop, direction: 'east' },
     { id: 'garden', from: 'square', to: 'garden', length: long, direction: 'north' },
     { id: 'gate', from: 'workshop', to: 'gate', length: long, direction: 'north' },
+    ...(run.navigation?.openRetreat ? [{ id: 'outskirts' as const, from: origin > 0 ? 'approach' as const : 'start' as const, to: 'outskirts' as const, length: retreat, direction: 'west' as const }] : []),
     ...(origin > 0 ? [{ id: 'approach' as const, from: 'approach' as const, to: 'start' as const, length: origin, direction: 'east' as const }] : []),
   ];
   return { places, edges };
@@ -76,12 +80,31 @@ export function selectDirection(run: Run, direction: Direction): Navigation {
   return { ...run.navigation, edge: edge.id, offset: run.navigation.edge === edge.id ? run.navigation.offset : choice.heading === 1 ? 0 : edge.length, heading: choice.heading, lastHeading: choice.heading };
 }
 export function advanceNavigation(run: Run): Run {
-  const nav = run.navigation;
-  if (!nav || !nav.heading || run.reserve === 0) return run;
-  const edge = worldGraph(run).edges.find(item => item.id === nav.edge)!;
-  const amount = Math.min(run.reserve, nav.heading === 1 ? edge.length - nav.offset : nav.offset);
-  const offset = nav.offset + nav.heading * amount, previous = nav.walked[edge.id];
-  return { ...run, reserve: run.reserve - amount, navigation: { ...nav, offset, heading: offset === 0 || offset === edge.length ? null : nav.heading, walked: { ...nav.walked, [edge.id]: { min: Math.min(previous?.min ?? nav.offset, offset), max: Math.max(previous?.max ?? nav.offset, offset) } } } };
+  let next = run;
+  // Start/approach are transit points; authored intersections still stop movement.
+  for (let hop = 0; hop < 4; hop++) {
+    const nav = next.navigation;
+    if (!nav?.heading) break;
+    const edge = worldGraph(next).edges.find(item => item.id === nav.edge)!;
+    const unlimited = edge.id === 'outskirts' && nav.heading === 1;
+    const amount = unlimited ? next.reserve : Math.min(next.reserve, nav.heading === 1 ? edge.length - nav.offset : nav.offset);
+    const offset = nav.offset + nav.heading * amount, previous = nav.walked[edge.id];
+    if (!Number.isSafeInteger(offset)) throw new Error('Travel distance overflow');
+    const reached = !unlimited && (nav.heading === 1 ? offset === edge.length : offset === 0);
+    next = { ...next, reserve: next.reserve - amount, navigation: { ...nav, offset, heading: reached ? null : nav.heading,
+      walked: amount > 0 ? { ...nav.walked, [edge.id]: { min: Math.min(previous?.min ?? nav.offset, offset), max: Math.max(previous?.max ?? nav.offset, offset) } } : nav.walked } };
+    if (!reached || !nav.openRetreat) break;
+    const node = currentNode(next);
+    if (node === 'office' && !['street', 'job'].includes(next.stage) && next.events.some(event => event.type === 'cross') && !next.events.some(event => event.type === 'accept')) {
+      next = { ...next, stage: 'job', destination: undefined };
+    }
+    if (node !== 'start' && node !== 'approach') break;
+    const direction = nav.heading === 1 ? edge.direction : opposite[edge.direction];
+    if (!availableDirections(next)[direction]) break;
+    next = { ...next, navigation: selectDirection(next, direction) };
+    if (next.reserve === 0) break;
+  }
+  return next;
 }
 export function authorizeRoute(run: Run, edge: EdgeId): Navigation {
   if (!run.navigation) throw new Error('Navigation unavailable');
@@ -109,4 +132,24 @@ export function currentLeg(run: Run): { current: number; required: number } {
   const edge = worldGraph(run).edges.find(item => item.id === nav.edge)!;
   const target = questPlace(run), heading = target === edge.from ? -1 : target === edge.to ? 1 : nav.heading ?? nav.lastHeading ?? 1;
   return { current: heading === -1 ? edge.length - nav.offset : nav.offset, required: edge.length };
+}
+
+export function remainingQuestSteps(run: Run): number | undefined {
+  const target = questPlace(run), nav = run.navigation;
+  if (!target) return undefined;
+  if (!nav) return Math.max(0, Math.max(1, Math.ceil(run.goal * (run.stage === 'street' ? .02 : .1))) - run.reserve);
+  const graph = worldGraph(run), edge = graph.edges.find(item => item.id === nav.edge)!;
+  const distance = new Map<Place, number>([[edge.from, nav.offset], [edge.to, edge.length - nav.offset]]);
+  const visited = new Set<Place>();
+  while (true) {
+    const candidate = [...distance].filter(([place]) => !visited.has(place)).sort((a, b) => a[1] - b[1])[0];
+    if (!candidate) return undefined;
+    const [place, cost] = candidate;
+    if (place === target) return cost;
+    visited.add(place);
+    for (const road of graph.edges.filter(item => nav.authorized.includes(item.id))) {
+      const other = road.from === place ? road.to : road.to === place ? road.from : undefined;
+      if (other && cost + road.length < (distance.get(other) ?? Infinity)) distance.set(other, cost + road.length);
+    }
+  }
 }

@@ -22,6 +22,8 @@ export function journalCopy(event: Action, t: typeof en, original: Record<string
     case 'choose-place': return `${t.routeRecorded} ${t.places[event.place]}`;
     case 'meet-place': return `${t.encounterRecorded} ${t.places[event.place]}`;
     case 'reply': return event.reply === 'help' ? t.helpRecorded : t.listenRecorded;
+    case 'life-day': return `${event.day.source === 'test' ? t.lifeTestDate : t.lifeDayRecorded} ${event.day.date}`;
+    case 'resume-help': return t.resumeHelp;
     case 'ask': return content?.topics[event.topic].journal ?? t.dialogueRecorded;
     default: return original[event.type] ?? ({ reconsider: t.reconsiderRecorded, 'open-letter': t.openRecorded, 'destroy-letter': t.destroyRecorded, 'report-loss': t.lossRecorded, 'continue-neighborhood': t.explorationRecorded, 'explore-neighborhood': t.explorationRecorded, 'finish-conversation': t.conversationEnded, 'return-to-offer': t.reconsiderRecorded, inspect: t.inspectRecorded, 'finish-errand': t.helpCompleted } as Record<string, string>)[event.type];
   }

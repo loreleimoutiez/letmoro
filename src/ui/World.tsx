@@ -34,6 +34,7 @@ export function World({ run, label, text: t, content, act, controls, choiceVisib
     element.addEventListener('wheel', wheel, { passive: false });
     return () => { observer.disconnect(); element.removeEventListener('wheel', wheel); };
   }, []);
+  useEffect(() => { const parent = world.current?.parentElement; parent?.style.setProperty('--world-zoom', String(zoom)); }, [zoom]);
   const fresh = run.events.length === 0;
   useEffect(() => { if (fresh) setZoom(1); }, [fresh]);
   function distance() {
@@ -77,11 +78,27 @@ export function World({ run, label, text: t, content, act, controls, choiceVisib
             return <rect key={edge.id} data-route={edge.id} x={Math.min(x, x + dx)} y={Math.min(y, y + dy)} width={Math.max(Math.abs(dx), 1 / zoom)} height={Math.max(Math.abs(dy), 1 / zoom)} fill="white" />;
           })}
         </svg>
+        {graph.edges.flatMap(edge => {
+          const range = nav.walked[edge.id];
+          if (!range) return [];
+          const points = [];
+          const from = graph.places[edge.from], to = graph.places[edge.to];
+          const currentOffset = Math.max(0, Math.min(edge.length, ((position.x - from.x) * (to.x - from.x) + (position.y - from.y) * (to.y - from.y)) / edge.length));
+          const low = Math.max(range.min, currentOffset - Math.max(size.width, size.height) / zoom);
+          const high = Math.min(range.max, currentOffset + Math.max(size.width, size.height) / zoom);
+          for (let offset = Math.ceil((low - 48) / 96) * 96 + 48; offset < high && points.length < 80; offset += 96) {
+            if (offset < range.min || offset < 0) continue;
+            const point = positionOn(view, { ...nav, edge: edge.id, offset });
+            const sign = Math.floor(offset / 96) % 2 ? 1 : -1;
+            points.push(<span aria-hidden="true" className="pebble" key={`${edge.id}:${offset}`} style={{ left: point.x + (edge.direction === 'north' ? sign * 5 : 0), top: point.y + (edge.direction !== 'north' ? sign * 5 : 0) }} />);
+          }
+          return points;
+        })}
         {places.map(place => {
           const point = graph.places[place], title = t.places[place];
           const x = size.width / 2 + (point.x - 44 - position.x) * zoom, y = size.height / 2 + (point.y - 64 - position.y) * zoom;
           const width = title.length * 8;
-          const inCopy = choiceVisible && y > 80 && y < size.height / 2 - 80 && Math.abs(x - size.width / 2) < Math.min(280, size.width / 2 - 24) + width / 2;
+          const inCopy = choiceVisible && y > 80 && y < size.height / 2 - Math.max(80, 48 * zoom) && Math.abs(x - size.width / 2) < Math.min(280, size.width / 2 - 24) + width / 2;
           const inMoro = Math.abs(x - size.width / 2) < width / 2 + 20 && y + 10 > size.height / 2 - 40 && y < size.height / 2 + 4;
           const fits = x - width / 2 > 8 && x + width / 2 < size.width - 8 && y > 64 && y < size.height - 160 && !inCopy && !inMoro && !labels.some(other => Math.abs(other.x - x) < (other.width + width) / 2 + 8 && Math.abs(other.y - y) < 20);
           if (fits) labels.push({ x, y, width });
@@ -96,10 +113,10 @@ export function World({ run, label, text: t, content, act, controls, choiceVisib
           return <span key={`${marker.character}:${marker.place}`} role="img" aria-label={title} title={title} data-character={marker.character} data-last-seen={marker.latest} className={marker.latest ? 'encounter-marker' : 'encounter-trace'} style={{ left: point.x + 32 + slot * 28, top: point.y - (marker.latest ? 44 : 32), color: character?.color ?? '#fff' }} />;
         })}
       </div></div>
-      <span className="moro-clearance" aria-hidden="true" /><span className="moro" />
+      <span className="moro-clearance" aria-hidden="true" style={{ transform: `scale(${zoom})` }} /><span className="moro" style={{ transform: `scale(${zoom})` }} />
     </div>
     {controls && <>
-      <div className="map-zoom" role="group" aria-label={t.mapZoom}><button aria-label={t.zoomOut} disabled={zoom <= minimumZoom} onClick={() => setZoom(value => clampZoom(value / 1.4, minimumZoom))}>−</button><button aria-label={zoom === 1 ? t.fitMap : t.resetZoom} onClick={() => setZoom(zoom === 1 ? fitZoom : 1)}>{zoom < .01 ? (zoom * 100).toFixed(2) : Math.round(zoom * 100)}%</button><button aria-label={t.zoomIn} disabled={zoom >= MAX_ZOOM} onClick={() => setZoom(value => clampZoom(value * 1.4, minimumZoom))}>+</button></div>
+      <div className="map-zoom" role="group" aria-label={t.mapZoom}><button aria-label={t.zoomOut} disabled={zoom <= minimumZoom} onClick={() => setZoom(value => clampZoom(value / 1.4, minimumZoom))}>−</button><button aria-label={zoom === 1 ? t.fitMap : t.resetZoom} onClick={() => setZoom(zoom === 1 ? fitZoom : 1)}>□</button><button aria-label={t.zoomIn} disabled={zoom >= MAX_ZOOM} onClick={() => setZoom(value => clampZoom(value * 1.4, minimumZoom))}>+</button></div>
       <nav className="direction-control" aria-label={t.navigation} title={t.directionHint}>
         {directions.map(direction => <button key={direction} className={direction} disabled={!run.navigation || !available[direction]} aria-label={t.directions[direction]} aria-pressed={nav.heading !== null && nav.edge === available[direction]?.edge && nav.heading === available[direction]?.heading} onClick={() => act({ type: 'choose-direction', direction })}>{t.directions[direction][0]}</button>)}
         <span className="direction-center" aria-hidden="true" />

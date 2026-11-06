@@ -18,6 +18,7 @@ import androidx.health.connect.client.permission.HealthPermission
 import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.request.AggregateRequest
 import androidx.health.connect.client.time.TimeRangeFilter
+import com.getcapacitor.JSArray
 import com.getcapacitor.JSObject
 import com.getcapacitor.Plugin
 import com.getcapacitor.PluginCall
@@ -28,6 +29,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import java.util.concurrent.CancellationException
+import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -104,6 +107,63 @@ class HealthStepsPlugin : Plugin(), SensorEventListener {
                 call.resolve(result("permission-required"))
             } catch (_: Exception) {
                 call.resolve(result("error"))
+            }
+        }
+    }
+
+    @PluginMethod
+    fun readClosedDays(call: PluginCall) {
+        scope.launch {
+            try {
+                if (HealthConnectClient.getSdkStatus(context) != HealthConnectClient.SDK_AVAILABLE) {
+                    call.resolve(JSObject().put("status", "unavailable").put("days", JSArray()))
+                    return@launch
+                }
+                val client = HealthConnectClient.getOrCreate(context)
+                if (!client.permissionController.getGrantedPermissions().containsAll(permissions)) {
+                    call.resolve(JSObject().put("status", "permission-required").put("days", JSArray()))
+                    return@launch
+                }
+                val zone = ZoneId.of(call.getString("zone") ?: throw IllegalArgumentException())
+                val now = Instant.now()
+                val first = LocalDate.parse(call.getString("from") ?: throw IllegalArgumentException()).plusDays(1)
+                // No additional history permission: only inspect a recent bounded window.
+                var day = maxOf(first, LocalDate.now(zone).minusDays(28))
+                val requestedDays = linkedSetOf<LocalDate>()
+                while (!day.plusDays(1).atStartOfDay(zone).toInstant().plus(Duration.ofHours(24)).isAfter(now)) {
+                    requestedDays.add(day)
+                    day = day.plusDays(1)
+                }
+                // Rotate through older recorded days so late corrections have no fixed expiry.
+                val recheck = call.getArray("recheck")
+                for (index in 0 until minOf(recheck?.length() ?: 0, 7)) {
+                    val candidate = LocalDate.parse(recheck!!.getString(index))
+                    if (!candidate.isBefore(first) && !candidate.plusDays(1).atStartOfDay(zone).toInstant().plus(Duration.ofHours(24)).isAfter(now)) requestedDays.add(candidate)
+                }
+                val days = JSArray()
+                for (recordDate in requestedDays.sorted()) {
+                    val end = recordDate.plusDays(1).atStartOfDay(zone).toInstant()
+                    val start = recordDate.atStartOfDay(zone).toInstant()
+                    val count = try {
+                        client.aggregate(AggregateRequest(
+                            metrics = setOf(StepsRecord.COUNT_TOTAL),
+                            timeRangeFilter = TimeRangeFilter.between(start, end)
+                        ))[StepsRecord.COUNT_TOTAL]
+                    } catch (cancel: CancellationException) { throw cancel } catch (_: Exception) { null }
+                    // Missing/inaccessible metrics remain unknown, including old history.
+                    days.put(JSObject().apply {
+                        put("date", recordDate.toString())
+                        put("steps", count ?: org.json.JSONObject.NULL)
+                        put("complete", count != null)
+                        put("closedAt", end.toString())
+                        put("observedAt", now.toString())
+                    })
+                }
+                call.resolve(JSObject().put("status", "ready").put("days", days))
+            } catch (_: SecurityException) {
+                call.resolve(JSObject().put("status", "permission-required").put("days", JSArray()))
+            } catch (_: Exception) {
+                call.resolve(JSObject().put("status", "error").put("days", JSArray()))
             }
         }
     }

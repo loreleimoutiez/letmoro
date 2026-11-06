@@ -1,5 +1,5 @@
 import type { Action, Run } from '../domain/prologue.ts';
-import { atPlace, currentLeg, questReady } from '../domain/navigation.ts';
+import { atPlace, currentLeg, questReady, remainingQuestSteps } from '../domain/navigation.ts';
 import type { Neighborhood } from '../domain/navigation.ts';
 import type { en } from '../content/ui.ts';
 import type { OpeningContent, Topic } from '../content/narrative.ts';
@@ -8,6 +8,7 @@ import { DialogueChoices } from './DialogueChoices.tsx';
 export function QuestActions({ run, text: t, content, act, locale }: {
   run: Run; text: typeof en; content?: OpeningContent; act: (action: Action) => void; locale: string;
 }) {
+  if (run.life.lives === 0) return <p>{t.lifeEnded}</p>;
   const lastTopic = run.discussed.at(-1), ready = questReady(run), leg = currentLeg(run);
   const traveling = ['street', 'delivery', 'errand', 'errand-return'].includes(run.stage) || (run.stage === 'neighborhood' && run.destination);
   const progress = <p className="quest-progress">{Math.min(leg.current, leg.required).toLocaleString(locale)} / {leg.required.toLocaleString(locale)} {t.steps}</p>;
@@ -15,6 +16,8 @@ export function QuestActions({ run, text: t, content, act, locale }: {
   const place = run.stage as Neighborhood, visit = content?.visits?.[place];
   return <div className="actions">
     {traveling && progress}
+    {(remainingQuestSteps(run) ?? 0) > 0 && <p className="muted">{remainingQuestSteps(run)!.toLocaleString(locale)} {t.stepsRemaining}</p>}
+    {run.errand && !['street', 'job', 'delivery', 'handover', 'settlement', 'errand', 'errand-return'].includes(run.stage) && <button onClick={() => act({ type: 'resume-help' })}>{t.resumeHelp}</button>}
     {['street', 'delivery'].includes(run.stage) && <button disabled={!ready} onClick={() => act({ type: run.stage === 'street' ? 'cross' : 'arrive' })}>{run.stage === 'street' ? t.cross : t.arrive}</button>}
     {run.stage === 'job' && atPlace(run, 'office') && (content ? <DialogueChoices key="job" label={t.askQuestions} back={t.backToChoices} initial={initialJobChoices}>
       {lastTopic && <p role="status">{content.topics[lastTopic].answer}</p>}{(Object.keys(content.topics) as Topic[]).filter(topic => !run.discussed.includes(topic)).map(topic => <button key={topic} onClick={() => act({ type: 'ask', topic })}>{content.topics[topic].question}</button>)}
