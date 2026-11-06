@@ -1,10 +1,10 @@
 # Account-owned cloud saves
 
-Status: migration and opt-in client implemented; not deployed to the actual Supabase project. Local browser tests use intercepted requests. SQL was verified against an isolated PostgreSQL 16 database with synthetic Auth roles/users, not against the production service.
+Status: initial migration applied to the verified hosted Letmoro project on 2026-11-06 through the connected Supabase integration. Owner policies, anonymous denial, foreign-owner RPC rejection and invoker privileges were verified remotely without touching player records. The security advisor found no database issue; its separate leaked-password-protection warning remains an Auth configuration task. Local cloud synchronization is enabled in ignored `.env.local`. Real-account cross-device round trips remain to verify.
 
 ## Owner setup
 
-Apply [the migration](../supabase/migrations/202611060001_player_saves.sql) to the existing Supabase project's SQL editor or migration workflow. It creates `player_saves`, authenticated owner-only row policies and the `save_player_progress` function. This session has no administrative connection to that project and did not execute remote SQL. Never embed a database password or service-role key in the client.
+Apply [the migration](../supabase/migrations/202611060001_player_saves.sql) to the existing Supabase project's SQL editor or migration workflow. It creates `player_saves`, authenticated owner-only row policies and the `save_player_progress` function. The initial migration has now been applied; do not re-run its CREATE statements against the deployed table. Never embed a database password or service-role key in the client.
 
 After applying and verifying the migration, set `VITE_CLOUD_SAVES=true` in ignored `.env.local` and rebuild/restart the preview. The checked-in example defaults to false, so the current ordinary configuration still saves locally. Test with two real test accounts before claiming live cross-device persistence. Anonymous reads/writes and cross-account access must fail.
 
@@ -32,6 +32,10 @@ The snapshot covers currently persisted gameplay and language, including fixed-z
 The database policies and function follow [Supabase row security](https://supabase.com/docs/guides/database/postgres/row-level-security) and [database functions](https://supabase.com/docs/guides/database/functions). Applying this migration is necessary before enabling the client; writing these files alone does not create a live backup.
 
 
-## Requested deployment status — 2026-11-06
+## Hosted deployment verification — 2026-11-06
 
-The user explicitly authorized applying the migration. No admin credential, database URL, authenticated CLI or connected Supabase tool was available. Plugin discovery found a Supabase integration and offered it, but the last confirmed state is not installed/connected. The existing SQL is still the required initial migration; generic JSONB payloads already support the new life/timestamp events without a second schema change. Do not enable cloud flags or claim deployment until project identity is verified and that migration is actually applied. No personal records or credentials were queried to work around this missing connection.
+The owner connected the Supabase integration and authorized the prepared migration. Project identity was checked against the ignored client configuration before execution. The initially empty public schema now contains `player_saves`; the migration is recorded in hosted history.
+
+Verified remotely: RLS enabled; all three policies constrain ownership with `auth.uid()`; anonymous users cannot SELECT or execute the save RPC; the RPC is SECURITY INVOKER with an empty search path; authenticated foreign-owner calls fail. Access tests used transaction-local synthetic claims, performed no player writes, and rolled back. Earlier isolated SQL tests additionally cover stale revisions and tombstones. No personal records, secret keys or live sessions were queried.
+
+The security advisor reports leaked-password protection disabled. This is separate from save isolation and has not been changed automatically. Actual account upload/restore across devices and offline recovery remain device checks before claiming operational cross-device backup.

@@ -160,3 +160,10 @@ The user confirmed a 24-hour synchronization margin, protected incomplete/unknow
 Skill progression serves political, relational, professional and personal routes. An advanced optional political arc may enable rebellion, demonstrations, a general strike and attempts to change the ruling power. These remain authored future commitments with contextual consequences, never automatic initiatives or visible locked placeholders. Only Basic respect is currently implemented.
 
 The user explicitly requests applying the Supabase migration. An appropriate Supabase integration was discovered and suggested, but it is not installed/connected in the last confirmed state. Local configuration contains only public client settings, no admin connection. No remote migration has been performed; authorization to apply the prepared migration persists once a valid project connection is available.
+
+
+## Hosted save migration — 2026-11-06
+
+Supabase integration connected on the correct owner account. The verified Letmoro project was healthy and its public schema empty. The prepared player_saves migration was applied through MCP and recorded in hosted history. Remote checks confirm RLS, own-row policies, denied anonymous table/RPC access and rejected foreign-owner RPC calls. Tests used transaction-local synthetic claims with rollback, without reading or writing player records. SECURITY INVOKER/search_path and grants were checked. Local ignored configuration now enables cloud saves. Real account cross-device upload/restore remains unverified. Security advisor reports only disabled leaked-password protection; no Auth setting was changed. See cloud-saves.md.
+
+Latest user authorization supersedes earlier no-APK checkpoints: finish the richer playable opening, update docs/commits, remove the internal test toolbar, then build the APK. Rest weekdays are player-selected (two Standard, one Hard); changes take effect next Monday with seven days between changes. These new schedule rules supersede automatic rests after the schedule takes effect.
