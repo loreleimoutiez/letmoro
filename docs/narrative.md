@@ -50,4 +50,7 @@ Build recurring relationships, main quests, smaller quests, branching conversati
 
 The first work encounter must clearly offer employment, with dialogue choices before accepting the letter. Letters need authored outcomes for being kept sealed, opened, destroyed unread or destroyed after reading, plus witnesses and later effects where appropriate. An opening event cannot be erased by later destruction. Character truth, Moro's knowledge and other characters' knowledge must remain distinct.
 
-Full plots, private character biographies, letter bodies, hidden conditions and endings must not be authored in this repository. Separate private storage is pending selection. Public documentation may describe mechanics and authoring requirements without spoilers. No secret campaign manuscript exists here.
+Full plots, private character biographies, letter bodies, hidden conditions and endings must not be tracked in this repository. Separate private storage is pending selection. Public documentation may describe mechanics and authoring requirements without spoilers. No full campaign manuscript is tracked here.
+
+
+The approved opening neighborhood and cast live in the ignored local opening pack and authoring tree. The post office is the sole available employer in the territory; other inhabitants must not offer alternative paid work. Initial optional questions establish remembered facts about work, pay and directions. The runtime slice implements letter condition and immediate delivery outcomes, not a complete relationship system or subsequent campaign.

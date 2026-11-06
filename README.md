@@ -4,7 +4,7 @@ A quiet Android walking adventure about delivering letters and finding a life of
 
 ## Status
 
-An internal Android build is available for device testing. This is not the complete first public campaign. The current story covers meeting Moro, a fictional street crossing, a job decision, one intact delivery and its settlement. The refusal route is a draft endpoint.
+An internal Android build is available for device testing. This is not the complete first public campaign. The current story covers meeting Moro, a fictional street crossing, a job decision, one delivery with sealed/opened/destroyed outcomes and its settlement. The refusal route allows reconsideration; further exploration is not implemented.
 
 Implemented:
 
@@ -17,7 +17,9 @@ Implemented:
 - Local saves isolated by account, validated event replay, persistent step deduplication, hidden locked badges, a first-job pixel medal and an underlined-square app mark.
 - Temporary red **Reset game** control in Settings, with confirmation, clearing only the current account's local game. It is a testing utility, not production reboot rules.
 
-Full campaign, return encounters, opened-letter consequences, trait/mode mechanics, life penalties, account-wide rescue, cloud save synchronization, heart-rate feedback and time-of-day presentation remain ahead. No public release, push or project license has been selected.
+Full campaign, multidirectional travel and returns, return encounters, long-term letter consequences, trait/mode mechanics, life penalties, account-wide rescue, cloud save synchronization, heart-rate feedback and time-of-day presentation remain ahead. No public release, push or project license has been selected.
+
+New source features include arrival choices above Moro, explicit paid-work acceptance, optional job questions, first-letter opening/destruction with confirmation and persisted outcomes, and a character gallery. Postal delivery is the territory's only available employment. New narrative text and the authoring tree live in an ignored local pack; a checkout without it uses generic opening content and cannot open unread letters. See [private authoring](docs/narrative-authoring.md). No new Android APK is claimed for these changes.
 
 ## Development
 
@@ -48,7 +50,7 @@ cd android
 
 Daily step checkpoints and game progress stay on the device, separated by authenticated account. The first authenticated account can claim an older local save once. Authentication tokens and PKCE verifiers use Android Keystore-backed AES-GCM encryption; passwords are never persisted. Browser preview sessions use session storage. Android backup/transfer and native logging are disabled. No game or health data is uploaded to Supabase; only authentication is connected.
 
-TypeScript, 24 JavaScript/TypeScript behavioral tests, 3 Kotlin unit tests, production build and Android compilation/lint pass. App lint retains non-blocking template/dependency/KTX suggestions. npm audit reported zero known advisories. Browser tests with synthetic native events and intercepted auth requests cover account gating, signup/sign-in/sign-out/recovery, Google PKCE launch/callback, quest baseline, live updates and local reset. These tests do not create real accounts or send emails. The user has confirmed installation and a displayed Health Connect daily count on S23; new live-sensor timing and actual auth email/OAuth flows still need device tests.
+Current source passes TypeScript, 27 JavaScript/TypeScript behavioral tests and the production web build. The previous Android build passed 3 Kotlin unit tests and Android compilation/lint; these native checks were not repeated for the new narrative UI. App lint retains non-blocking template/dependency/KTX suggestions. npm audit reported zero known advisories. Browser tests with synthetic native events and intercepted auth requests cover account gating, signup/sign-in/sign-out/recovery, Google PKCE launch/callback, quest baseline, live updates and local reset. These tests do not create real accounts or send emails. The user has confirmed installation and a displayed Health Connect daily count on S23; new live-sensor timing and actual auth email/OAuth flows still need device tests.
 
 ## Structure
 

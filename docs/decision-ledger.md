@@ -124,3 +124,10 @@ Allow non-horizontal routes and freely chosen step-funded returns on traversed p
 Add visible above-Moro choices on arrival, branching character dialogue from the first job quest, explicit paid-work acceptance, actionable undelivered letters in Collection, and consequences for route, dialogue and item decisions. The character collection should show unboxed colored squares with names and known roles beneath. Whether every narrative choice creates a distinct physical route is still a proposal.
 
 Keep full narrative secrets out of this repository; a private content repository is being considered. No remote creation or publication is authorized. The hollow yellow office is a visual proposal awaiting preview. See product and narrative documents for details. These changes are requirements, not implemented behavior.
+
+
+## Sole employment and implementation authorization — 2026-11-06
+
+The user approved the proposed opening neighborhood and inhabitants, with one overriding correction: delivery work at the post office is the only available employment in the territory. Earlier proposed paid alternatives with inhabitants are superseded. The user authorized beginning implementation. Keep refusal viable through exploration and relationships without inventing alternative jobs.
+
+An ignored local opening pack and vertical authoring tree now exist under `src/content/private/`; no private remote was created. The runtime supports an absent pack with generic draft content and disables opening unread letters whose text is unavailable. Full private content is still excluded from Git. The first playable slice is documented in product and handoff; route traversal and long-term consequences remain pending.

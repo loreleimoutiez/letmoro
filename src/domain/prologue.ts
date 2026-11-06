@@ -2,14 +2,18 @@ import { healthChanges } from './health.ts';
 import { parseProfile } from './profile.ts';
 import type { Profile } from './profile.ts';
 export const CONTENT_VERSION = 'prologue-1';
-export const stages = ['street', 'job', 'delivery', 'handover', 'settlement', 'complete', 'rest'] as const;
+export const stages = ['street', 'job', 'delivery', 'handover', 'settlement', 'complete', 'rest', 'failed'] as const;
 export type Stage = typeof stages[number];
 export type Action =
   | { type: 'start-journey' }
+  | { type: 'ask'; topic: 'work' | 'pay' | 'directions' }
   | { type: 'health-sync'; dayKey: string; total: number }
   | { type: 'steps'; amount: number; source?: 'health' }
-  | { type: 'cross' | 'accept' | 'rest' | 'arrive' | 'deliver' | 'settle' };
+  | { type: 'cross' | 'accept' | 'rest' | 'arrive' | 'deliver' | 'settle' | 'reconsider' | 'open-letter' | 'destroy-letter' | 'report-loss' };
 export interface Run {
+  readonly letterOpened: boolean;
+  readonly letterDestroyed: boolean;
+  readonly discussed: readonly ('work' | 'pay' | 'directions')[];
   readonly goal: number;
   readonly journeyOrigin?: number;
   readonly profile?: Profile;
@@ -25,7 +29,7 @@ export interface Run {
 }
 export function createRun(goal: number, profile?: Profile): Run {
   if (!Number.isSafeInteger(goal) || goal < 1 || goal > 100000) throw new Error('Invalid daily goal');
-  return { ...(profile ? { profile: parseProfile(profile) } : {}), goal, stage: 'street', reserve: 0, simulatedSteps: 0, walkedSteps: 0, healthLedger: {}, sous: 0, delivered: 0, events: [] };
+  return { ...(profile ? { profile: parseProfile(profile) } : {}), goal, letterOpened: false, letterDestroyed: false, discussed: [], stage: 'street', reserve: 0, simulatedSteps: 0, walkedSteps: 0, healthLedger: {}, sous: 0, delivered: 0, events: [] };
 }
 // Trial ratios only; production travel balance and goal changes are undecided.
 export function travelCost(run: Run): number {
@@ -53,13 +57,30 @@ export function apply(run: Run, action: Action): Run {
       changes = { stage: action.type === 'cross' ? 'job' : 'handover', reserve: run.reserve - travelCost(run) };
       break;
     }
+    case 'ask':
+      if (run.stage !== 'job' || !['work', 'pay', 'directions'].includes(action.topic) || run.discussed.includes(action.topic)) throw new Error('Dialogue unavailable');
+      changes = { discussed: [...run.discussed, action.topic] };
+      break;
+    case 'reconsider':
+      if (run.stage !== 'rest') throw new Error('No offer to reconsider');
+      changes = { stage: 'job' };
+      break;
+    case 'open-letter':
+    case 'destroy-letter':
+      if (!['delivery', 'handover'].includes(run.stage) || run.letterDestroyed || (action.type === 'open-letter' && run.letterOpened)) throw new Error('Letter unavailable');
+      changes = action.type === 'open-letter' ? { letterOpened: true } : { letterDestroyed: true };
+      break;
+    case 'report-loss':
+      if (run.stage !== 'handover' || !run.letterDestroyed) throw new Error('No missing letter to report');
+      changes = { stage: 'failed' };
+      break;
     case 'accept':
     case 'rest':
       if (run.stage !== 'job') throw new Error('No job decision pending');
       changes = { stage: action.type === 'accept' ? 'delivery' : 'rest' };
       break;
     case 'deliver':
-      if (run.stage !== 'handover') throw new Error('No letter to deliver');
+      if (run.stage !== 'handover' || run.letterDestroyed) throw new Error('No letter to deliver');
       changes = { stage: 'settlement', delivered: 1 };
       break;
     case 'settle':
@@ -73,7 +94,8 @@ export function apply(run: Run, action: Action): Run {
 export function isAction(value: unknown): value is Action {
   if (!value || typeof value !== 'object') return false;
   const item = value as Record<string, unknown>;
+  if (item.type === 'ask') return ['work', 'pay', 'directions'].includes(String(item.topic));
   if (item.type === 'health-sync') return typeof item.dayKey === 'string' && typeof item.total === 'number';
   return item.type === 'steps' ? typeof item.amount === 'number' && (item.source === undefined || item.source === 'health') :
-    ['start-journey', 'cross', 'accept', 'rest', 'arrive', 'deliver', 'settle'].includes(String(item.type));
+    ['start-journey', 'cross', 'accept', 'rest', 'arrive', 'deliver', 'settle', 'reconsider', 'open-letter', 'destroy-letter', 'report-loss'].includes(String(item.type));
 }

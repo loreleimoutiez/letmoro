@@ -34,7 +34,7 @@ export function World({ run, label }: { run: Run | null; label: string }) {
     <div className="terrain-origin"><div className="terrain" style={{ transform: `scale(${zoom}) translateX(${-discovered}px)` }}>
       <span className="discovered-path" style={{ width: discovered + 24, height: 1 / zoom }} />
       {discovered >= route.crossing && <span className="crossing" style={{ width: 1 / zoom, left: route.crossing }} />}
-      {run?.events.some(event => event.type === 'cross') && <span className="post-office" style={{ left: route.office - 6 }} />}
+      {run?.events.some(event => event.type === 'cross') && <span className="post-office" style={{ left: route.office - 18 }} />}
       {Array.from({ length: Math.ceil(discovered / 96) }, (_, index) => 48 + index * 96).filter(x => x < discovered).map((x, index) => <span className="pebble" key={x} style={{ left: x, top: index % 2 ? 5 : -4 }} />)}
     </div></div>
     <span className="moro" />

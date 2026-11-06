@@ -6,8 +6,8 @@ export function recordsFor(run: Run) {
   const happened = (type: string) => run.events.some(event => event.type === type);
   const employed = happened('accept');
   return {
-    letters: employed ? [{ id: 'courtyard-letter', title: recordText.courtyardLetter.title, opened: false,
-      status: happened('deliver') ? recordText.courtyardLetter.delivered : recordText.courtyardLetter.carried }] : [],
+    letters: employed ? [{ id: 'courtyard-letter', title: recordText.courtyardLetter.title, opened: run.letterOpened, destroyed: run.letterDestroyed,
+      status: run.letterDestroyed ? 'Destroyed' : happened('deliver') ? (run.letterOpened ? 'Delivered opened' : recordText.courtyardLetter.delivered) : (run.letterOpened ? 'Carried, opened' : recordText.courtyardLetter.carried) }] : [],
     characters: [
       ...(happened('cross') ? [{ id: 'clerk', ...recordText.clerk }] : []),
       ...(happened('arrive') ? [{ id: 'recipient', ...recordText.recipient }] : []),

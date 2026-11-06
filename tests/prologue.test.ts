@@ -38,7 +38,7 @@ test('reserve caps at seven goals, total simulated steps keep counting', () => {
   assert.equal(run.reserve, 700);
   assert.equal(run.simulatedSteps, 1000);
 });
-test('declining the trial job records an explicit quiet ending without pay', () => {
+test('declining the job records a pause without employment or payment', () => {
   let run = apply(createRun(100), { type: 'steps', amount: 10 });
   run = apply(apply(run, { type: 'cross' }), { type: 'rest' });
   assert.equal(run.stage, 'rest');
@@ -77,4 +77,55 @@ test('records reveal only encountered people and earned badges, preserving seale
   assert.equal(restored.letters[0].status, 'Delivered intact');
   assert.equal(restored.letters[0].opened, false);
   assert.equal(restored.badges[0].title, 'A first job');
+});
+
+test('job questions persist, do not spend steps, and cannot grant employment', () => {
+  let run = apply(apply(createRun(100), { type: 'steps', amount: 100 }), { type: 'cross' });
+  const reserve = run.reserve;
+  for (const topic of ['work', 'pay', 'directions'] as const) run = apply(run, { type: 'ask', topic });
+  assert.equal(run.reserve, reserve);
+  assert.equal(run.stage, 'job');
+  assert.equal(recordsFor(run).letters.length, 0);
+  assert.throws(() => apply(run, { type: 'ask', topic: 'pay' }));
+  run = apply(run, { type: 'rest' });
+  assert.throws(() => apply(run, { type: 'ask', topic: 'work' }));
+  run = apply(run, { type: 'reconsider' });
+  assert.deepEqual(decodeSave(encodeSave(run)), run);
+  assert.equal(apply(run, { type: 'accept' }).stage, 'delivery');
+});
+
+test('opened deliveries retain breach of seal and cannot be opened after delivery', () => {
+  let run = apply(apply(apply(createRun(100), { type: 'steps', amount: 100 }), { type: 'cross' }), { type: 'accept' });
+  run = apply(run, { type: 'open-letter' });
+  assert.throws(() => apply(run, { type: 'open-letter' }));
+  run = apply(apply(run, { type: 'arrive' }), { type: 'deliver' });
+  assert.equal(run.delivered, 1);
+  assert.equal(recordsFor(run).letters[0].status, 'Delivered opened');
+  assert.throws(() => apply(run, { type: 'open-letter' }));
+  assert.throws(() => apply(run, { type: 'destroy-letter' }));
+  run = apply(run, { type: 'settle' });
+  assert.equal(run.sous, 4);
+  assert.deepEqual(decodeSave(encodeSave(run)), run);
+});
+
+test('destruction before or after reading prevents delivery and payment without erasing knowledge', () => {
+  for (const opened of [false, true]) {
+    let run = apply(apply(apply(createRun(100), { type: 'steps', amount: 100 }), { type: 'cross' }), { type: 'accept' });
+    if (opened) run = apply(run, { type: 'open-letter' });
+    run = apply(run, { type: 'destroy-letter' });
+    assert.throws(() => apply(run, { type: 'open-letter' }));
+    assert.throws(() => apply(run, { type: 'destroy-letter' }));
+    assert.throws(() => apply(run, { type: 'report-loss' }));
+    run = apply(run, { type: 'arrive' });
+    assert.throws(() => apply(run, { type: 'deliver' }));
+    run = apply(run, { type: 'report-loss' });
+    assert.equal(run.stage, 'failed');
+    assert.equal(run.delivered, 0);
+    assert.equal(run.sous, 0);
+    assert.equal(run.letterOpened, opened);
+    assert.equal(recordsFor(run).letters[0].status, 'Destroyed');
+    assert.throws(() => apply(run, { type: 'settle' }));
+    assert.deepEqual(decodeSave(encodeSave(run)), run);
+  }
+  for (const type of ['open-letter', 'destroy-letter', 'report-loss', 'reconsider'] as const) assert.throws(() => apply(createRun(100), { type }));
 });

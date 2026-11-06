@@ -17,6 +17,9 @@ import { World } from './ui/World.tsx';
 import { creditSteps } from './health/credit.ts';
 import { Account } from './ui/Account.tsx';
 import { useAccount } from './auth/useAccount.ts';
+import { openingContent } from './content/narrative.ts';
+import { QuestActions } from './ui/QuestActions.tsx';
+import { LetterRecord } from './ui/LetterRecord.tsx';
 import './style.css';
 
 function initialLocale(): Locale {
@@ -87,9 +90,12 @@ function App() {
     setLocale(value);
     try { localStorage.setItem('letmoro.locale.v1', value); } catch { setWarning('saveError'); }
   }
+  const content = openingContent(locale);
   const scene = run ? (locale === 'fr' ? scenesFr : prologue.scenes)[run.stage] : null;
   const records = run ? recordsFor(run) : null;
   const traveling = run && (run.stage === 'street' || run.stage === 'delivery');
+  const sceneText = run?.stage === 'job' ? content?.job ?? scene?.text : run?.stage === 'rest' ? content?.rest ?? scene?.text : run?.stage === 'handover' && run.letterDestroyed ? content?.destroyedHandover ?? t.destroyed : run?.stage === 'handover' && run.letterOpened ? content?.openedHandover ?? t.opened : scene?.text;
+  const readyChoice = run && (!traveling || run.reserve >= travelCost(run));
   const journals = locale === 'fr' ? journalFr : journalText;
   const healthStatus = { ready: t.connected, empty: t.empty, 'permission-required': t.permission, error: t.error, unavailable: t.disconnected }[health.snapshot.status];
   const format = (value: number) => value.toLocaleString(locale);
@@ -106,7 +112,8 @@ function App() {
       <button className="menu-button" aria-label={t.menu} aria-haspopup="dialog" onClick={() => open('menu')}><span aria-hidden="true" className="menu-icon" /></button>
     </>}
     {intro !== null && <section className="introduction" aria-live="polite"><div className="intro-copy"><h1 ref={introFocus} tabIndex={-1} key={intro} className={intro === 0 ? 'meet-moro' : ''}>{[t.meet, t.intro1, t.intro2, t.intro3][intro]}</h1></div><div className="intro-actions"><button onClick={() => { if (intro < 3) setIntro(intro + 1); else finishIntro(); }}>{t.next}</button><button className="back-button" onClick={finishIntro}>{t.skip}</button></div></section>}
-    {walkCue && intro === null && <p className="walk-cue">{t.walkCue}</p>}
+    {run && intro === null && readyChoice && <section className="world-choice" aria-label={t.story}><p aria-live="polite">{sceneText}</p><QuestActions run={run} text={t} content={content} act={act} locale={locale} /></section>}
+    {walkCue && !readyChoice && intro === null && <p className="walk-cue">{t.walkCue}</p>}
     {warning && <p role="alert" className="warning">{t[warning]}</p>}
     <dialog ref={dialog} aria-label={t.menu} onClick={event => { if (event.target === event.currentTarget && run) dialog.current?.close(); }}>
       <div className="menu-head">{page !== 'menu' && (run || page === 'account') ? <button className="back-button" onClick={() => setPage('menu')}><PixelIcon name="back" />{t.back}</button> : <span />}{run && <button className="close-button" onClick={() => dialog.current?.close()} aria-label={t.close}><span aria-hidden="true">×</span></button>}</div>
@@ -117,21 +124,19 @@ function App() {
           <button onClick={() => setPage('steps')}><PixelIcon name="steps" />{t.healthTitle}<span aria-hidden="true">&gt;</span></button>
           <button className="settings-entry" onClick={() => setPage('settings')}><PixelIcon name="settings" />{t.settings}<span aria-hidden="true">&gt;</span></button>
         </nav>}
-        {page === 'story' && <section className="story" aria-labelledby="scene-title"><div aria-live="polite" aria-atomic="true"><h1 id="scene-title" tabIndex={-1}>{scene!.title}</h1><p className="lead">{scene!.text}</p><p>{scene!.detail}</p></div>
-          {run.stage === 'settlement' && <dl className="receipt">{[[t.deliveryPay, '+8'], [t.deduction1, '−2'], [t.deduction2, '−2'], [t.net, '4']].map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value} {t.coins}</dd></div>)}</dl>}
-          <div className="actions">{traveling && <><p className="quest-progress">{format(Math.min(run.reserve, travelCost(run)))} / {format(travelCost(run))} {t.steps}</p><button disabled={run.reserve < travelCost(run)} onClick={() => act({ type: run.stage === 'street' ? 'cross' : 'arrive' })}>{run.stage === 'street' ? t.cross : t.arrive}</button></>}
-            {run.stage === 'job' && <><button onClick={() => act({ type: 'accept' })}>{t.accept}</button><button onClick={() => act({ type: 'rest' })}>{t.rest}</button></>}
-            {run.stage === 'handover' && <button onClick={() => act({ type: 'deliver' })}>{t.deliver}</button>}
-            {run.stage === 'settlement' && <button onClick={() => act({ type: 'settle' })}>{t.settle}</button>}
-            {(run.stage === 'complete' || run.stage === 'rest') && <p className="muted">{t.end}</p>}
-          </div>
+        {page === 'story' && <section className="story" aria-labelledby="scene-title"><div aria-live="polite" aria-atomic="true"><h1 id="scene-title" tabIndex={-1}>{scene!.title}</h1><p className="lead">{sceneText}</p><p>{run.letterOpened || run.letterDestroyed ? '' : scene!.detail}</p></div>
+
+          <QuestActions run={run} text={t} content={content} act={act} locale={locale} />
         </section>}
         {page === 'collection' && <section><h1 tabIndex={-1}>{t.collection}</h1><nav className="collection-tabs" aria-label={t.collection}>{(['letters', 'characters', 'badges', 'journal'] as const).map(key => <button key={key} aria-current={key === collection ? 'page' : undefined} onClick={() => setCollection(key)}>{t[key]}</button>)}</nav>
           <h2>{t[collection]}</h2>
-          {collection === 'letters' && records!.letters.map(letter => <article key={letter.id}><h3>{t.courtyardLetter}</h3><p className="status-tag">{run.delivered ? t.intact : t.carried}</p><p className="muted">{t.unopened}</p></article>)}
-          {collection === 'characters' && records!.characters.map(person => <article key={person.id}><h3>{person.id === 'clerk' ? t.clerk : t.recipient}</h3><p>{person.id === 'clerk' ? t.office : t.courtyard}</p></article>)}
+          {collection === 'letters' && records!.letters.map(letter => <LetterRecord key={letter.id} run={run} text={t} body={content?.letter} act={act} />)}
+          {collection === 'characters' && <div className="character-gallery">{records!.characters.map(person => {
+            const character = content?.characters[person.id as 'clerk' | 'recipient'];
+            return <article key={person.id}><span className="character-square" aria-hidden="true" style={{ background: character?.color ?? '#fff' }} /><h3>{character?.name ?? (person.id === 'clerk' ? t.clerk : t.recipient)}</h3><p>{character?.role ?? (person.id === 'clerk' ? t.office : t.courtyard)}</p></article>;
+          })}</div>}
           {collection === 'badges' && records!.badges.filter(badge => badge.description !== null).map(badge => <article key={badge.id}><h3 className="badge-title"><PixelIcon name="medal" />{t.firstJob}</h3><p>{t.badgeDescription}</p></article>)}
-          {collection === 'journal' && <ol>{run.events.filter(event => event.type !== 'steps' && event.type !== 'health-sync' && event.type !== 'start-journey').map((event, index) => <li key={index}>{journals[event.type]}</li>)}</ol>}
+          {collection === 'journal' && <ol>{run.events.filter(event => event.type !== 'steps' && event.type !== 'health-sync' && event.type !== 'start-journey').map((event, index) => <li key={index}>{event.type === 'ask' ? content?.topics[event.topic].journal ?? t.dialogueRecorded : journals[event.type] ?? ({ 'reconsider': t.reconsiderRecorded, 'open-letter': t.openRecorded, 'destroy-letter': t.destroyRecorded, 'report-loss': t.lossRecorded } as Record<string, string>)[event.type]}</li>)}</ol>}
         </section>}
         {page === 'coins' && <section><h1 tabIndex={-1}>{t.coins}</h1><p className="stat-value">{format(run.sous)}<span className="stat-unit"> {t.coins}</span></p></section>}
         {page === 'steps'  && <section><h1 tabIndex={-1}>{t.healthTitle}</h1><p className="stat-value">{health.snapshot.count === null ? '—' : format(health.snapshot.count)}<span className="stat-unit"> {t.today}</span></p><p className="status-tag">{healthStatus}</p><p>{supportsHealth ? t.healthNative : t.healthWeb}</p><p className="muted">{t.healthNote}</p>{health.snapshot.checkedAt && <p className="muted">{t.checked}: {new Date(health.snapshot.checkedAt).toLocaleTimeString(locale)}</p>}

@@ -10,3 +10,6 @@ android/.gradle/
 android/local.properties
 *.keystore
 *.jks
+
+# Private narrative manuscripts; never stage campaign spoilers.
+/src/content/private/

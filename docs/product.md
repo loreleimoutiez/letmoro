@@ -137,3 +137,12 @@ These are approved design requirements, not implemented features.
 - Character collection uses an unboxed gallery: each encountered character's colored square, name below it, then a brief known role or description. Do not reveal undiscovered identities or information.
 - The office visual proposal is a hollow yellow square slightly larger than Moro, with border thickness matching the current yellow marker's side length. Exact sizing and appearance remain to preview; this is not implemented.
 - Full story content must stay out of this intended public repository. A separate private content repository is under consideration, not created or authorized for publication. Existing tracked prologue drafts remain in the current repository; no history rewrite has been requested. Content distributed to clients is not guaranteed to remain secret.
+
+
+## First playable narrative slice — 2026-11-06
+
+The post office offers the territory's only available employment: letter delivery. This supersedes proposed paid errands or alternative jobs with other inhabitants. Refusal must still support meaningful exploration and relationships; the continuing route remains to author.
+
+Implemented in source: arrival decisions above Moro, explicit paid-work acceptance, three optional remembered employment questions when the private opening pack is present, reconsideration after a pause, and collection actions to open/read or confirm destruction of the first undelivered letter. Opening is disabled when its private text is absent. Delivered-opened letters count as deliveries and preserve their opened state. Destruction blocks delivery and wages; an explicit courtyard report records failure. Reading remains known after destruction. Existing intact settlement remains four net coins; no additional financial penalty for opening has been introduced. Further social consequences are not implemented.
+
+Encountered characters now use an unboxed square/name/role gallery, with private names and colors supplied by the opening pack. The office is a hollow yellow 36 px square with a 12 px border. These source changes have not been built or tested on Android in this session. Multidirectional paths, mid-route reversal, additional quests and the full campaign remain unimplemented.

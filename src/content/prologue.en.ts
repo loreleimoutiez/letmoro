@@ -5,6 +5,7 @@ export const prologue = {
   locale: 'en',
   version: 'prologue-1',
   scenes: {
+    failed: { title: 'An unfinished delivery', place: 'The courtyard', text: 'The letter cannot be handed over.', detail: 'No delivery payment is due. The record of what happened remains.' },
     street: { title: 'A beginning', place: 'The near side of the street', text: 'Cross the street to find your first job…', detail: 'Across the fictional street, a small square of warm light marks the delivery office. Moro waits with empty pockets and a little time.' },
     job: { title: 'Something to carry', place: 'The delivery office', text: '“One letter. The next courtyard. Eight coins, once it arrives.”', detail: 'The clerk slides an envelope across the counter. No grand promise. Just work, and somewhere to begin. Moro can accept, or take a moment outside.' },
     delivery: { title: 'The short way', place: 'The courtyard path', text: 'The envelope makes a dry sound against Moro’s sleeve.', detail: 'The office falls quiet behind. Ahead, the path bends toward a courtyard. For now, there is only this small task.' },
@@ -18,7 +19,7 @@ export const journalText: Record<string, string> = {
   cross: 'Moro crossed the fictional street and found the delivery office.',
   accept: 'Moro accepted a sealed letter for the courtyard. The promised pay was 8 coins.',
   rest: 'Moro chose a quiet moment outside. The clerk left the possibility of later work open.',
-  arrive: 'Moro reached the courtyard with the letter still sealed.',
-  deliver: 'Moro handed over the letter intact and received a receipt showing two contributions of 2 coins.',
+  arrive: 'Moro reached the courtyard.',
+  deliver: 'Moro handed over the letter and received a receipt showing two contributions of 2 coins.',
   settle: 'Moro collected 4 coins after contributions. The first delivery is complete.',
 };

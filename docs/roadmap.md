@@ -8,9 +8,9 @@ Passed: TypeScript, 24 behavioral tests, 3 native reconciliation tests, browser 
 
 ## Current priority — 2026-11-06
 
-Narrative planning precedes new feature implementation. Design five arcs targeting approximately a real year, led by inhabitants with a discreet mystery. Keep all secret content outside this repository; select private authoring storage before writing the manuscript to disk.
+The user has now authorized implementation alongside narrative planning. Design five arcs targeting approximately a real year, led by inhabitants with a discreet mystery. Keep private manuscripts in the ignored local content directory for now; separate storage is deferred.
 
-Before extending the runtime, design the traversable route graph, mid-edge reversal, step-funded returns, quest effort in personal daily goals, conditional dialogues and per-letter lifecycle. Distinguish geographic branches from narrative consequences. Plan visible above-Moro decisions and the character gallery. Preserve the easy first work quest and existing saves; current linear stages cannot represent the approved journey yet. Do not claim these requirements implemented.
+Next design the traversable route graph, mid-edge reversal, step-funded returns and quest effort in personal daily goals. Distinguish geographic branches from narrative consequences. Preserve the easy first work quest and existing saves; current linear stages cannot represent the approved journey yet. Opening dialogue and letter lifecycle are implemented only to the extent listed below.
 
 ## Next device checks
 
@@ -48,3 +48,8 @@ The temporary red Reset game action is not production reboot and must never rese
 - Validate S23 + Fit3 integration on hardware before promising wearable latency/cadence.
 
 The intended first public campaign remains complete and substantial across all continuing major routes. Counts and duration in the product specification remain planning targets.
+
+
+## Opening implementation checkpoint — 2026-11-06
+
+Source now includes above-Moro arrival actions, optional remembered employment questions, explicit work acceptance, offer reconsideration, first-letter opening/destruction and immediate delivery outcomes, character gallery and hollow office marker. Private text and a vertical tree are local and ignored. Sole available employment is postal delivery. Next: design and implement the route graph and step-funded reversal/returns, expand refusal/social encounters without alternative jobs, and author contextual consequences and longer journeys. The five-arc/year target remains unimplemented. Select durable private storage and backup for the manuscript; Git does not back up ignored files.

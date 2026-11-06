@@ -93,7 +93,7 @@ fieldset label:has(input:disabled) { color: #777; }
 .intro-actions { position: absolute; top: calc(50svh + 40px); bottom: 0; left: 0; right: 0; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 12px 24px; margin: 0; overflow-y: auto; pointer-events: auto; }
 @media (min-width: 480px) { .trait-grid { grid-template-columns: 1fr 1fr; } }
 @media (prefers-reduced-motion: reduce) { .terrain { transition: none; } .meet-moro { animation: none; } }
-.post-office { position: absolute; left: 154px; top: -56px; width: 12px; height: 12px; background: #ffe05c; }
+.post-office { position: absolute; left: 154px; top: -80px; width: 36px; height: 36px; border: 12px solid #ffe05c; background: transparent; }
 
 .difficulty .mode-option { align-items: flex-start; padding: 16px 12px; margin-block: 12px; border: 1px solid #444; }
 .difficulty .mode-option:has(input:checked) { border-color: #fff; }
@@ -129,3 +129,22 @@ fieldset label:has(input:disabled) { color: #777; }
 .auth-brand { display: flex; align-items: center; gap: 12px; margin: 0 0 48px; }
 .auth-brand .welcome-mark { width: 36px; height: 44px; margin: 0; }
 .auth-brand h1 { font-size: 14px; text-align: left; margin: 0; }
+
+/* Arrival decisions stay above Moro; short screens scroll inside this region. */
+.world-choice { position: fixed; top: max(80px, calc(env(safe-area-inset-top) + 64px)); bottom: calc(50svh + 80px); left: 24px; right: 24px; max-width: 560px; margin: 0 auto; overflow-y: auto; padding: 4px 8px 12px; background: #000; }
+.world-choice > p { color: #fff; margin-top: 0; }
+.world-choice .actions { margin: 12px 0 0; gap: 8px; }
+.world-choice button { font-size: 9px; padding: 8px; }
+.character-gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 24px; }
+.character-gallery article { border: 0; text-align: center; margin: 0; }
+.character-square { display: block; width: 24px; height: 24px; margin: 0 auto 16px; }
+.letter-body { white-space: pre-line; }
+@media (max-height: 500px) { .world-choice { bottom: calc(50svh + 40px); top: 64px; } }
+
+.actions .receipt { width: 100%; }
+.world-choice .receipt dt, .world-choice .receipt dd { font-size: 9px; }
+
+.job-dialogue { width: 100%; font-size: 9px; line-height: 2; }
+.job-dialogue summary { cursor: pointer; min-height: 44px; padding: 10px 0; text-decoration: underline; text-underline-offset: 4px; }
+.job-dialogue > div { max-height: 140px; overflow-y: auto; padding: 4px; }
+.job-dialogue button { margin-bottom: 8px; }

@@ -2,6 +2,7 @@ import type { Stage } from '../domain/prologue.ts';
 
 // French translation of the versioned English draft; Moro has no specified gender.
 export const scenesFr = {
+  failed: { title: 'Une livraison inachevée', place: 'La cour', text: 'La lettre ne peut pas être remise.', detail: 'Aucun salaire de livraison n’est dû. Le souvenir de ce qui s’est passé demeure.' },
   street: { title: 'Un début', place: 'De ce côté de la rue', text: 'Traverse la rue pour trouver ton premier travail…', detail: 'De l’autre côté de cette rue fictive, un peu de lumière signale le bureau de livraison. Moro attend, les poches vides.' },
   job: { title: 'Quelque chose à porter', place: 'Le bureau de livraison', text: '« Une lettre. La prochaine cour. Huit sous à l’arrivée. »', detail: 'Une enveloppe glisse sur le comptoir. Aucune grande promesse. Du travail, et un point de départ. Moro peut accepter ou prendre un moment dehors.' },
   delivery: { title: 'Le petit chemin', place: 'Le chemin de la cour', text: 'L’enveloppe fait un bruit sec contre la manche de Moro.', detail: 'Le bureau devient silencieux. Le chemin mène vers une cour. Pour l’instant, cette petite tâche suffit.' },
@@ -14,7 +15,7 @@ export const journalFr: Record<string, string> = {
   cross: 'Moro a traversé la rue fictive et découvert le bureau de livraison.',
   accept: 'Moro a accepté une lettre scellée pour la cour, pour huit sous.',
   rest: 'Moro a choisi un moment dehors. La possibilité de travailler reste ouverte.',
-  arrive: 'Moro a atteint la cour avec la lettre encore scellée.',
-  deliver: 'Moro a remis la lettre intacte et reçu un reçu avec deux contributions de deux sous.',
+  arrive: 'Moro a atteint la cour.',
+  deliver: 'Moro a remis la lettre et reçu un reçu avec deux contributions de deux sous.',
   settle: 'Moro a reçu quatre sous. La première livraison est terminée.',
 };
