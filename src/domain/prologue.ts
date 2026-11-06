@@ -1,17 +1,28 @@
+import { advanceNavigation, atPlace, authorizeRoute, enableNavigation, questReady, selectDirection } from './navigation.ts';
+import type { Direction, Navigation, Neighborhood } from './navigation.ts';
 import { healthChanges } from './health.ts';
 import { parseProfile } from './profile.ts';
 import type { Profile } from './profile.ts';
-export const CONTENT_VERSION = 'prologue-1';
-export const stages = ['street', 'job', 'delivery', 'handover', 'settlement', 'complete', 'rest', 'failed'] as const;
+export const CONTENT_VERSION = 'prologue-2';
+export const stages = ['street', 'job', 'delivery', 'handover', 'settlement', 'complete', 'rest', 'failed', 'neighborhood', 'square', 'workshop', 'errand', 'errand-return'] as const;
 export type Stage = typeof stages[number];
 export type Action =
   | { type: 'start-journey' }
+  | { type: 'choose-direction'; direction: Direction }
+  | { type: 'choose-place' | 'meet-place'; place: Neighborhood }
+  | { type: 'reply'; reply: 'listen' | 'help' }
+  | { type: 'enable-navigation' | 'continue-neighborhood' | 'explore-neighborhood' | 'finish-conversation' | 'return-to-offer' | 'inspect' | 'finish-errand' }
   | { type: 'test-coins'; amount: number }
   | { type: 'ask'; topic: 'work' | 'pay' | 'directions' }
   | { type: 'health-sync'; dayKey: string; total: number }
   | { type: 'steps'; amount: number; source?: 'health' }
   | { type: 'cross' | 'accept' | 'rest' | 'arrive' | 'deliver' | 'settle' | 'reconsider' | 'open-letter' | 'destroy-letter' | 'report-loss' };
 export interface Run {
+  readonly navigation?: Navigation;
+  readonly destination?: Neighborhood;
+  readonly replies: readonly string[];
+  readonly errand?: { from: Neighborhood };
+  readonly completedErrands: readonly Neighborhood[];
   readonly letterOpened: boolean;
   readonly letterDestroyed: boolean;
   readonly discussed: readonly ('work' | 'pay' | 'directions')[];
@@ -30,7 +41,7 @@ export interface Run {
 }
 export function createRun(goal: number, profile?: Profile): Run {
   if (!Number.isSafeInteger(goal) || goal < 1 || goal > 100000) throw new Error('Invalid daily goal');
-  return { ...(profile ? { profile: parseProfile(profile) } : {}), goal, letterOpened: false, letterDestroyed: false, discussed: [], stage: 'street', reserve: 0, simulatedSteps: 0, walkedSteps: 0, healthLedger: {}, sous: 0, delivered: 0, events: [] };
+  return { ...(profile ? { profile: parseProfile(profile) } : {}), goal, replies: [], completedErrands: [], letterOpened: false, letterDestroyed: false, discussed: [], stage: 'street', reserve: 0, simulatedSteps: 0, walkedSteps: 0, healthLedger: {}, sous: 0, delivered: 0, events: [] };
 }
 // Trial ratios only; production travel balance and goal changes are undecided.
 export function travelCost(run: Run): number {
@@ -39,6 +50,52 @@ export function travelCost(run: Run): number {
 export function apply(run: Run, action: Action): Run {
   let changes: Partial<Run>;
   switch (action.type) {
+    case 'enable-navigation':
+      if (run.navigation) throw new Error('Navigation already enabled');
+      changes = enableNavigation(run);
+      break;
+    case 'choose-direction':
+      changes = { navigation: selectDirection(run, action.direction) };
+      break;
+    case 'continue-neighborhood':
+    case 'explore-neighborhood':
+      if (!run.navigation || (action.type === 'continue-neighborhood' ? !['complete', 'failed'].includes(run.stage) || !atPlace(run, 'courtyard') : run.stage !== 'rest' || !atPlace(run, 'office'))) throw new Error('Exploration unavailable');
+      changes = { stage: 'neighborhood', navigation: authorizeRoute(run, 'courtyard'), destination: undefined };
+      break;
+    case 'choose-place': {
+      if (run.stage !== 'neighborhood' || !['square', 'workshop'].includes(action.place)) throw new Error('Route choice unavailable');
+      const navigation = authorizeRoute(run, action.place);
+      const directed = { ...run, navigation };
+      changes = { destination: action.place, navigation: atPlace(run, 'courtyard') ? selectDirection(directed, action.place === 'square' ? 'west' : 'east') : atPlace(run, 'office') ? selectDirection(directed, 'north') : navigation };
+      break;
+    }
+    case 'meet-place':
+      if (run.stage !== 'neighborhood' || run.destination !== action.place || !atPlace(run, action.place)) throw new Error('Encounter unavailable');
+      changes = { stage: action.place, destination: undefined };
+      break;
+    case 'reply': {
+      if (!['square', 'workshop'].includes(run.stage) || !atPlace(run, run.stage as Neighborhood) || !['listen', 'help'].includes(action.reply)) throw new Error('Reply unavailable');
+      const place = run.stage as Neighborhood, key = `${place}:${action.reply}`;
+      if (run.replies.includes(key) || (action.reply === 'help' && (run.errand || run.completedErrands.includes(place)))) throw new Error('Reply already used');
+      changes = { replies: [...run.replies, key], ...(action.reply === 'help' ? { stage: 'errand' as const, errand: { from: place }, navigation: selectDirection({ ...run, navigation: authorizeRoute(run, place === 'square' ? 'garden' : 'gate') }, 'north') } : {}) };
+      break;
+    }
+    case 'inspect':
+      if (run.stage !== 'errand' || !questReady(run)) throw new Error('Inspection unavailable');
+      changes = { stage: 'errand-return' };
+      break;
+    case 'finish-errand':
+      if (run.stage !== 'errand-return' || !run.errand || !questReady(run)) throw new Error('Return unavailable');
+      changes = { stage: run.errand.from, completedErrands: [...run.completedErrands, run.errand.from], errand: undefined };
+      break;
+    case 'finish-conversation':
+      if (!['square', 'workshop'].includes(run.stage) || !atPlace(run, run.stage as Neighborhood)) throw new Error('Conversation unavailable');
+      changes = { stage: 'neighborhood', destination: undefined };
+      break;
+    case 'return-to-offer':
+      if (run.stage !== 'neighborhood' || !atPlace(run, 'office') || run.events.some(event => event.type === 'accept')) throw new Error('Offer unavailable');
+      changes = { stage: 'job', destination: undefined };
+      break;
     case 'test-coins':
       if (!Number.isSafeInteger(action.amount) || action.amount < 0 || action.amount > 1000000000) throw new Error('Invalid test balance');
       changes = { sous: action.amount };
@@ -58,16 +115,16 @@ export function apply(run: Run, action: Action): Run {
     case 'cross':
     case 'arrive': {
       const expected = action.type === 'cross' ? 'street' : 'delivery';
-      if (run.stage !== expected || run.reserve < travelCost(run)) throw new Error('Journey unavailable');
-      changes = { stage: action.type === 'cross' ? 'job' : 'handover', reserve: run.reserve - travelCost(run) };
+      if (run.stage !== expected || (run.navigation ? !questReady(run) : run.reserve < travelCost(run))) throw new Error('Journey unavailable');
+      changes = { stage: action.type === 'cross' ? 'job' : 'handover', reserve: run.navigation ? run.reserve : run.reserve - travelCost(run) };
       break;
     }
     case 'ask':
-      if (run.stage !== 'job' || !['work', 'pay', 'directions'].includes(action.topic) || run.discussed.includes(action.topic)) throw new Error('Dialogue unavailable');
+      if (run.stage !== 'job' || !atPlace(run, 'office') || !['work', 'pay', 'directions'].includes(action.topic) || run.discussed.includes(action.topic)) throw new Error('Dialogue unavailable');
       changes = { discussed: [...run.discussed, action.topic] };
       break;
     case 'reconsider':
-      if (run.stage !== 'rest') throw new Error('No offer to reconsider');
+      if (run.stage !== 'rest' || !atPlace(run, 'office')) throw new Error('No offer to reconsider');
       changes = { stage: 'job' };
       break;
     case 'open-letter':
@@ -76,32 +133,36 @@ export function apply(run: Run, action: Action): Run {
       changes = action.type === 'open-letter' ? { letterOpened: true } : { letterDestroyed: true };
       break;
     case 'report-loss':
-      if (run.stage !== 'handover' || !run.letterDestroyed) throw new Error('No missing letter to report');
+      if (run.stage !== 'handover' || !atPlace(run, 'courtyard') || !run.letterDestroyed) throw new Error('No missing letter to report');
       changes = { stage: 'failed' };
       break;
     case 'accept':
     case 'rest':
-      if (run.stage !== 'job') throw new Error('No job decision pending');
-      changes = { stage: action.type === 'accept' ? 'delivery' : 'rest' };
+      if (run.stage !== 'job' || !atPlace(run, 'office')) throw new Error('No job decision pending');
+      changes = { stage: action.type === 'accept' ? 'delivery' : 'rest', ...(action.type === 'accept' && run.navigation ? { navigation: selectDirection({ ...run, navigation: authorizeRoute(run, 'courtyard') }, 'north') } : {}) };
       break;
     case 'deliver':
-      if (run.stage !== 'handover' || run.letterDestroyed) throw new Error('No letter to deliver');
+      if (run.stage !== 'handover' || !atPlace(run, 'courtyard') || run.letterDestroyed) throw new Error('No letter to deliver');
       changes = { stage: 'settlement', delivered: 1 };
       break;
     case 'settle':
-      if (run.stage !== 'settlement') throw new Error('No wages pending');
+      if (run.stage !== 'settlement' || !atPlace(run, 'courtyard')) throw new Error('No wages pending');
       changes = { stage: 'complete', sous: run.sous + 8 - 2 - 2 };
       break;
     default: throw new Error('Unknown action');
   }
-  return { ...run, ...changes, events: [...run.events, action] };
+  const next = { ...run, ...changes, events: [...run.events, action] };
+  return ['steps', 'health-sync', 'choose-direction', 'choose-place', 'accept', 'reply'].includes(action.type) ? advanceNavigation(next) : next;
 }
 export function isAction(value: unknown): value is Action {
   if (!value || typeof value !== 'object') return false;
   const item = value as Record<string, unknown>;
+  if (item.type === 'choose-direction') return ['north', 'east', 'south', 'west'].includes(String(item.direction));
+  if (item.type === 'choose-place' || item.type === 'meet-place') return ['square', 'workshop'].includes(String(item.place));
+  if (item.type === 'reply') return ['listen', 'help'].includes(String(item.reply));
   if (item.type === 'test-coins') return typeof item.amount === 'number';
   if (item.type === 'ask') return ['work', 'pay', 'directions'].includes(String(item.topic));
   if (item.type === 'health-sync') return typeof item.dayKey === 'string' && typeof item.total === 'number';
   return item.type === 'steps' ? typeof item.amount === 'number' && (item.source === undefined || item.source === 'health') :
-    ['start-journey', 'cross', 'accept', 'rest', 'arrive', 'deliver', 'settle', 'reconsider', 'open-letter', 'destroy-letter', 'report-loss'].includes(String(item.type));
+    ['enable-navigation', 'continue-neighborhood', 'explore-neighborhood', 'finish-conversation', 'return-to-offer', 'inspect', 'finish-errand', 'start-journey', 'cross', 'accept', 'rest', 'arrive', 'deliver', 'settle', 'reconsider', 'open-letter', 'destroy-letter', 'report-loss'].includes(String(item.type));
 }

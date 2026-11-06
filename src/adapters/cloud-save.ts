@@ -1,5 +1,5 @@
 import { auth } from './auth.ts';
-import { decodeSave } from './save.ts';
+import { decodeSave, encodeSave } from './save.ts';
 import type { Locale } from '../content/ui.ts';
 
 export interface CloudSnapshot { payload: string | null; locale: Locale; revision: number }
@@ -9,8 +9,7 @@ export function parseCloudSnapshot(value: unknown, userId: string): CloudSnapsho
   if (!value || typeof value !== 'object') throw new Error('Invalid cloud save');
   const row = value as Record<string, unknown>;
   if (row.user_id !== userId || !Number.isSafeInteger(row.revision) || Number(row.revision) < 1 || !['en', 'fr'].includes(String(row.locale))) throw new Error('Invalid cloud save owner or revision');
-  const payload = row.payload === null ? null : JSON.stringify(row.payload);
-  if (payload !== null) decodeSave(payload);
+  const payload = row.payload === null ? null : encodeSave(decodeSave(JSON.stringify(row.payload)));
   return { payload, locale: row.locale as Locale, revision: Number(row.revision) };
 }
 export async function readCloudSave(userId: string): Promise<CloudSnapshot | null> {

@@ -54,3 +54,10 @@ Full plots, private character biographies, letter bodies, hidden conditions and 
 
 
 The approved opening neighborhood and cast live in the ignored local opening pack and authoring tree. The post office is the sole available employer in the territory; other inhabitants must not offer alternative paid work. Initial optional questions establish remembered facts about work, pay and directions. The runtime slice implements letter condition and immediate delivery outcomes, not a complete relationship system or subsequent campaign.
+
+
+## Playable neighborhood slice — 2026-11-06
+
+The ignored opening pack now contains two neighborhood conversations following either the first delivery outcome or refusal. Each offers listening and optional unpaid help, with explicit outward/return effort and no real-time deadline. Current consequences include recorded knowledge, a promise, observations, completion, and a later recipient encounter that recalls only witnessed/reported letter outcomes. Further social arcs, mystery development, romances and political/private-life campaign resolutions remain to author.
+
+The vertical private tree marks these branches playable and keeps all five campaign arcs planned. Asking for details replaces rather than adds to initial choices. Encounter history supplies map memory; it is not hidden live world state. Basic respect and three first-letter-action badges are implemented, with future skill/badge entries absent until earned/authored. Current dialogue content is still an authoring draft rather than a finished first arc.

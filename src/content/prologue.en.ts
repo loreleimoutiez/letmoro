@@ -5,6 +5,11 @@ export const prologue = {
   locale: 'en',
   version: 'prologue-1',
   scenes: {
+    'neighborhood': { title: 'The neighborhood', place: 'Known paths', text: 'Choose a destination, then follow its direction.', detail: 'Your steps pay for every outward and return journey.' },
+    'square': { title: 'A meeting', place: 'Square', text: 'A conversation waits.', detail: 'Choose what you wish to discuss.' },
+    'workshop': { title: 'A meeting', place: 'Workshop', text: 'A conversation waits.', detail: 'Choose what you wish to discuss.' },
+    'errand': { title: 'A promised visit', place: 'On the path', text: 'Follow the path to the agreed place.', detail: 'This is unpaid help. The outward journey requires two daily goals.' },
+    'errand-return': { title: 'A return to make', place: 'On the path', text: 'Your observations are ready to share.', detail: 'Choose the return direction. The same distance must be walked again.' },
     failed: { title: 'An unfinished delivery', place: 'The courtyard', text: 'The letter cannot be handed over.', detail: 'No delivery payment is due. The record of what happened remains.' },
     street: { title: 'A beginning', place: 'The near side of the street', text: 'Cross the street to find your first job…', detail: 'Across the fictional street, a small square of warm light marks the delivery office. Moro waits with empty pockets and a little time.' },
     job: { title: 'Something to carry', place: 'The delivery office', text: '“One letter. The next courtyard. Eight coins, once it arrives.”', detail: 'The clerk slides an envelope across the counter. No grand promise. Just work, and somewhere to begin. Moro can accept, or take a moment outside.' },

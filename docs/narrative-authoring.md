@@ -6,6 +6,8 @@ The intended public repository contains the runtime, content interfaces and beha
 
 `src/content/private/` is ignored by Git. The local `opening.json` supplies `en` and `fr` objects matching `OpeningContent` in `src/content/narrative.ts`. English is source; French is translation. Vite includes the optional pack at build time. No remote content service, private repository, update protocol or backup exists yet.
 
+The optional `visits` section now supplies neighborhood dialogue/errand text, and `characters` includes the current four encountered-character identities/colors. Generic tracked stage copy keeps a checkout buildable without these private scenes.
+
 The local `tree.txt` is the vertical authoring view. Label implemented branches separately from planned scenes and mechanics. Keep it synchronized with manuscript and runtime progress. The tree is an authoring artifact, not a player-visible map or an implemented year-long campaign.
 
 Without the pack, the app uses the tracked generic prologue, hides optional questions, uses generic character identities, and disables opening unread letters. Existing opened/destroyed/delivered event histories remain readable. Rebuild after adding or changing a pack. The letter body and identities are never put into game-save events; events store actions and known topic identifiers.

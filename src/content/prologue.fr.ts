@@ -2,6 +2,11 @@ import type { Stage } from '../domain/prologue.ts';
 
 // French translation of the versioned English draft; Moro has no specified gender.
 export const scenesFr = {
+    'neighborhood': { title: 'Le quartier', place: 'Chemins connus', text: 'Choisis une destination, puis sa direction.', detail: 'Chaque aller et chaque retour utilise tes pas.' },
+    'square': { title: 'Une rencontre', place: 'Place', text: 'Une conversation attend.', detail: 'Choisis ce dont tu souhaites parler.' },
+    'workshop': { title: 'Une rencontre', place: 'Atelier', text: 'Une conversation attend.', detail: 'Choisis ce dont tu souhaites parler.' },
+    'errand': { title: 'Une visite promise', place: 'Sur le chemin', text: 'Suis le chemin vers le lieu convenu.', detail: 'Cette aide est bénévole. L’aller demande deux objectifs quotidiens.' },
+    'errand-return': { title: 'Un retour à faire', place: 'Sur le chemin', text: 'Les observations sont prêtes à être partagées.', detail: 'Choisis la direction du retour. La même distance reste à marcher.' },
   failed: { title: 'Une livraison inachevée', place: 'La cour', text: 'La lettre ne peut pas être remise.', detail: 'Aucun salaire de livraison n’est dû. Le souvenir de ce qui s’est passé demeure.' },
   street: { title: 'Un début', place: 'De ce côté de la rue', text: 'Traverse la rue pour trouver ton premier travail…', detail: 'De l’autre côté de cette rue fictive, un peu de lumière signale le bureau de livraison. Moro attend, les poches vides.' },
   job: { title: 'Quelque chose à porter', place: 'Le bureau de livraison', text: '« Une lettre. La prochaine cour. Huit sous à l’arrivée. »', detail: 'Une enveloppe glisse sur le comptoir. Aucune grande promesse. Du travail, et un point de départ. Moro peut accepter ou prendre un moment dehors.' },

@@ -12,7 +12,7 @@ Passed: TypeScript, 24 behavioral tests, 3 native reconciliation tests, browser 
 
 The user has now authorized implementation alongside narrative planning. Design five arcs targeting approximately a real year, led by inhabitants with a discreet mystery. Keep private manuscripts in the ignored local content directory for now; separate storage is deferred.
 
-Next design the traversable route graph, mid-edge reversal, step-funded returns and quest effort in personal daily goals. Distinguish geographic branches from narrative consequences. Preserve the easy first work quest and existing saves; current linear stages cannot represent the approved journey yet. Opening dialogue and letter lifecycle are implemented only to the extent listed below.
+The small opening route graph, reversal, funded returns and initial goal-scaled errands are implemented in source; expand authored geography and quest effort next. Distinguish geographic branches from narrative consequences. Preserve the easy first work quest and existing saves; physical position is now separated from story stage for the opening neighborhood. Opening dialogue and letter lifecycle are implemented only to the extent listed below.
 
 ## Next device checks
 
@@ -45,7 +45,7 @@ The temporary red Reset game action is not production reboot and must never rese
 
 - Write the full act/cast structure, first act and substantial refusal/private-life routes. Author letters, deliberate opening choices and consequences, return notes/witnesses and endings.
 - Implement actual trait/mode mechanics after necessary health/calendar rules. Current settings are saved choices, not active life systems.
-- Add account-owned cloud save policies and conflict handling only after defining privacy/data ownership. Account deletion/export and production email configuration remain production work.
+- Deploy and verify the prepared account-owned cloud-save migration/client after owner configuration; production data ownership/retention work remains. Account deletion/export and production email configuration remain production work.
 - Review French/English accessibility, real-time local-hour presentation and expansion compatibility. Keep the current dark presentation until a new time-of-day design is agreed.
 - Validate S23 + Fit3 integration on hardware before promising wearable latency/cadence.
 
@@ -60,3 +60,10 @@ Source now includes above-Moro arrival actions, optional remembered employment q
 ## Latest checkpoint — test access and persistence
 
 No APK build now, per user. Internal toolbar implemented in source; reset/replay removed from Settings. Cloud snapshot schema, RLS, compare-and-swap RPC and opt-in client are implemented and verified with isolated SQL/synthetic browser tests. Apply the migration to the actual Supabase project and verify two real accounts before enabling/claiming live backup. This session has no administrative database connection. Current ordinary configuration remains local-only. Further narrative/travel work remains as above; do not let persistence status imply campaign completion.
+
+
+## Current opening-navigation checkpoint
+
+Source now supports reversible cardinal travel, officially authorized branches, remembered encounter markers, adaptive map zoom and label culling. Local private text adds two neighborhood visits and optional multi-day unpaid errands with required return travel. Basic respect and three letter-action badges are visible only after unlock. This supersedes the earlier statements that all return travel and neighborhood writing were pending.
+
+Next narrative work: expand recurring conversations, subsequent paid letters and contextual consequences; continue the privately authored arc outline. Before scaling toward a real year, design campaign-driven topology, per-letter identities and event compaction beyond the current replay limit. The five-arc campaign, full skill mechanics and physical Android gesture validation remain incomplete. No APK now. Cloud activation still requires the real migration/setup.

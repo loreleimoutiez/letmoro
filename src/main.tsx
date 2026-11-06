@@ -1,6 +1,6 @@
 import { StrictMode, useCallback, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { apply, createRun, travelCost } from './domain/prologue.ts';
+import { apply, createRun } from './domain/prologue.ts';
 import type { Action, Run } from './domain/prologue.ts';
 import type { Profile } from './domain/profile.ts';
 import { prologue, journalText } from './content/prologue.en.ts';
@@ -24,13 +24,16 @@ import { TestToolbar, internalTools } from './ui/TestToolbar.tsx';
 import { useCloudSave } from './ui/useCloudSave.ts';
 import { decodeSave } from './adapters/save.ts';
 import type { CloudSnapshot } from './adapters/cloud-save.ts';
+import { atPlace, currentNode, questReady } from './domain/navigation.ts';
+import type { CharacterId } from './domain/encounters.ts';
+import { journalCopy, sceneCopy } from './content/presentation.ts';
 import './style.css';
 
 function initialLocale(): Locale {
   try { const stored = localStorage.getItem('letmoro.locale.v1'); if (stored === 'fr' || stored === 'en') return stored; } catch { /* Locale can stay in memory. */ }
   return 'en';
 }
-type Page = 'menu' | 'story' | 'collection' | 'steps' | 'settings' | 'coins' | 'account';
+type Page = 'menu' | 'story' | 'collection' | 'steps' | 'settings' | 'coins' | 'account' | 'skills';
 type Collection = 'letters' | 'characters' | 'badges' | 'journal';
 function App() {
   const account = useAccount();
@@ -41,6 +44,7 @@ function App() {
   const [warning, setWarning] = useState<'loadError' | 'saveError' | 'settingsError' | null>(null);
   const [page, setPage] = useState<Page>('menu');
   const [collection, setCollection] = useState<Collection>('letters');
+  const [skillNotice, setSkillNotice] = useState(false);
   const [walkCue, setWalkCue] = useState(false);
   const [intro, setIntro] = useState<number | null>(null);
   const dialog = useRef<HTMLDialogElement>(null);
@@ -54,7 +58,7 @@ function App() {
     setGameOwner(userId);
     setPage('menu');
     setIntro(null);
-    setWalkCue(false);
+    setWalkCue(false); setSkillNotice(false);
   }, [userId]);
   useEffect(() => { if (account.recovery) { setPage('account'); dialog.current?.showModal(); } }, [account.recovery]);
   useEffect(() => { document.documentElement.lang = locale; }, [locale]);
@@ -89,19 +93,27 @@ function App() {
     else if (intro === null && run.journeyOrigin === undefined && run.healthKey) store(apply(run, { type: 'start-journey' }));
   }, [health.snapshot, run, store, intro, account.user, gameOwner, userId, cloud.status]);
   useEffect(() => {
+    if (run && intro === null && !run.navigation && (run.journeyOrigin !== undefined || run.simulatedSteps > 0 || run.stage !== 'street')) store(apply(run, { type: 'enable-navigation' }));
+  }, [run, intro, store]);
+  useEffect(() => {
+    if (!skillNotice) return;
+    const timer = window.setTimeout(() => setSkillNotice(false), 7000);
+    return () => clearTimeout(timer);
+  }, [skillNotice]);
+  useEffect(() => {
     if (!walkCue) return;
     const timer = window.setTimeout(() => setWalkCue(false), 7000);
     return () => clearTimeout(timer);
   }, [walkCue]);
   useEffect(() => { if (run && run.reserve > 0) setWalkCue(false); }, [run]);
   function finishIntro() { setIntro(null); setWalkCue(true); }
-  function act(action: Action) { if (run) store(apply(run, action)); }
+  function act(action: Action) { if (run) { store(apply(run, action)); if (action.type === 'accept') setSkillNotice(true); } }
   function open(page: Page) { setPage(page); dialog.current?.showModal(); }
   function restart() {
     try { localStorage.setItem(`letmoro.cloud.v1.${account.user!.id}.reset`, '1'); resetAccountRun(account.user!.id); } catch { setWarning('saveError'); return; }
-    setRun(null); setIntro(null); setPage('menu');
+    setRun(null); setIntro(null); setSkillNotice(false); setPage('menu');
   }
-  function begin(goal: number, profile: Profile) { store(createRun(goal, profile)); dialog.current?.close(); setIntro(0); }
+  function begin(goal: number, profile: Profile) { setSkillNotice(false); store(createRun(goal, profile)); dialog.current?.close(); setIntro(0); }
   function chooseLocale(value: Locale) {
     setLocale(value);
     try { localStorage.setItem('letmoro.locale.v1', value); } catch { setWarning('saveError'); }
@@ -109,9 +121,9 @@ function App() {
   const content = openingContent(locale);
   const scene = run ? (locale === 'fr' ? scenesFr : prologue.scenes)[run.stage] : null;
   const records = run ? recordsFor(run) : null;
-  const traveling = run && (run.stage === 'street' || run.stage === 'delivery');
-  const sceneText = run?.stage === 'job' ? content?.job ?? scene?.text : run?.stage === 'rest' ? content?.rest ?? scene?.text : run?.stage === 'handover' && run.letterDestroyed ? content?.destroyedHandover ?? t.destroyed : run?.stage === 'handover' && run.letterOpened ? content?.openedHandover ?? t.opened : scene?.text;
-  const readyChoice = run && (!traveling || run.reserve >= travelCost(run));
+  const sceneText = run && scene ? sceneCopy(run, scene.text, t, content) : undefined;
+  const node = run?.navigation ? currentNode(run) : undefined;
+  const readyChoice = Boolean(run && (questReady(run) || (run.stage === 'errand-return' && atPlace(run, run.errand?.from === 'square' ? 'garden' : 'gate'))));
   const journals = locale === 'fr' ? journalFr : journalText;
   const healthStatus = { ready: t.connected, empty: t.empty, 'permission-required': t.permission, error: t.error, unavailable: t.disconnected }[health.snapshot.status];
   const format = (value: number) => value.toLocaleString(locale);
@@ -120,8 +132,8 @@ function App() {
   if (!account.user || account.recovery) return <main className="account-arrival"><Account locale={locale} user={account.user} recovery={account.recovery} completeRecovery={account.completeRecovery} callbackFailed={account.failed} googleAvailable={account.googleAvailable} landing /></main>;
   if (cloud.status === 'loading' && gameOwner === userId && !run && warning !== 'loadError') return <main className="arrival-loading"><span className="loading-square" /></main>;
   if (gameOwner !== userId) return <main className="arrival-loading"><span className="loading-square" /></main>;
-  return <main>
-    {run && <World run={run} label={`${t.world} ${scene!.place}`} />}
+  return <main className={internalTools ? 'internal-preview' : undefined}>
+    {run && <World run={run} label={`${t.world} ${node ? t.places[node] : t.onPath}`} text={t} content={content} act={act} controls={intro === null} choiceVisible={readyChoice} />}
     {run && intro === null && <>
       <div className="lives" role="img" aria-label={t.lives}><i /><i /><i /></div>
       {!internalTools && <button className="coin-counter" onClick={() => open('coins')} aria-label={`${run.sous} ${t.coins}`}>{format(run.sous)}<span className="step-label">{t.coins}</span></button>}
@@ -129,7 +141,8 @@ function App() {
       <button className="menu-button" aria-label={t.menu} aria-haspopup="dialog" onClick={() => open('menu')}><span aria-hidden="true" className="menu-icon" /></button>
     </>}
     {intro !== null && <section className="introduction" aria-live="polite"><div className="intro-copy"><h1 ref={introFocus} tabIndex={-1} key={intro} className={intro === 0 ? 'meet-moro' : ''}>{[t.meet, t.intro1, t.intro2, t.intro3][intro]}</h1></div><div className="intro-actions"><button onClick={() => { if (intro < 3) setIntro(intro + 1); else finishIntro(); }}>{t.next}</button><button className="back-button" onClick={finishIntro}>{t.skip}</button></div></section>}
-    {run && intro === null && readyChoice && <section className="world-choice" aria-label={t.story}><p aria-live="polite">{sceneText}</p><QuestActions run={run} text={t} content={content} act={act} locale={locale} /></section>}
+    {run && intro === null && readyChoice && <section className="world-choice" aria-label={t.story}><p aria-live="polite">{sceneText}</p>{skillNotice && <p className="muted" role="status">{t.skillsUnlocked}</p>}<QuestActions run={run} text={t} content={content} act={act} locale={locale} /></section>}
+    {skillNotice && intro === null && !readyChoice && <p className="skill-notice" role="status">{t.skillsUnlocked}</p>}
     {walkCue && !readyChoice && intro === null && <p className="walk-cue">{t.walkCue}</p>}
     {run && intro === null && internalTools && <TestToolbar run={run} text={t} count={health.snapshot.count} act={act} restart={restart} intro={() => setIntro(0)} />}
     {cloud.status === 'conflict' && <aside className="cloud-conflict" role="alert"><p>{t.cloudConflict}</p><button onClick={() => { void cloud.resolve(true); }}>{t.keepDevice}</button><button onClick={() => { void cloud.resolve(false); }}>{t.keepCloud}</button></aside>}
@@ -140,6 +153,7 @@ function App() {
         {page === 'menu' && <nav className="menu-list" aria-label={t.menu}>
           <button onClick={() => setPage('story')}><PixelIcon name="story" />{t.story}<span aria-hidden="true">&gt;</span></button>
           <button onClick={() => setPage('collection')}><PixelIcon name="collection" />{t.collection}<span aria-hidden="true">&gt;</span></button>
+          {records!.skills.length > 0 && <button onClick={() => setPage('skills')}><PixelIcon name="collection" />{t.skills}<span aria-hidden="true">&gt;</span></button>}
           <button onClick={() => setPage('steps')}><PixelIcon name="steps" />{t.healthTitle}<span aria-hidden="true">&gt;</span></button>
           <button className="settings-entry" onClick={() => setPage('settings')}><PixelIcon name="settings" />{t.settings}<span aria-hidden="true">&gt;</span></button>
         </nav>}
@@ -151,12 +165,13 @@ function App() {
           <h2>{t[collection]}</h2>
           {collection === 'letters' && records!.letters.map(letter => <LetterRecord key={letter.id} run={run} text={t} body={content?.letter} act={act} />)}
           {collection === 'characters' && <div className="character-gallery">{records!.characters.map(person => {
-            const character = content?.characters[person.id as 'clerk' | 'recipient'];
-            return <article key={person.id}><span className="character-square" aria-hidden="true" style={{ background: character?.color ?? '#fff' }} /><h3>{character?.name ?? (person.id === 'clerk' ? t.clerk : t.recipient)}</h3><p>{character?.role ?? (person.id === 'clerk' ? t.office : t.courtyard)}</p></article>;
+            const character = content?.characters[person.id as CharacterId];
+            return <article key={person.id}><span className="character-square" aria-hidden="true" style={{ background: character?.color ?? '#fff' }} /><h3>{character?.name ?? (person.id === 'clerk' ? t.clerk : person.id === 'recipient' ? t.recipient : t.knownCharacter)}</h3><p>{character?.role ?? t.places[person.lastKnownPlace]}</p><p className="muted">{t.lastSeen} · {t.places[person.lastKnownPlace]}</p></article>;
           })}</div>}
-          {collection === 'badges' && records!.badges.filter(badge => badge.description !== null).map(badge => <article key={badge.id}><h3 className="badge-title"><PixelIcon name="medal" />{t.firstJob}</h3><p>{t.badgeDescription}</p></article>)}
-          {collection === 'journal' && <ol>{run.events.filter(event => event.type !== 'steps' && event.type !== 'health-sync' && event.type !== 'start-journey' && event.type !== 'test-coins').map((event, index) => <li key={index}>{event.type === 'ask' ? content?.topics[event.topic].journal ?? t.dialogueRecorded : journals[event.type] ?? ({ 'reconsider': t.reconsiderRecorded, 'open-letter': t.openRecorded, 'destroy-letter': t.destroyRecorded, 'report-loss': t.lossRecorded } as Record<string, string>)[event.type]}</li>)}</ol>}
+          {collection === 'badges' && records!.badges.filter(badge => badge.description !== null).map(badge => <article key={badge.id}><h3 className="badge-title"><PixelIcon name="medal" />{t.badgeText[badge.id as keyof typeof t.badgeText].title}</h3><p>{t.badgeText[badge.id as keyof typeof t.badgeText].description}</p></article>)}
+          {collection === 'journal' && <ol>{run.events.filter(event => event.type !== 'steps' && event.type !== 'health-sync' && event.type !== 'start-journey' && event.type !== 'test-coins' && event.type !== 'enable-navigation').map((event, index) => <li key={index}>{journalCopy(event, t, journals, content)}{event.type === 'accept' && <p>{t.skillsUnlocked}</p>}</li>)}</ol>}
         </section>}
+        {page === 'skills' && records!.skills.length > 0 && <section><h1 tabIndex={-1}>{t.skills}</h1><p>{t.skillsUnlocked}</p><div className="skill-root"><span aria-hidden="true" /><h2>{t.basicRespect}</h2><p>{t.basicRespectDescription}</p></div></section>}
         {page === 'coins' && <section><h1 tabIndex={-1}>{t.coins}</h1><p className="stat-value">{format(run.sous)}<span className="stat-unit"> {t.coins}</span></p></section>}
         {page === 'steps'  && <section><h1 tabIndex={-1}>{t.healthTitle}</h1><p className="stat-value">{health.snapshot.count === null ? '—' : format(health.snapshot.count)}<span className="stat-unit"> {t.today}</span></p><p className="status-tag">{healthStatus}</p><p>{supportsHealth ? t.healthNative : t.healthWeb}</p><p className="muted">{t.healthNote}</p>{health.snapshot.checkedAt && <p className="muted">{t.checked}: {new Date(health.snapshot.checkedAt).toLocaleTimeString(locale)}</p>}
           {supportsHealth && <div className="actions"><button disabled={health.busy} onClick={() => { void health.refresh(true); }}>{health.snapshot.status === 'ready' && !health.snapshot.live ? t.enableLive : t.connect}</button><button disabled={health.busy} onClick={() => { void health.refresh(); }}>{t.refresh}</button><button onClick={() => { void openHealthSettings().catch(() => setWarning('settingsError')); }}>{t.manage}</button></div>}

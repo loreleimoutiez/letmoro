@@ -138,3 +138,12 @@ An ignored local opening pack and vertical authoring tree now exist under `src/c
 Latest user direction: keep the story tree locally in this repository under Git ignore for now; separate storage is deferred. Do not build an APK yet. Add an accessible bottom test toolbar at the usual coin/step positions, allowing coin edits, fictional-step additions, game reset and intro replay; remove reset/replay from Settings. This supersedes earlier removal of all player-facing test controls for the current internal testing phase. Tools are enabled in the development preview or explicitly flagged internal builds, not normal builds.
 
 The user requests database persistence of progression and player data. An opt-in Supabase snapshot adapter, owner-only policies, revision-checked RPC and reset tombstones are implemented. Persist current game/profile/history, daily step aggregate/checkpoint events and selected language. Passwords/tokens and device permissions do not belong in game snapshots. Live migration/deployment has not occurred: no administrative connection is available. Do not claim current accounts are backed up remotely until activation and real-account verification. No APK was built.
+
+
+## Conversation replacement, encounter map and skill discovery — 2026-11-06
+
+The user requests that asking for details temporarily hide initial choices; returning restores them. Map characters are colored hollow squares at their latest encountered place, with small colored traces at earlier distinct encounter points. A later meeting relocates only the latest marker; do not track or imply live character presence. Short building/place labels appear above hollow squares when space permits.
+
+Add a minimal cardinal direction selector, disabling nonexistent or not officially authorized routes, while preserving step-funded movement and mid-route returns. Fix mobile/browser zoom. Implement actual narrative choices beyond the first letter. Award first-delivery, first-opening and first-destruction badges with authored localized copy. The skill tree starts at Basic respect after work acceptance, with a small unlock notice; future skills remain entirely concealed.
+
+Implemented source and local private text now support this opening slice, including two neighborhood conversations and unpaid long errands. This does not finish an arc or the year-long campaign. No new APK, publication or cloud activation is authorized by these changes. See navigation and handoff for verification.
