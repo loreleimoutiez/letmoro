@@ -5,6 +5,7 @@ import type { Locale } from './ui.ts';
 
 export type Topic = 'work' | 'pay' | 'directions';
 export interface OpeningContent {
+  campaign?: CampaignContent;
   job: string;
   rest: string;
   letter: string;
@@ -19,4 +20,14 @@ export interface OpeningContent {
 const packs = import.meta.glob<Record<Locale, OpeningContent>>('./private/opening.json', { eager: true, import: 'default' });
 export function openingContent(locale: Locale): OpeningContent | undefined {
   return packs['./private/opening.json']?.[locale];
+}
+
+export interface LetterContent { title: string; offer: string; body: string; delivered: string; report: string; question: string; answer: string }
+export interface CampaignContent {
+  conversations?: Record<string, { prompt: string; listen: string; press: string; listening: string; pressing: string }>;
+  letters: Record<string, LetterContent>;
+  places: Partial<Record<import('../domain/navigation.ts').Place, { title: string; text: string }>>;
+  thoughts: { id: string; condition: 'always' | 'alone' | 'company' | 'sealed' | 'opened' | 'cemetery'; text: string }[];
+  badges: Record<string, { title: string; description: string }>;
+  ending: string;
 }

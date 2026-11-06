@@ -3,18 +3,24 @@ import { atPlace, currentLeg, questReady, remainingQuestSteps } from '../domain/
 import type { Neighborhood } from '../domain/navigation.ts';
 import type { en } from '../content/ui.ts';
 import type { OpeningContent, Topic } from '../content/narrative.ts';
+import { CampaignPanel } from './CampaignPanel.tsx';
+import { campaignUI } from '../content/campaign-ui.ts';
+import type { Locale } from '../content/ui.ts';
+import { currentNode } from '../domain/navigation.ts';
 import { DialogueChoices } from './DialogueChoices.tsx';
 
 export function QuestActions({ run, text: t, content, act, locale }: {
   run: Run; text: typeof en; content?: OpeningContent; act: (action: Action) => void; locale: string;
 }) {
   if (run.life.lives === 0) return <p>{t.lifeEnded}</p>;
+  if (run.stage === 'campaign') return content?.campaign ? <CampaignPanel run={run} locale={locale as Locale} content={content} act={act} /> : <p>{locale === 'fr' ? 'Cette partie du voyage est indisponible. Ta progression est conservée.' : 'This part of the journey is unavailable. Your progress is preserved.'}</p>;
   const lastTopic = run.discussed.at(-1), ready = questReady(run), leg = currentLeg(run);
   const traveling = ['street', 'delivery', 'errand', 'errand-return'].includes(run.stage) || (run.stage === 'neighborhood' && run.destination);
   const progress = <p className="quest-progress">{Math.min(leg.current, leg.required).toLocaleString(locale)} / {leg.required.toLocaleString(locale)} {t.steps}</p>;
   const initialJobChoices = <><button onClick={() => act({ type: 'accept' })}>{t.accept}</button><button onClick={() => act({ type: 'rest' })}>{t.rest}</button></>;
   const place = run.stage as Neighborhood, visit = content?.visits?.[place];
   return <div className="actions">
+    {content?.campaign && run.navigation && currentNode(run) && ['complete','failed','rest','neighborhood','square','workshop'].includes(run.stage) && <button onClick={()=>act({type:'enter-campaign'})}>{campaignUI(locale as Locale).continue}</button>}
     {traveling && progress}
     {(remainingQuestSteps(run) ?? 0) > 0 && <p className="muted">{remainingQuestSteps(run)!.toLocaleString(locale)} {t.stepsRemaining}</p>}
     {run.errand && !['street', 'job', 'delivery', 'handover', 'settlement', 'errand', 'errand-return'].includes(run.stage) && <button onClick={() => act({ type: 'resume-help' })}>{t.resumeHelp}</button>}

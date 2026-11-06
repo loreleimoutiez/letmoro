@@ -20,7 +20,9 @@ import { useAccount } from './auth/useAccount.ts';
 import { openingContent } from './content/narrative.ts';
 import { QuestActions } from './ui/QuestActions.tsx';
 import { LetterRecord } from './ui/LetterRecord.tsx';
-import { TestToolbar, internalTools } from './ui/TestToolbar.tsx';
+import { CampaignLetters } from './ui/CampaignPanel.tsx';
+import { campaignUI } from './content/campaign-ui.ts';
+import { RestSettings } from './ui/RestSettings.tsx';
 import { useCloudSave } from './ui/useCloudSave.ts';
 import { decodeSave } from './adapters/save.ts';
 import type { CloudSnapshot } from './adapters/cloud-save.ts';
@@ -128,10 +130,6 @@ function App() {
   function leaveHealthGate() { setHealthDismissed(true); if (awaitingWalk) { setWalkCue(true); setAwaitingWalk(false); } }
   function act(action: Action) { const latest = currentRun.current; if (latest && (latest.life.lives > 0 || action.type === 'life-day')) { store(apply(latest, { ...action, at: new Date().toISOString() })); if (action.type === 'accept') setSkillNotice(true); } }
   function open(page: Page) { setPage(page); dialog.current?.showModal(); }
-  function restart() {
-    try { localStorage.setItem(`letmoro.cloud.v1.${account.user!.id}.reset`, '1'); resetAccountRun(account.user!.id); } catch { setWarning('saveError'); return; }
-    currentRun.current = null; setRun(null); setIntro(null); setSkillNotice(false); setPage('menu');
-  }
   function begin(goal: number, profile: Profile) { setSkillNotice(false); const now = new Date().toISOString(); store(apply(createRun(goal, profile), { type: 'begin-life-accounting', startedAt: now, zone: Intl.DateTimeFormat().resolvedOptions().timeZone, at: now })); dialog.current?.close(); setIntro(0); }
   function chooseLocale(value: Locale) {
     setLocale(value);
@@ -142,7 +140,33 @@ function App() {
   const records = run ? recordsFor(run) : null;
   const sceneText = run && scene ? sceneCopy(run, scene.text, t, content) : undefined;
   const node = run?.navigation ? currentNode(run) : undefined;
-  const readyChoice = Boolean(run && (questReady(run) || (run.stage === 'errand-return' && atPlace(run, run.errand?.from === 'square' ? 'garden' : 'gate'))));
+  useEffect(() => {
+    if (!run || !content?.campaign || !userId || gameOwner !== userId || run.life.lives === 0 || cloud.status === 'loading' || cloud.status === 'conflict') return;
+    const campaign = run.campaign, odometer = run.navigation?.odometer ?? 0;
+    if (campaign.pendingThought || odometer - campaign.thoughtMark < run.goal * .5) return;
+    const letters = Object.values(campaign.letters);
+    const suitable = content.campaign.thoughts.filter(thought => thought.id !== campaign.lastThought && (
+      thought.condition === 'always' || thought.condition === 'alone' && !campaign.friends.length || thought.condition === 'company' && campaign.friends.length > 0 || thought.condition === 'sealed' && letters.some(letter=>letter.status==='carried'&&!letter.opened) || thought.condition === 'opened' && (run.letterOpened || letters.some(letter=>letter.opened)) || thought.condition === 'cemetery' && campaign.visited.includes('cemetery')));
+    const unseen=suitable.filter(thought=>!campaign.thoughts.includes(thought.id));
+    const eligible=unseen.length?unseen:suitable;
+    if (!unseen.length && odometer-campaign.thoughtMark < run.goal*2) return;
+    if (!eligible.length) return;
+    const chosen=eligible[(Math.floor(odometer/run.goal)+campaign.thoughts.length*7)%eligible.length];
+    store(apply(run,{type:'capture-thought',id:chosen.id,at:new Date().toISOString()}));
+  }, [run,content,userId,gameOwner,cloud.status,store]);
+  const badgeMemory = useRef<{owner:string|null;ids:string[]} | null>(null);
+  const [badgeNotice,setBadgeNotice]=useState<string | null>(null);
+  const badgeIds=records?.badges.filter(badge=>badge.description!==null).map(badge=>badge.id) ?? [];
+  useEffect(()=>{
+    if (!run || !userId) { badgeMemory.current=null; setBadgeNotice(null); return; }
+    const previous=badgeMemory.current;
+    if (previous?.owner===userId) { const earned=badgeIds.filter(id=>!previous.ids.includes(id)); if(earned.length)setBadgeNotice(earned.at(-1)!); }
+    badgeMemory.current={owner:userId,ids:badgeIds};
+  },[run,userId]);
+  useEffect(()=>{ if(!badgeNotice)return;const timer=window.setTimeout(()=>setBadgeNotice(null),5000);return()=>clearTimeout(timer); },[badgeNotice]);
+  const pendingThought=content?.campaign?.thoughts.find(thought=>thought.id===run?.campaign.pendingThought);
+
+  const readyChoice = Boolean(run && (run.stage === 'campaign' ? Boolean(node && !['start','approach','outskirts'].includes(node)) : (questReady(run) || (run.stage === 'errand-return' && atPlace(run, run.errand?.from === 'square' ? 'garden' : 'gate')))));
   const remaining = run ? remainingQuestSteps(run) : undefined;
   const journals = locale === 'fr' ? journalFr : journalText;
   const healthStatus = { ready: t.connected, empty: t.empty, 'permission-required': t.permission, error: t.error, unavailable: t.disconnected }[health.snapshot.status];
@@ -153,21 +177,22 @@ function App() {
   if (cloud.status === 'loading' && gameOwner === userId && !run && warning !== 'loadError') return <main className="arrival-loading"><span className="loading-square" /></main>;
   if (gameOwner !== userId) return <main className="arrival-loading"><span className="loading-square" /></main>;
   if (run && intro === null && !healthDismissed && !healthConnected) return <HealthArrival text={t} snapshot={health.snapshot} initialized={health.initialized} busy={health.busy} supported={supportsHealth} connect={() => { void health.refresh(true); }} continueGame={leaveHealthGate} />;
-  return <main className={internalTools ? 'internal-preview' : undefined}>
+  return <main>
     {run && <World run={run} label={`${t.world} ${node ? t.places[node] : t.onPath}`} text={t} content={content} act={act} controls={intro === null && run.life.lives > 0} choiceVisible={readyChoice} />}
     {run && intro === null && <>
       <div className="lives" role="img" aria-label={`${run.life.lives} / 3 ${t.lifeWord}`}>{Array.from({ length: 3 }, (_, index) => <i key={index} className={index >= run.life.lives ? 'lost' : undefined} />)}</div>
-      {!internalTools && <button className="coin-counter" onClick={() => open('coins')} aria-label={`${run.sous} ${t.coins}`}>{format(run.sous)}<span className="step-label">{t.coins}</span></button>}
-      {!internalTools && <button className="step-counter" onClick={() => open('steps')} aria-label={`${health.snapshot.count === null ? t.unknownSteps : format(health.snapshot.count)} ${t.steps}`}><span className="step-value">{health.snapshot.count === null ? '—' : format(health.snapshot.count)}</span><span className="step-label">{t.steps}</span></button>}
+      <button className="coin-counter" onClick={() => open('coins')} aria-label={`${run.sous} ${t.coins}`}>{format(run.sous)}<span className="step-label">{t.coins}</span></button>
+      <button className="step-counter" onClick={() => open('steps')} aria-label={`${health.snapshot.count === null ? t.unknownSteps : format(health.snapshot.count)} ${t.steps}`}><span className="step-value">{health.snapshot.count === null ? '—' : format(health.snapshot.count)}</span><span className="step-label">{t.steps}</span></button>
       <button className="menu-button" aria-label={t.menu} aria-haspopup="dialog" onClick={() => open('menu')}><span aria-hidden="true" className="menu-icon" /></button>
     </>}
     {intro !== null && <section className="introduction" aria-live="polite"><div className="intro-copy"><h1 ref={introFocus} tabIndex={-1} key={intro} className={intro === 0 ? 'meet-moro' : ''}>{[t.meet, t.intro1, t.intro2, t.intro3][intro]}</h1></div><div className="intro-actions"><button onClick={() => { if (intro < 3) setIntro(intro + 1); else finishIntro(); }}>{t.next}</button><button className="back-button" onClick={finishIntro}>{t.skip}</button></div></section>}
-    {run && run.life.lives > 0 && intro === null && readyChoice && <section className="world-choice" aria-label={t.story}><p aria-live="polite">{sceneText}</p>{skillNotice && <p className="muted" role="status">{t.skillsUnlocked}</p>}<QuestActions run={run} text={t} content={content} act={act} locale={locale} /></section>}
+    {run && run.life.lives > 0 && intro === null && readyChoice && !pendingThought && <section className="world-choice" aria-label={t.story}><p aria-live="polite">{sceneText}</p>{skillNotice && <p className="muted" role="status">{t.skillsUnlocked}</p>}<QuestActions run={run} text={t} content={content} act={act} locale={locale} /></section>}
     {run && run.life.lives === 0 && <aside className="run-ended" role="alert"><p>{t.lifeEnded}</p></aside>}
     {skillNotice && intro === null && !readyChoice && <p className="skill-notice" role="status">{t.skillsUnlocked}</p>}
     {run && run.life.lives > 0 && intro === null && remaining !== undefined && remaining > 0 && <p className="remaining-steps" role="status">{format(remaining)} {t.stepsRemaining}</p>}
-    {walkCue && !readyChoice && intro === null && <p className="walk-cue">{t.walkCue}</p>}
-    {run && intro === null && internalTools && <TestToolbar run={run} text={t} count={health.snapshot.count} act={act} restart={restart} intro={() => setIntro(0)} />}
+    {badgeNotice && intro===null && <p key={badgeNotice} className="badge-toast" role="status"><PixelIcon name="medal" />{content?.campaign?.badges[badgeNotice]?.title ?? t.badgeText[badgeNotice as keyof typeof t.badgeText]?.title}</p>}
+    {pendingThought && run && intro===null && <aside className="travel-thought"><p>{pendingThought.text}</p><button onClick={()=>act({type:'dismiss-thought'})}>{campaignUI(locale).closeThought}</button></aside>}
+    {walkCue && !pendingThought && !readyChoice && intro === null && <p className="walk-cue">{t.walkCue}</p>}
     {cloud.status === 'conflict' && <aside className="cloud-conflict" role="alert"><p>{t.cloudConflict}</p><button onClick={() => { void cloud.resolve(true); }}>{t.keepDevice}</button><button onClick={() => { void cloud.resolve(false); }}>{t.keepCloud}</button></aside>}
     {warning && <p role="alert" className="warning">{t[warning]}</p>}
     <dialog ref={dialog} aria-label={t.menu} onClick={event => { if (event.target === event.currentTarget && run) dialog.current?.close(); }}>
@@ -186,12 +211,14 @@ function App() {
         </section>}
         {page === 'collection' && <section><h1 tabIndex={-1}>{t.collection}</h1><nav className="collection-tabs" aria-label={t.collection}>{(['letters', 'characters', 'badges', 'journal'] as const).map(key => <button key={key} aria-current={key === collection ? 'page' : undefined} onClick={() => setCollection(key)}>{t[key]}</button>)}</nav>
           <h2>{t[collection]}</h2>
+          {collection === 'letters' && <CampaignLetters run={run} locale={locale} content={content} act={act} />}
           {collection === 'letters' && records!.letters.map(letter => <LetterRecord key={letter.id} run={run} text={t} body={content?.letter} act={act} />)}
           {collection === 'characters' && <div className="character-gallery">{records!.characters.map(person => {
             const character = content?.characters[person.id as CharacterId];
-            return <article key={person.id}><span className="character-square" aria-hidden="true" style={{ background: character?.color ?? '#fff' }} /><h3>{character?.name ?? (person.id === 'clerk' ? t.clerk : person.id === 'recipient' ? t.recipient : t.knownCharacter)}</h3><p>{character?.role ?? t.places[person.lastKnownPlace]}</p><p className="muted">{t.lastSeen} · {t.places[person.lastKnownPlace]}</p></article>;
+            return <article key={person.id}><span className="character-square" aria-hidden="true" style={{ background: character?.color ?? '#fff' }} /><h3>{character?.name ?? (person.id === 'clerk' ? t.clerk : person.id === 'recipient' ? t.recipient : t.knownCharacter)}</h3><p>{character?.role ?? t.places[person.lastKnownPlace]}</p><p className="muted">{campaignUI(locale).trust} {run.campaign.trust[person.id]??0}{run.campaign.friends.includes(person.id) ? ` · ${campaignUI(locale).friends}` : ''}</p><p className="muted">{t.lastSeen} · {t.places[person.lastKnownPlace]}</p></article>;
           })}</div>}
-          {collection === 'badges' && records!.badges.filter(badge => badge.description !== null).map(badge => <article key={badge.id}><h3 className="badge-title"><PixelIcon name="medal" />{t.badgeText[badge.id as keyof typeof t.badgeText].title}</h3><p>{t.badgeText[badge.id as keyof typeof t.badgeText].description}</p></article>)}
+          {collection === 'badges' && records!.badges.filter(badge => badge.description !== null).map(badge => <article key={badge.id}><h3 className="badge-title"><PixelIcon name="medal" />{content?.campaign?.badges[badge.id]?.title ?? t.badgeText[badge.id as keyof typeof t.badgeText]?.title ?? badge.title}</h3><p>{content?.campaign?.badges[badge.id]?.description ?? t.badgeText[badge.id as keyof typeof t.badgeText]?.description ?? ''}</p></article>)}
+          {collection === 'journal' && run.campaign.thoughts.length>0 && <section><h3>{campaignUI(locale).thoughts}</h3>{[...run.campaign.thoughts].reverse().map(id=><p key={id}>{content?.campaign?.thoughts.find(thought=>thought.id===id)?.text}</p>)}{pendingThought && <button onClick={()=>act({type:'dismiss-thought'})}>{campaignUI(locale).closeThought}</button>}</section>}
           {collection === 'journal' && <Journal run={run} text={t} locale={locale} original={journals} content={content} />}
         </section>}
         {page === 'skills' && records!.skills.length > 0 && <section><h1 tabIndex={-1}>{t.skills}</h1><p>{t.skillsUnlocked}</p><div className="skill-root"><span aria-hidden="true" /><h2>{t.basicRespect}</h2><p>{t.basicRespectDescription}</p></div></section>}
@@ -199,7 +226,7 @@ function App() {
         {page === 'steps'  && <section><h1 tabIndex={-1}>{t.healthTitle}</h1><p className="stat-value">{health.snapshot.count === null ? '—' : format(health.snapshot.count)}<span className="stat-unit"> {t.today}</span></p><p className="status-tag">{healthStatus}</p><p>{supportsHealth ? t.healthNative : t.healthWeb}</p><p className="muted">{t.healthNote}</p>{health.snapshot.checkedAt && <p className="muted">{t.checked}: {new Date(health.snapshot.checkedAt).toLocaleTimeString(locale)}</p>}
           {supportsHealth && <div className="actions"><button disabled={health.busy} onClick={() => { void health.refresh(true); }}>{health.snapshot.status === 'ready' && !health.snapshot.live ? t.enableLive : t.connect}</button><button disabled={health.busy} onClick={() => { void health.refresh(); }}>{t.refresh}</button><button onClick={() => { void openHealthSettings().catch(() => setWarning('settingsError')); }}>{t.manage}</button></div>}
         </section>}
-        {page === 'settings' && <section><h1 tabIndex={-1}>{t.settings}</h1>{language}<LifeDetails run={run} text={t} historyStatus={lifeHistory} /><p role="status">{t.cloudStates[cloud.status]}</p>{cloud.status === 'offline' && <button onClick={cloud.retry}>{t.retryCloud}</button>}{run.profile && <><h2>{t.difficulty}</h2><p>{t[run.profile.mode]}</p><p>{t.modeDescriptions[run.profile.mode]}</p><p className="muted">{t.modeStatusNote}</p><h2>{t.positive}</h2><p>{run.profile.positive.map(trait => t.traits[trait as keyof typeof t.traits]).join(' · ')}</p><h2>{t.negative}</h2><p>{run.profile.negative.map(trait => t.traits[trait as keyof typeof t.traits]).join(' · ')}</p></>}<div className="actions"><button onClick={() => setPage('account')}>{t.account}</button></div></section>}
+        {page === 'settings' && <section><h1 tabIndex={-1}>{t.settings}</h1>{language}<RestSettings key={`${userId}:${run.life.schedules?.length??0}`} run={run} locale={locale} act={act} /><LifeDetails run={run} text={t} historyStatus={lifeHistory} /><p role="status">{t.cloudStates[cloud.status]}</p>{cloud.status === 'offline' && <button onClick={cloud.retry}>{t.retryCloud}</button>}{run.profile && <><h2>{t.difficulty}</h2><p>{t[run.profile.mode]}</p><p>{t.modeDescriptions[run.profile.mode]}</p><p className="muted">{t.modeStatusNote}</p><h2>{t.positive}</h2><p>{run.profile.positive.map(trait => t.traits[trait as keyof typeof t.traits]).join(' · ')}</p><h2>{t.negative}</h2><p>{run.profile.negative.map(trait => t.traits[trait as keyof typeof t.traits]).join(' · ')}</p></>}<div className="actions"><button onClick={() => setPage('account')}>{t.account}</button></div></section>}
 
       </>}
     </dialog>

@@ -18,6 +18,11 @@ export function sceneCopy(run: Run, fallback: string, t: typeof en, content?: Op
 }
 export function journalCopy(event: Action, t: typeof en, original: Record<string, string>, content?: OpeningContent): string | undefined {
   switch (event.type) {
+    case 'set-rest-days': return t.lifeHeading;
+    case 'take-letter': case 'decline-letter': case 'open-item': case 'destroy-item': case 'deliver-item': case 'return-item': case 'report-item': return `${({ 'take-letter':t.accept, 'decline-letter':t.rest, 'open-item':t.openRecorded, 'destroy-item':t.destroyRecorded, 'deliver-item':t.deliver, 'return-item':t.back, 'report-item':t.shareFindings })[event.type]} · ${content?.campaign?.letters[event.id]?.title ?? event.id}`;
+    case 'dialogue': return event.reply==='listen'?t.listenRecorded:t.dialogueRecorded;
+    case 'befriend': return t.encounterRecorded;
+    case 'enter-campaign': return t.explorationRecorded;
     case 'choose-direction': return `${t.journeyRecorded} ${t.directions[event.direction]}`;
     case 'choose-place': return `${t.routeRecorded} ${t.places[event.place]}`;
     case 'meet-place': return `${t.encounterRecorded} ${t.places[event.place]}`;

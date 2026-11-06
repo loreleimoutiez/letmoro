@@ -1,3 +1,4 @@
+import { campaignBadges } from './campaign.ts';
 import { encountersFor } from './encounters.ts';
 import { recordText } from '../content/records.en.ts';
 import type { Run } from './prologue.ts';
@@ -9,10 +10,10 @@ export function recordsFor(run: Run) {
   return {
     letters: employed ? [{ id: 'courtyard-letter', title: recordText.courtyardLetter.title, opened: run.letterOpened, destroyed: run.letterDestroyed,
       status: run.letterDestroyed ? 'Destroyed' : happened('deliver') ? (run.letterOpened ? 'Delivered opened' : recordText.courtyardLetter.delivered) : (run.letterOpened ? 'Carried, opened' : recordText.courtyardLetter.carried) }] : [],
-    characters: [...new Map(encountersFor(run).map(encounter => [encounter.character, encounter])).values()].map(encounter => ({ id: encounter.character, ...recordText[encounter.character], lastKnownPlace: encounter.place })),
+    characters: [...new Map(encountersFor(run).map(encounter => [encounter.character, encounter])).values()].map(encounter => ({ id: encounter.character, ...(recordText[encounter.character as keyof typeof recordText] ?? {}), lastKnownPlace: encounter.place })),
     skills: employed ? [{ id: 'basic-respect' as const }] : [],
     badges: [{ id: 'first-job', title: employed ? recordText.firstJob.title : null,
       description: employed ? recordText.firstJob.description : null },
-      ...([['first-delivery', 'deliver', recordText.firstDelivery], ['first-opening', 'open-letter', recordText.firstOpening], ['first-destruction', 'destroy-letter', recordText.firstDestruction]] as const).filter(([, event]) => happened(event)).map(([id, , text]) => ({ id, title: text.title, description: text.description }))],
+      ...([['first-delivery', 'deliver', recordText.firstDelivery], ['first-opening', 'open-letter', recordText.firstOpening], ['first-destruction', 'destroy-letter', recordText.firstDestruction]] as const).filter(([, event]) => happened(event) || (event === 'deliver' ? run.delivered > 0 : Object.values(run.campaign.letters).some(letter => event === 'open-letter' ? letter.opened : letter.status === 'destroyed'))).map(([id, , text]) => ({ id, title: text.title, description: text.description })), ...campaignBadges(run).map(id => ({id, title:id, description:id}))],
   };
 }

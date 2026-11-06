@@ -145,22 +145,12 @@ fieldset label:has(input:disabled) { color: #777; }
 .world-choice .receipt dt, .world-choice .receipt dd { font-size: 9px; }
 
 
-.test-toolbar { position: fixed; bottom: 0; left: 0; right: 0; padding: 8px max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)); border-top: 1px solid #555; background: #000; z-index: 2; max-height: 45svh; overflow-y: auto; }
-.test-commands { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 8px; }
-.test-toolbar button { padding: 6px; font-size: 8px; }
-.test-values { display: flex; justify-content: space-between; gap: 20px; }
-.test-values form { display: flex; gap: 6px; align-items: flex-end; width: min(45%, 220px); }
-.test-values label { min-width: 0; width: 100%; font-size: 8px; line-height: 2; }
-.test-values input { font-family: monospace; font-size: 16px; padding: 6px; margin: 4px 0 0; min-width: 0; }
-.test-reset p { font-size: 8px; }
-.test-reset button { margin: 4px; }
 
 .cloud-conflict { position: fixed; top: 70px; left: 12px; right: 12px; padding: 16px; background: #000; border: 1px solid #fff; z-index: 4; max-height: 60svh; overflow-y: auto; }
 .cloud-conflict button { width: 100%; margin-top: 12px; font-size: 9px; }
 
 /* Map controls have quiet visible marks and full-size touch targets. */
 main { --map-clearance: 68px; }
-main.internal-preview { --map-clearance: 164px; }
 .terrain { transition: none; }
 .route-lines { position: absolute; left: 0; top: 0; }
 .place-marker { position: absolute; width: 36px; height: 36px; border: 12px solid; }
@@ -168,8 +158,6 @@ main.internal-preview { --map-clearance: 164px; }
 .encounter-marker, .encounter-trace { position: absolute; display: block; }
 .encounter-marker { width: 20px; height: 20px; border: 4px solid currentColor; }
 .encounter-trace { width: 4px; height: 4px; background: currentColor; }
-.map-zoom { position: fixed; left: 8px; bottom: var(--map-clearance); display: flex; align-items: center; }
-.map-zoom button { border: 0; font-size: 9px; min-width: 44px; padding: 6px; }
 .direction-control { position: fixed; right: 8px; bottom: var(--map-clearance); width: 132px; height: 132px; display: grid; grid-template: repeat(3, 44px) / repeat(3, 44px); margin: 0; gap: 0; }
 .direction-control button { border: 0; padding: 0; font-size: 9px; }
 .direction-control button:disabled { opacity: .23; }
@@ -185,7 +173,7 @@ main.internal-preview { --map-clearance: 164px; }
 .skill-root > span { display: block; width: 20px; height: 20px; border: 4px solid white; margin: 0 auto 16px; }
 
 .moro-clearance { position: absolute; left: calc(50% - 16px); top: calc(50% - 36px); width: 32px; height: 32px; background: #000; }
-.map-zoom, .direction-control { touch-action: manipulation; }
+.direction-control { touch-action: manipulation; }
 @media (max-height: 500px) and (min-width: 480px) {
   .world-choice, .skill-notice { left: 164px; right: 148px; max-width: none; }
 }
@@ -205,11 +193,24 @@ main.internal-preview { --map-clearance: 164px; }
 
 .lives .lost { background: transparent; border: 1px solid #633; }
 .run-ended { position: fixed; top: 80px; left: 24px; right: 24px; max-width: 560px; margin: 0 auto; }
-.test-life { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
-.test-life label { font-size: 8px; min-width: 0; }
-.test-life input { font: 14px monospace; padding: 8px; margin: 4px 0; min-width: 0; }
-.test-life button { grid-column: 1 / -1; }
 
 @media (min-height: 501px) { .world-choice { bottom: calc(50svh + max(80px, calc(48px * var(--world-zoom, 1)))); } }
 
 .journal-date-column { width: 100px; }
+
+/* Brief earned feedback stays separate from persistent travel thoughts. */
+.badge-toast { position:fixed; margin:0; line-height:1.5; top:52px; left:50%; transform:translateX(-50%); max-width:calc(100vw - 48px); display:flex; gap:10px; align-items:center; font-size:8px; z-index:8; pointer-events:none; animation:badge-fade 5s forwards; background:#000; padding:4px; }
+@keyframes badge-fade { 0% {opacity:0} 10%,70% {opacity:1} 100% {opacity:0} }
+@media (prefers-reduced-motion:reduce) { .badge-toast {animation:none} }
+.travel-thought { position:fixed; bottom:calc(50% + 64px); left:50%; transform:translateX(-50%); width:min(440px,calc(100vw - 48px)); max-height:calc(50dvh - 132px); overflow:auto; background:#000; z-index:4; font-size:11px; line-height:1.8; }
+.travel-thought button {font-size:10px; color:#aaa; padding:8px 0}
+.campaign-panel article {border-top:1px solid #333; padding-top:10px; margin-top:14px}
+.campaign-panel h3 {font-size:11px}
+.campaign-panel p {font-size:11px}
+.campaign-panel .actions {gap:8px}
+.weekday-options {display:flex; flex-wrap:wrap; gap:14px; margin:18px 0}
+.weekday-options label {display:flex; align-items:center; gap:6px; font-size:11px}
+.rest-settings {border:0; padding:0; margin:24px 0}
+.rest-settings legend {font-size:14px}
+.grave-marker {position:absolute; width:12px; height:12px}
+.letter-body {white-space:pre-line; line-height:1.9}

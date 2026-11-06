@@ -10,7 +10,9 @@ export interface LifeDay {
   readonly source: 'health' | 'test';
 }
 export type DayResult = 'unknown' | 'incomplete' | 'goal' | 'short' | 'rest' | 'loss' | 'ended' | 'free';
+export interface RestSchedule { readonly requestedAt: string; readonly effective: string; readonly weekdays: readonly number[] }
 export interface LifeState {
+  readonly schedules?: readonly RestSchedule[];
   readonly calendar?: LifeCalendar;
   readonly days: Readonly<Record<string, LifeDay>>;
   readonly outcomes: Readonly<Record<string, DayResult>>;
@@ -58,6 +60,15 @@ export function beginLifeCalendar(startedAt: string, zone: string): LifeState {
   civilDate(startedAt, zone);
   return { ...initialLives(), calendar: { startedAt, zone } };
 }
+export function scheduleRest(state: LifeState, weekdays: readonly number[], at: string, mode: Mode): LifeState {
+  if (!state.calendar || !Number.isFinite(Date.parse(at)) || state.lives === 0 || mode === 'free') throw new Error('Rest settings unavailable');
+  const allowance = mode === 'hard' ? 1 : 2;
+  if (weekdays.length !== allowance || new Set(weekdays).size !== allowance || weekdays.some(day => !Number.isInteger(day) || day < 0 || day > 6)) throw new Error('Invalid rest weekdays');
+  const previous = state.schedules?.at(-1);
+  if (previous && Date.parse(at) - Date.parse(previous.requestedAt) < 7 * 86400000) throw new Error('Rest change cooldown');
+  const effective = addDays(weekOf(civilDate(at, state.calendar.zone)), 7);
+  return { ...state, schedules: [...(state.schedules ?? []), { requestedAt: at, effective, weekdays: [...weekdays].sort() }] };
+}
 export function recordLifeDay(state: LifeState, day: LifeDay, goal: number, mode: Mode): LifeState {
   if (!state.calendar || !validDate(day.date) || !['health', 'test'].includes(day.source) || typeof day.complete !== 'boolean' ||
     (day.steps !== null && (!Number.isSafeInteger(day.steps) || day.steps < 0)) || !Number.isFinite(Date.parse(day.observedAt)) ||
@@ -82,9 +93,11 @@ export function recordLifeDay(state: LifeState, day: LifeDay, goal: number, mode
       else if (++recovery === 3) { lives++; recovery = 0; pendingRecovery = 0; }
     } else if (item.steps === 0) {
       const week = weekOf(item.date), allowance = mode === 'hard' ? 1 : 2;
-      if ((restUsed[week] ?? 0) < allowance) { restUsed[week] = (restUsed[week] ?? 0) + 1; outcomes[item.date] = 'rest'; }
+      const schedule = state.schedules?.filter(entry => entry.effective <= item.date).at(-1);
+      const designated = !schedule || schedule.weekdays.includes(new Date(`${item.date}T12:00:00Z`).getUTCDay());
+      if (designated && (restUsed[week] ?? 0) < allowance) { restUsed[week] = (restUsed[week] ?? 0) + 1; outcomes[item.date] = 'rest'; }
       else { lives--; recovery = 0; pendingRecovery = 0; outcomes[item.date] = 'loss'; if (lives === 0) finalMode = mode; }
     } else { recovery = 0; pendingRecovery = 0; outcomes[item.date] = 'short'; }
   }
-  return { calendar: state.calendar, days, outcomes, restUsed, lives, recovery, pendingRecovery, ...(finalMode ? { finalMode } : {}) };
+  return { ...state, calendar: state.calendar, days, outcomes, restUsed, lives, recovery, pendingRecovery, finalMode };
 }

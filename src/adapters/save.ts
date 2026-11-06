@@ -9,7 +9,7 @@ export function decodeSave(raw: string): Run {
   const data: unknown = JSON.parse(raw);
   if (!data || typeof data !== 'object') throw new Error('Invalid save');
   const save = data as Record<string, unknown>;
-  if (save.schema !== 1 || !['prologue-1', 'prologue-2', CONTENT_VERSION].includes(String(save.content)) || typeof save.goal !== 'number' ||
+  if (save.schema !== 1 || !['prologue-1', 'prologue-2', 'prologue-3', CONTENT_VERSION].includes(String(save.content)) || typeof save.goal !== 'number' ||
       !Array.isArray(save.events) || save.events.length > 50000) throw new Error('Unsupported save');
   let run = createRun(save.goal, save.profile === undefined ? undefined : parseProfile(save.profile));
   for (const event of save.events) {

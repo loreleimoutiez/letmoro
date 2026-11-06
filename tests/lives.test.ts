@@ -107,3 +107,20 @@ test('life outcomes replay with the run, freeze gameplay at zero, and correction
   assert.equal(run.life.lives, 1);
   assert.equal(apply(run, { type: 'steps', amount: 1 }).simulatedSteps, 1);
 });
+
+test('chosen rest weekdays apply next Monday, keep history and enforce a seven-day change delay', async () => {
+  const { scheduleRest } = await import('../src/domain/lives.ts');
+  let state=scheduleRest(calendar(),[2,4],'2026-01-06T12:00:00Z','standard');
+  assert.equal(state.schedules![0].effective,'2026-01-12');
+  assert.throws(()=>scheduleRest(state,[1,3],'2026-01-12T12:00:00Z','standard'));
+  assert.throws(()=>scheduleRest(state,[1,1],'2026-01-13T12:00:00Z','standard'));
+  assert.throws(()=>scheduleRest(state,[1,3],'2026-01-13T12:00:00Z','hard'));
+  state=record(state,'2026-01-08',0);assert.equal(state.outcomes['2026-01-08'],'rest');
+  state=record(state,'2026-01-12',0);assert.equal(state.outcomes['2026-01-12'],'loss');
+  state=record(state,'2026-01-13',0);assert.equal(state.outcomes['2026-01-13'],'rest');
+  state=scheduleRest(state,[1,3],'2026-01-13T12:00:00Z','standard');
+  assert.equal(state.schedules![1].effective,'2026-01-19');
+  state=record(state,'2026-01-12',1);assert.equal(state.lives,3);assert.equal(state.outcomes['2026-01-13'],'rest');
+  state=record(state,'2026-01-19',0);assert.equal(state.outcomes['2026-01-19'],'rest');
+  assert.equal(state.schedules!.length,2);
+});

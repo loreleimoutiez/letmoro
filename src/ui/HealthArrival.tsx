@@ -8,6 +8,6 @@ export function HealthArrival({ text: t, snapshot, busy, initialized, supported,
     <p className="muted">{t.healthDataUse}</p>
     <p className="muted" role="status">{!initialized || busy ? t.checkingConnection : snapshot.status === 'permission-required' ? t.permission : snapshot.status === 'error' ? t.error : t.disconnected}</p>
     {supported && <button disabled={busy || !initialized} onClick={connect}>{t.connect}</button>}
-    <button className="back-button" disabled={!initialized} onClick={continueGame}>{supported ? t.connectLater : t.continuePreview}</button>
+    <button className="back-button" disabled={!initialized} onClick={continueGame}>{t.connectLater}</button>
   </section></main>;
 }

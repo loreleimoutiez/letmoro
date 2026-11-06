@@ -3,7 +3,7 @@ import type { PointerEvent } from 'react';
 import type { Run, Action } from '../domain/prologue.ts';
 import { availableDirections, directions, enableNavigation, positionOn, worldGraph } from '../domain/navigation.ts';
 import { encounterMarkers, knownPlaces } from '../domain/encounters.ts';
-import { clampZoom, wheelZoom, MAX_ZOOM } from '../domain/viewport.ts';
+import { clampZoom, wheelZoom } from '../domain/viewport.ts';
 import type { OpeningContent } from '../content/narrative.ts';
 import type { en } from '../content/ui.ts';
 
@@ -95,7 +95,7 @@ export function World({ run, label, text: t, content, act, controls, choiceVisib
           return points;
         })}
         {places.map(place => {
-          const point = graph.places[place], title = t.places[place];
+          const point = graph.places[place], title = content?.campaign?.places[place]?.title ?? t.places[place];
           const x = size.width / 2 + (point.x - 44 - position.x) * zoom, y = size.height / 2 + (point.y - 64 - position.y) * zoom;
           const width = title.length * 8;
           const inCopy = choiceVisible && y > 80 && y < size.height / 2 - Math.max(80, 48 * zoom) && Math.abs(x - size.width / 2) < Math.min(280, size.width / 2 - 24) + width / 2;
@@ -106,6 +106,7 @@ export function World({ run, label, text: t, content, act, controls, choiceVisib
             {fits && <span className="place-label" style={{ fontSize: 8 / zoom }}>{title}</span>}
           </span>;
         })}
+        {run.campaign.visited.includes('cemetery') && Array.from({length:7},(_,index)=><span key={`grave:${index}`} className="grave-marker" role="img" aria-label={index===4 ? (document.documentElement.lang==='fr'?'La tombe indiquée':'The indicated grave') : (document.documentElement.lang==='fr'?'Une tombe':'A grave')} style={{left:graph.places.cemetery.x-108+(index%4)*24,top:graph.places.cemetery.y-92+Math.floor(index/4)*24,background:index===4?'#777':'#383838'}} />)}
         {markers.map(marker => {
           const point = graph.places[marker.place], character = content?.characters[marker.character];
           const slot = markers.filter(other => other.place === marker.place).findIndex(other => other.character === marker.character);
@@ -116,7 +117,6 @@ export function World({ run, label, text: t, content, act, controls, choiceVisib
       <span className="moro-clearance" aria-hidden="true" style={{ transform: `scale(${zoom})` }} /><span className="moro" style={{ transform: `scale(${zoom})` }} />
     </div>
     {controls && <>
-      <div className="map-zoom" role="group" aria-label={t.mapZoom}><button aria-label={t.zoomOut} disabled={zoom <= minimumZoom} onClick={() => setZoom(value => clampZoom(value / 1.4, minimumZoom))}>−</button><button aria-label={zoom === 1 ? t.fitMap : t.resetZoom} onClick={() => setZoom(zoom === 1 ? fitZoom : 1)}>□</button><button aria-label={t.zoomIn} disabled={zoom >= MAX_ZOOM} onClick={() => setZoom(value => clampZoom(value * 1.4, minimumZoom))}>+</button></div>
       <nav className="direction-control" aria-label={t.navigation} title={t.directionHint}>
         {directions.map(direction => <button key={direction} className={direction} disabled={!run.navigation || !available[direction]} aria-label={t.directions[direction]} aria-pressed={nav.heading !== null && nav.edge === available[direction]?.edge && nav.heading === available[direction]?.heading} onClick={() => act({ type: 'choose-direction', direction })}>{t.directions[direction][0]}</button>)}
         <span className="direction-center" aria-hidden="true" />

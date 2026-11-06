@@ -1,6 +1,6 @@
 import type { Run } from './prologue.ts';
 import type { Place } from './navigation.ts';
-export type CharacterId = 'clerk' | 'recipient' | 'host' | 'repairer';
+export type CharacterId = 'clerk' | 'recipient' | 'host' | 'repairer' | 'keeper' | 'traveler' | 'archivist';
 export interface Encounter { character: CharacterId; place: Place; event: number }
 export function encountersFor(run: Run): Encounter[] {
   return run.events.flatMap((event, index): Encounter[] => {
@@ -10,7 +10,7 @@ export function encountersFor(run: Run): Encounter[] {
       ? [{ character: 'host', place: 'square', event: index }, ...(run.events.slice(0, index).some(item => item.type === 'arrive') ? [{ character: 'recipient' as const, place: 'square' as const, event: index }] : [])]
       : [{ character: 'repairer', place: 'workshop', event: index }];
     return [];
-  });
+  }).concat((run.campaign.encounters ?? []).map(encounter => ({...encounter,character:encounter.character as CharacterId})));
 }
 export function encounterMarkers(run: Run) {
   const history = encountersFor(run), last = new Map<CharacterId, Encounter>();
@@ -24,7 +24,7 @@ export function encounterMarkers(run: Run) {
 }
 
 export function knownPlaces(run: Run): Place[] {
-  const known = new Set(encountersFor(run).map(encounter => encounter.place));
+  const known = new Set([...encountersFor(run).map(encounter => encounter.place), ...run.campaign.visited]);
   let conversation: 'square' | 'workshop' | undefined;
   let destination: 'garden' | 'gate' | undefined;
   for (const event of run.events) {

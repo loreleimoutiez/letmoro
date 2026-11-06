@@ -1,13 +1,15 @@
+import { letterRules } from './campaign.ts';
 import type { Run } from './prologue.ts';
 
 export const directions = ['north', 'east', 'south', 'west'] as const;
 export type Direction = typeof directions[number];
-export type Place = 'start' | 'approach' | 'office' | 'courtyard' | 'square' | 'workshop' | 'garden' | 'gate' | 'outskirts';
+export type Place = 'start' | 'approach' | 'office' | 'courtyard' | 'square' | 'workshop' | 'garden' | 'gate' | 'outskirts' | 'bridge' | 'relay' | 'cemetery' | 'ridge' | 'reservoir';
 export type Neighborhood = 'square' | 'workshop';
-export type EdgeId = 'approach' | 'street' | 'courtyard' | 'square' | 'workshop' | 'garden' | 'gate' | 'outskirts';
+export type EdgeId = 'crosslane' | 'approach' | 'street' | 'courtyard' | 'square' | 'workshop' | 'garden' | 'gate' | 'outskirts' | 'bridge' | 'relay' | 'cemetery' | 'ridge' | 'reservoir';
 export interface Point { x: number; y: number }
 export interface Edge { id: EdgeId; from: Place; to: Place; length: number; direction: Direction }
 export interface Navigation {
+  readonly odometer?: number;
   readonly edge: EdgeId;
   readonly offset: number;
   readonly heading: 1 | -1 | null;
@@ -23,6 +25,8 @@ export function worldGraph(run: Run) {
   const origin = run.journeyOrigin ?? (run.healthKey ? run.walkedSteps : 0);
   const retreat = Math.max(run.goal, (run.navigation?.walked.outskirts?.max ?? 0) + run.goal, run.navigation?.edge === 'outskirts' ? run.navigation.offset + run.goal : 0);
   const places: Record<Place, Point> = {
+    bridge: { x: street+workshop+cost(.5),y:-courtyard-long }, relay:{x:street+workshop+cost(.5),y:-courtyard-long-cost(.5)},
+    cemetery:{x:street-square-cost(1),y:-courtyard-long},ridge:{x:street-square-cost(1),y:-courtyard-long-cost(.5)},reservoir:{x:street+workshop+cost(1),y:-courtyard-long-cost(.5)},
     outskirts: { x: -origin - retreat, y: 0 },
     approach: { x: -origin, y: 0 }, start: { x: 0, y: 0 }, office: { x: street, y: 0 },
     courtyard: { x: street, y: -courtyard }, square: { x: street - square, y: -courtyard },
@@ -35,6 +39,12 @@ export function worldGraph(run: Run) {
     { id: 'workshop', from: 'courtyard', to: 'workshop', length: workshop, direction: 'east' },
     { id: 'garden', from: 'square', to: 'garden', length: long, direction: 'north' },
     { id: 'gate', from: 'workshop', to: 'gate', length: long, direction: 'north' },
+    {id:'crosslane',from:'garden',to:'gate',length:square+workshop,direction:'east'},
+    {id:'bridge',from:'gate',to:'bridge',length:cost(.5),direction:'east'},
+    {id:'relay',from:'bridge',to:'relay',length:cost(.5),direction:'north'},
+    {id:'cemetery',from:'garden',to:'cemetery',length:cost(1),direction:'west'},
+    {id:'ridge',from:'cemetery',to:'ridge',length:cost(.5),direction:'north'},
+    {id:'reservoir',from:'relay',to:'reservoir',length:cost(.5),direction:'east'},
     ...(run.navigation?.openRetreat ? [{ id: 'outskirts' as const, from: origin > 0 ? 'approach' as const : 'start' as const, to: 'outskirts' as const, length: retreat, direction: 'west' as const }] : []),
     ...(origin > 0 ? [{ id: 'approach' as const, from: 'approach' as const, to: 'start' as const, length: origin, direction: 'east' as const }] : []),
   ];
@@ -91,7 +101,7 @@ export function advanceNavigation(run: Run): Run {
     const offset = nav.offset + nav.heading * amount, previous = nav.walked[edge.id];
     if (!Number.isSafeInteger(offset)) throw new Error('Travel distance overflow');
     const reached = !unlimited && (nav.heading === 1 ? offset === edge.length : offset === 0);
-    next = { ...next, reserve: next.reserve - amount, navigation: { ...nav, offset, heading: reached ? null : nav.heading,
+    next = { ...next, reserve: next.reserve - amount, navigation: { ...nav, odometer:(nav.odometer ?? 0)+amount, offset, heading: reached ? null : nav.heading,
       walked: amount > 0 ? { ...nav.walked, [edge.id]: { min: Math.min(previous?.min ?? nav.offset, offset), max: Math.max(previous?.max ?? nav.offset, offset) } } : nav.walked } };
     if (!reached || !nav.openRetreat) break;
     const node = currentNode(next);
@@ -114,6 +124,7 @@ export function atPlace(run: Run, place: Place): boolean {
   return run.navigation ? currentNode(run) === place : true;
 }
 export function questPlace(run: Run): Place | undefined {
+  if (run.stage === 'campaign') { const focus=run.campaign.focus; const rule=letterRules.find(rule=>rule.id===focus?.id); return rule ? focus?.returning ? rule.from : rule.to : undefined; }
   if (['street', 'job', 'rest'].includes(run.stage)) return 'office';
   if (['delivery', 'handover', 'settlement', 'complete', 'failed'].includes(run.stage)) return 'courtyard';
   if (run.stage === 'square' || run.stage === 'workshop') return run.stage;

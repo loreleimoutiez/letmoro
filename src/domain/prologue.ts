@@ -1,14 +1,18 @@
+import { initialCampaign, campaignComplete } from './campaign.ts';
+import type { Campaign, CampaignAction } from './campaign.ts';
+import { reduceCampaign } from './campaign-reducer.ts';
 import { advanceNavigation, atPlace, authorizeRoute, enableNavigation, questReady, selectDirection } from './navigation.ts';
 import type { Direction, Navigation, Neighborhood } from './navigation.ts';
-import { beginLifeCalendar, initialLives, recordLifeDay } from './lives.ts';
+import { beginLifeCalendar, initialLives, recordLifeDay, scheduleRest } from './lives.ts';
 import type { LifeState, LifeDay } from './lives.ts';
 import { healthChanges } from './health.ts';
 import { parseProfile } from './profile.ts';
 import type { Profile } from './profile.ts';
-export const CONTENT_VERSION = 'prologue-3';
-export const stages = ['street', 'job', 'delivery', 'handover', 'settlement', 'complete', 'rest', 'failed', 'neighborhood', 'square', 'workshop', 'errand', 'errand-return'] as const;
+export const CONTENT_VERSION = 'prologue-4';
+export const stages = ['street', 'job', 'delivery', 'handover', 'settlement', 'complete', 'rest', 'failed', 'neighborhood', 'square', 'workshop', 'errand', 'errand-return', 'campaign'] as const;
 export type Stage = typeof stages[number];
-type ActionData =
+type ActionData = CampaignAction
+  | { type: 'set-rest-days'; weekdays: number[]; requestedAt: string }
   | { type: 'start-journey' }
   | { type: 'begin-life-accounting'; startedAt: string; zone: string }
   | { type: 'life-day'; day: LifeDay }
@@ -23,6 +27,7 @@ type ActionData =
   | { type: 'cross' | 'accept' | 'rest' | 'arrive' | 'deliver' | 'settle' | 'reconsider' | 'open-letter' | 'destroy-letter' | 'report-loss' };
 export type Action = ActionData & { readonly at?: string };
 export interface Run {
+  readonly campaign: Campaign;
   readonly life: LifeState;
   readonly navigation?: Navigation;
   readonly destination?: Neighborhood;
@@ -47,7 +52,7 @@ export interface Run {
 }
 export function createRun(goal: number, profile?: Profile): Run {
   if (!Number.isSafeInteger(goal) || goal < 1 || goal > 100000) throw new Error('Invalid daily goal');
-  return { ...(profile ? { profile: parseProfile(profile) } : {}), goal, life: initialLives(), replies: [], completedErrands: [], letterOpened: false, letterDestroyed: false, discussed: [], stage: 'street', reserve: 0, simulatedSteps: 0, walkedSteps: 0, healthLedger: {}, sous: 0, delivered: 0, events: [] };
+  return { ...(profile ? { profile: parseProfile(profile) } : {}), goal, campaign: initialCampaign(), life: initialLives(), replies: [], completedErrands: [], letterOpened: false, letterDestroyed: false, discussed: [], stage: 'street', reserve: 0, simulatedSteps: 0, walkedSteps: 0, healthLedger: {}, sous: 0, delivered: 0, events: [] };
 }
 // Trial ratios only; production travel balance and goal changes are undecided.
 export function travelCost(run: Run): number {
@@ -57,9 +62,14 @@ export function apply(run: Run, action: Action): Run {
   if (run.life.lives === 0 && !['health-sync', 'life-day', 'begin-life-accounting'].includes(action.type)) throw new Error('Run has ended');
   let changes: Partial<Run>;
   switch (action.type) {
+    case 'enter-campaign': case 'visit-campaign-place': case 'chart-route': case 'take-letter': case 'decline-letter': case 'focus-letter': case 'open-item': case 'destroy-item': case 'deliver-item': case 'return-item': case 'report-item': case 'befriend': case 'dialogue': case 'capture-thought': case 'dismiss-thought':
+      changes = reduceCampaign(run, action); break;
     case 'begin-life-accounting':
       if (run.life.calendar) throw new Error('Life accounting already initialized');
       changes = { life: beginLifeCalendar(action.startedAt, action.zone) };
+      break;
+    case 'set-rest-days':
+      changes = { life: scheduleRest(run.life, action.weekdays, action.requestedAt, run.profile?.mode ?? 'free') };
       break;
     case 'life-day': {
       const life = recordLifeDay(run.life, action.day, run.goal, run.profile?.mode ?? 'free');
@@ -169,7 +179,7 @@ export function apply(run: Run, action: Action): Run {
       break;
     case 'deliver':
       if (run.stage !== 'handover' || !atPlace(run, 'courtyard') || run.letterDestroyed) throw new Error('No letter to deliver');
-      changes = { stage: 'settlement', delivered: 1 };
+      changes = { stage: 'settlement', delivered: run.delivered + 1 };
       break;
     case 'settle':
       if (run.stage !== 'settlement' || !atPlace(run, 'courtyard')) throw new Error('No wages pending');
@@ -177,14 +187,25 @@ export function apply(run: Run, action: Action): Run {
       break;
     default: throw new Error('Unknown action');
   }
-  const next = { ...run, ...changes, events: [...run.events, action] };
+  let next = { ...run, ...changes, events: [...run.events, action] };
+  if (changes.campaign) next = {...next,campaign:{...next.campaign,
+    friends:next.campaign.friends.filter(person=>(next.campaign.trust[person]??0)>=0),
+    completed:campaignComplete(next),
+  }};
   return next.life.lives > 0 && ['steps', 'health-sync', 'choose-direction', 'choose-place', 'accept', 'reply'].includes(action.type) ? advanceNavigation(next) : next;
 }
 export function isAction(value: unknown): value is Action {
   if (!value || typeof value !== 'object') return false;
   const item = value as Record<string, unknown>;
   if (item.at !== undefined && (typeof item.at !== 'string' || !/^\d{4}-\d{2}-\d{2}T/.test(item.at) || !Number.isFinite(Date.parse(item.at)))) return false;
+  if (['take-letter','decline-letter','open-item','destroy-item','deliver-item','return-item','capture-thought'].includes(String(item.type))) return typeof item.id === 'string';
+  if (item.type === 'report-item') return typeof item.id === 'string' && typeof item.honest === 'boolean';
+  if (item.type === 'focus-letter') return typeof item.id === 'string' && typeof item.returning === 'boolean';
+  if (item.type === 'dialogue') return typeof item.character === 'string' && ['listen','press'].includes(String(item.reply));
+  if (item.type === 'befriend') return typeof item.character === 'string';
+  if (item.type === 'chart-route') return typeof item.place === 'string';
   if (item.type === 'begin-life-accounting') return typeof item.startedAt === 'string' && typeof item.zone === 'string';
+  if (item.type === 'set-rest-days') return Array.isArray(item.weekdays) && item.weekdays.every(day => typeof day === 'number') && typeof item.requestedAt === 'string';
   if (item.type === 'life-day') return Boolean(item.day && typeof item.day === 'object');
   if (item.type === 'choose-direction') return ['north', 'east', 'south', 'west'].includes(String(item.direction));
   if (item.type === 'choose-place' || item.type === 'meet-place') return ['square', 'workshop'].includes(String(item.place));
@@ -193,5 +214,5 @@ export function isAction(value: unknown): value is Action {
   if (item.type === 'ask') return ['work', 'pay', 'directions'].includes(String(item.topic));
   if (item.type === 'health-sync') return typeof item.dayKey === 'string' && typeof item.total === 'number';
   return item.type === 'steps' ? typeof item.amount === 'number' && (item.source === undefined || item.source === 'health') :
-    ['extend-return-path', 'resume-help', 'enable-navigation', 'continue-neighborhood', 'explore-neighborhood', 'finish-conversation', 'return-to-offer', 'inspect', 'finish-errand', 'start-journey', 'cross', 'accept', 'rest', 'arrive', 'deliver', 'settle', 'reconsider', 'open-letter', 'destroy-letter', 'report-loss'].includes(String(item.type));
+    ['enter-campaign', 'visit-campaign-place', 'dismiss-thought', 'extend-return-path', 'resume-help', 'enable-navigation', 'continue-neighborhood', 'explore-neighborhood', 'finish-conversation', 'return-to-offer', 'inspect', 'finish-errand', 'start-journey', 'cross', 'accept', 'rest', 'arrive', 'deliver', 'settle', 'reconsider', 'open-letter', 'destroy-letter', 'report-loss'].includes(String(item.type));
 }
