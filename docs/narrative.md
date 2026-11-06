@@ -39,7 +39,7 @@ Store immutable player events alongside versioned story content. Journal entries
 
 ## Still to author
 
-Origins consistent with the shared motivation; trait catalog and incompatibilities; geography; cast; central mystery; complete act outline; each romance; political routes; private-life projects; endings and reboot variations. None of these is complete simply because the engine exists.
+Complete origins consistent with the shared motivation; trait effects; geography/cast beyond the opening; central mystery; complete act outline; each romance; political routes; private-life projects; endings and reboot variations. None of these is complete simply because the engine exists.
 
 
 ## Campaign direction — 2026-11-06
@@ -53,18 +53,14 @@ The first work encounter must clearly offer employment, with dialogue choices be
 Full plots, private character biographies, letter bodies, hidden conditions and endings must not be tracked in this repository. Separate private storage is pending selection. Public documentation may describe mechanics and authoring requirements without spoilers. No full campaign manuscript is tracked here.
 
 
-The approved opening neighborhood and cast live in the ignored local opening pack and authoring tree. The post office is the sole available employer in the territory; other inhabitants must not offer alternative paid work. Initial optional questions establish remembered facts about work, pay and directions. The runtime slice implements letter condition and immediate delivery outcomes, not a complete relationship system or subsequent campaign.
+## Implemented opening — 0.2.0
 
+The approved neighborhood and cast are authored in the ignored local pack. Postal delivery is the only available employment. The first job has explicit questions/refusal/acceptance and a short initial delivery; two optional unpaid errands remain. Twenty further letters connect recurring inhabitants and new places, with a complete personal-request route when employment is refused. The round has a closing scene; this is not a completed first major arc.
 
-## Playable neighborhood slice — 2026-11-06
+Each campaign item can be declined, carried sealed, opened, destroyed, returned or delivered. Optional reports make the return a separate decision. Personal thank-you gifts are paid once upon reporting. Recipient reactions require a witnessed delivery; an unattended destination has no imaginary witness to inspect its seal. Honest reports, false reports and later contradictory accounts have different outcomes. Trust and explicit friendships are a small foundation for future relational arcs; broken trust can end friendship without revoking earned badges.
 
-The ignored opening pack now contains two neighborhood conversations following either the first delivery outcome or refusal. Each offers listening and optional unpaid help, with explicit outward/return effort and no real-time deadline. Current consequences include recorded knowledge, a promise, observations, completion, and a later recipient encounter that recalls only witnessed/reported letter outcomes. Further social arcs, mystery development, romances and political/private-life campaign resolutions remain to author.
+Seven short character dialogues provide deliberate listening/direct-question choices with context-specific trust effects. Details replace initial choices. Thirty travel thoughts cover hope, ordinary uncertainty, society and known relationships without revealing an undiscovered plot or inventing a detailed traumatic past. Only one pending thought is shown until dismissed; no queued catch-up. Unique thought texts remain in the archive. Repeats are spaced farther apart after suitable unseen thoughts are exhausted.
 
-The vertical private tree marks these branches playable and keeps all five campaign arcs planned. Asking for details replaces rather than adds to initial choices. Encounter history supplies map memory; it is not hidden live world state. Basic respect and three first-letter-action badges are implemented, with future skill/badge entries absent until earned/authored. Current dialogue content is still an authoring draft rather than a finished first arc.
+Twelve additional campaign badge conditions supplement the four original badges. Only Basic respect is implemented in the skill tree. The broader political, relational, professional and personal skill directions, five major arcs, substantial romances, private-life projects and personalized ending remain to author/implement. No automatic romance or political commitment is introduced.
 
-
-## Wider skill agency and return-road direction — 2026-11-06
-
-Skills are not limited to employment. The optional political arc may develop toward rebellion, demonstrations, calls for a general strike and attempts to change the ruling system. Its prerequisites and consequences must involve inhabitants, alliances and world state, not a skill that automatically guarantees support or success. Preserve equally substantive relational/personal/professional routes and explicit major commitments. The private `skills-tree.txt` records planned directions; only Basic respect is implemented and visible.
-
-The road past the original arrival now supports continuing travel; additional/complementary narrative there is still to author. Visiting the office again can reopen an unaccepted job offer without deleting a promised unpaid errand. No additional employment is introduced. Journal timestamps concern actual recorded actions, not invented dates for past content.
+The private vertical tree records actual playable branches separately from planned arcs. It is ignored alongside bodies and character text. Public documentation describes mechanics without reproducing plot/letter text. See narrative-authoring and gameplay-status. Continuing west of arrival is supported geometrically; a substantial authored reverse-road arc remains future work.

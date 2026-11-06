@@ -1,10 +1,10 @@
 # Step-funded neighborhood navigation
 
-Status: implemented in web source; no new Android package or physical gesture validation in this session. The opening graph and two optional out-and-back errands are playable with the ignored local content pack. This is not a complete first arc or year-long campaign.
+Status: implemented in shared web/Android source; native compilation and automated browser gestures verified, physical gestures still require phone checks. The opening graph and two optional out-and-back errands are playable with the ignored local content pack. This is not a complete first arc or year-long campaign.
 
 ## State and movement
 
-Story stage and physical position are separate. `Navigation` stores an edge, integer offset, selected heading, authorized edges and traversed intervals. The small cardinal control selects only directions available at the current node or on the current edge. Unavailable directions are disabled. Choosing a direction uses already earned reserve if present; it never creates step credit. New real or fictional credits then move Moro at one world pixel per accepted step at normal zoom. Fictional credits remain separate from health totals.
+Story stage and physical position are separate. `Navigation` stores an edge, integer offset, selected heading, authorized edges and traversed intervals. The small cardinal control selects only directions available at the current node or on the current edge. Unavailable directions are disabled. Choosing a direction uses already earned reserve if present; it never creates step credit. New real step credits then move Moro at one world pixel per accepted step at normal zoom. Synthetic credits remain available only to automated fixtures and legacy replay, with no simulator UI.
 
 Travel stops at authored edge endpoints, even with surplus credit. The arrival and earlier-approach nodes are now transit points: an explicitly upgraded return route continues through them and extends west as steps arrive. It does not skip dialogue or automatically select another branch. Turning around mid-edge preserves all discovered intervals and costs the same number of steps per pixel. A physical return to the encounter location is required before performing that scene's actions. Steps arriving while a decision waits remain in the capped reserve.
 
@@ -12,11 +12,11 @@ The initial office quest remains 2% of the daily goal, followed by a 10% northbo
 
 ## Replay and compatibility
 
-New saves use content generation `prologue-3`; decoding also accepts `prologue-1` and `prologue-2`. Existing events replay with their original linear credit rules until a single `enable-navigation` event materializes the already visible progress and charges it once. Existing delivery/letter outcomes remain unchanged. The primary street stays horizontal; the courtyard extends north. This is a geometry update for the prototype, not preservation of old screen coordinates.
+New saves use content generation `prologue-4`; decoding also accepts `prologue-1`, `prologue-2` and `prologue-3`. Existing events replay with their original linear credit rules until a single `enable-navigation` event materializes the already visible progress and charges it once. Existing delivery/letter outcomes remain unchanged. The primary street stays horizontal; the courtyard extends north. This is a geometry update for the prototype, not preservation of old screen coordinates.
 
-Imported activity before the quest origin forms an earlier known approach, not completed first-quest travel. Native aggregate/high-water reconciliation remains unchanged. Direction, destination, encounter, dialogue and errand events are saved through the same validated replay stream. Cloud decoding normalizes older saves before comparing current content fingerprints. Live cloud setup remains pending as documented separately.
+Imported activity before the quest origin forms an earlier known approach, not completed first-quest travel. Native aggregate/high-water reconciliation remains unchanged. Direction, destination, encounter, dialogue and errand events are saved through the same validated replay stream. Cloud decoding normalizes older saves before comparing current content fingerprints. The hosted save migration is applied; real-account cross-device verification remains pending.
 
-Do not infer another quest's discovery from a previous inspection: known locations are derived from the actual inspection/encounter event sequence. The current small graph has fixed prototype topology and a single-letter lifecycle; future campaign geography/content loading, event compaction and longer-term save scalability remain work before a year-long campaign.
+Do not infer another quest's discovery from a previous inspection: known locations are derived from the actual inspection/encounter event sequence. The campaign uses a fixed opening graph with a discovered cross-connection and up to three campaign letters. Further geography, content migrations, event compaction and longer-term save scalability remain work before a year-long campaign.
 
 ## Discovery and representation
 
@@ -26,9 +26,9 @@ Encountered buildings/places use hollow squares, with short localized labels abo
 
 ## Zoom and controls
 
-Pinch works from the opening, without the old post-office-distance gate. Capture the pinch ratio before scheduling a React state update; reading the mutable previous-distance reference inside the updater caused incorrect or reversed zoom. Wheel/trackpad, keyboard +/- with map focus, and visible +/- buttons also zoom.
+Pinch works from the opening, without the old post-office-distance gate. Capture the pinch ratio before scheduling a React state update; reading the mutable previous-distance reference inside the updater caused incorrect or reversed zoom. Wheel/trackpad and keyboard +/- with map focus also zoom. There are no visible zoom controls.
 
-A small square button fits the known route extents or resets zoom; no percentage is visible. The minimum zoom adapts to discovered extents so long walked routes can be viewed. Moro remains centered and scales proportionally; dragging never moves the camera or protagonist. Labels are culled instead of overlapping. Cardinal controls have small visible letters with 44 px touch targets; landscape reserves side space for controls. Reduced-motion preferences still disable Moro's pulse.
+No fit/reset button or percentage is visible; gestures and the wheel control magnification. The minimum zoom adapts to discovered extents so long walked routes can be viewed. Moro remains centered and scales proportionally; dragging never moves the camera or protagonist. Labels are culled instead of overlapping. Cardinal controls have small visible letters with 44 px touch targets; landscape reserves side space for controls. Reduced-motion preferences still disable Moro's pulse.
 
 ## Progression and narrative
 
@@ -48,3 +48,7 @@ Behavioral tests cover reversal, one-step/one-pixel spending, reserve stops, dis
 An unaccepted employment conversation reappears at the office even while another exploration destination is selected. A promised errand keeps its inspected state and can be resumed after employment/refusal. No second paid-job acceptance is granted to an already employed run.
 
 New user actions carry UTC timestamps; the unnumbered journal displays local date/time and reverses recorded order. Legacy entries remain undated. Life-accounting events use the observation time and separately name the day concerned. Historical corrections never rewrite story choices or invent dates.
+
+## Campaign routes and objectives
+
+Accepted letters authorize a connected route without rendering its unknown places. At an actual node the player may learn an adjacent direction, then choose it in the compass; no click pays travel. A cross-connection allows real alternative loops. An explicit letter focus points either to its delivery or optional sender report. Resolving a different carried item does not clear that focus. Shortest authorized route distance accounts for returns and detours. Visited campaign nodes and actual encounter history are persisted separately from mere route authorization.
