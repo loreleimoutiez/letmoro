@@ -131,3 +131,10 @@ Keep full narrative secrets out of this repository; a private content repository
 The user approved the proposed opening neighborhood and inhabitants, with one overriding correction: delivery work at the post office is the only available employment in the territory. Earlier proposed paid alternatives with inhabitants are superseded. The user authorized beginning implementation. Keep refusal viable through exploration and relationships without inventing alternative jobs.
 
 An ignored local opening pack and vertical authoring tree now exist under `src/content/private/`; no private remote was created. The runtime supports an absent pack with generic draft content and disables opening unread letters whose text is unavailable. Full private content is still excluded from Git. The first playable slice is documented in product and handoff; route traversal and long-term consequences remain pending.
+
+
+## Test toolbar, cloud persistence and private drafts — 2026-11-06
+
+Latest user direction: keep the story tree locally in this repository under Git ignore for now; separate storage is deferred. Do not build an APK yet. Add an accessible bottom test toolbar at the usual coin/step positions, allowing coin edits, fictional-step additions, game reset and intro replay; remove reset/replay from Settings. This supersedes earlier removal of all player-facing test controls for the current internal testing phase. Tools are enabled in the development preview or explicitly flagged internal builds, not normal builds.
+
+The user requests database persistence of progression and player data. An opt-in Supabase snapshot adapter, owner-only policies, revision-checked RPC and reset tombstones are implemented. Persist current game/profile/history, daily step aggregate/checkpoint events and selected language. Passwords/tokens and device permissions do not belong in game snapshots. Live migration/deployment has not occurred: no administrative connection is available. Do not claim current accounts are backed up remotely until activation and real-account verification. No APK was built.

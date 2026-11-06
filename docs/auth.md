@@ -26,9 +26,9 @@ Google sign-in requests identity access through Supabase, not Gmail messages or 
 
 Android sessions and PKCE verifiers use AES-GCM with an Android Keystore key and per-entry authenticated data. Encrypted values reside in private app preferences; backup/transfer and native logging are disabled. There is no plaintext native token fallback. Browser preview uses ephemeral session storage. Password fields clear after requests and are never written to a game save.
 
-Game saves are keyed separately per authenticated user on the device. An older unscoped save is claimed once by the first authenticated user. Claim ownership precedes copying so a failed write cannot expose it to another account. Invalid saves remain for that owner until explicit reset. Sign-out hides the game and stops live observation; it does not delete game saves. Temporary reset erases only the signed-in account's local game, not the Supabase account.
+Game saves are keyed separately per authenticated user on the device. An older unscoped save is claimed once by the first authenticated user. Claim ownership precedes copying so a failed write cannot expose it to another account. Invalid saves remain for that owner until explicit reset. Sign-out hides the game and stops live observation; it does not delete game saves. Temporary reset erases the signed-in account's game, not the Supabase account; when cloud sync is enabled it also saves a reset tombstone.
 
-No cloud game save, health upload, remote profile table or account-deletion endpoint exists. Before synchronization, define data ownership and conflict handling, then use server-enforced row-level policies. Never add a service-role key to work around client authorization.
+An opt-in cloud-save adapter and owner-isolated migration now exist; see [cloud saves](cloud-saves.md) for configuration, uploaded fields and conflict handling. The migration has not been applied to the actual service, so the default remains local-only. No account-deletion endpoint or production archive/rescue service exists. Never add a service-role key to work around client authorization.
 
 ## Validation
 

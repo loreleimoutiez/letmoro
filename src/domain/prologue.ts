@@ -6,6 +6,7 @@ export const stages = ['street', 'job', 'delivery', 'handover', 'settlement', 'c
 export type Stage = typeof stages[number];
 export type Action =
   | { type: 'start-journey' }
+  | { type: 'test-coins'; amount: number }
   | { type: 'ask'; topic: 'work' | 'pay' | 'directions' }
   | { type: 'health-sync'; dayKey: string; total: number }
   | { type: 'steps'; amount: number; source?: 'health' }
@@ -38,6 +39,10 @@ export function travelCost(run: Run): number {
 export function apply(run: Run, action: Action): Run {
   let changes: Partial<Run>;
   switch (action.type) {
+    case 'test-coins':
+      if (!Number.isSafeInteger(action.amount) || action.amount < 0 || action.amount > 1000000000) throw new Error('Invalid test balance');
+      changes = { sous: action.amount };
+      break;
     case 'start-journey':
       if (run.journeyOrigin !== undefined || !run.healthKey) throw new Error('Journey baseline unavailable');
       changes = { journeyOrigin: Math.max(0, run.walkedSteps - run.reserve) };
@@ -85,7 +90,7 @@ export function apply(run: Run, action: Action): Run {
       break;
     case 'settle':
       if (run.stage !== 'settlement') throw new Error('No wages pending');
-      changes = { stage: 'complete', sous: 8 - 2 - 2 };
+      changes = { stage: 'complete', sous: run.sous + 8 - 2 - 2 };
       break;
     default: throw new Error('Unknown action');
   }
@@ -94,6 +99,7 @@ export function apply(run: Run, action: Action): Run {
 export function isAction(value: unknown): value is Action {
   if (!value || typeof value !== 'object') return false;
   const item = value as Record<string, unknown>;
+  if (item.type === 'test-coins') return typeof item.amount === 'number';
   if (item.type === 'ask') return ['work', 'pay', 'directions'].includes(String(item.topic));
   if (item.type === 'health-sync') return typeof item.dayKey === 'string' && typeof item.total === 'number';
   return item.type === 'steps' ? typeof item.amount === 'number' && (item.source === undefined || item.source === 'health') :

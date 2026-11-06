@@ -2,6 +2,8 @@
 
 ## Current checkpoint
 
+Latest source adds an internal test toolbar and an opt-in cloud-save client/migration. Live database setup is pending. No new APK is authorized; the 0.1.3 Android checkpoint below predates these source changes. See the latest checkpoint at the end of this document.
+
 Android internal build 0.1.3. Pixel presentation, account-first entry, EN/FR settings, profile setup, walking introduction, first quest/delivery, Health Connect plus foreground live sensor, validated account-local saves and secret discoveries are implemented. This is not a public campaign release. No publication or license decision is authorized.
 
 Passed: TypeScript, 24 behavioral tests, 3 native reconciliation tests, browser tests with synthetic sensors/auth HTTP interception, production build, Android compilation/lint and npm audit. Device installation and basic Health Connect display are user-confirmed. Live physical latency and real account/email/Google round trips remain to verify.
@@ -53,3 +55,8 @@ The intended first public campaign remains complete and substantial across all c
 ## Opening implementation checkpoint — 2026-11-06
 
 Source now includes above-Moro arrival actions, optional remembered employment questions, explicit work acceptance, offer reconsideration, first-letter opening/destruction and immediate delivery outcomes, character gallery and hollow office marker. Private text and a vertical tree are local and ignored. Sole available employment is postal delivery. Next: design and implement the route graph and step-funded reversal/returns, expand refusal/social encounters without alternative jobs, and author contextual consequences and longer journeys. The five-arc/year target remains unimplemented. Select durable private storage and backup for the manuscript; Git does not back up ignored files.
+
+
+## Latest checkpoint — test access and persistence
+
+No APK build now, per user. Internal toolbar implemented in source; reset/replay removed from Settings. Cloud snapshot schema, RLS, compare-and-swap RPC and opt-in client are implemented and verified with isolated SQL/synthetic browser tests. Apply the migration to the actual Supabase project and verify two real accounts before enabling/claiming live backup. This session has no administrative database connection. Current ordinary configuration remains local-only. Further narrative/travel work remains as above; do not let persistence status imply campaign completion.

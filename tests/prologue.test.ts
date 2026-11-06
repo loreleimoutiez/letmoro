@@ -129,3 +129,15 @@ test('destruction before or after reading prevents delivery and payment without 
   }
   for (const type of ['open-letter', 'destroy-letter', 'report-loss', 'reconsider'] as const) assert.throws(() => apply(createRun(100), { type }));
 });
+
+test('test controls persist fictional credits separately from health and validate the editable balance', () => {
+  let run = apply(createRun(100), { type: 'test-coins', amount: 123 });
+  run = apply(run, { type: 'steps', amount: 100 });
+  assert.equal(run.simulatedSteps, 100);
+  assert.equal(run.walkedSteps, 0);
+  assert.deepEqual(run.healthLedger, {});
+  for (const amount of [-1, 0.5, NaN, Infinity, 1000000001]) assert.throws(() => apply(run, { type: 'test-coins', amount }));
+  run = apply(apply(apply(apply(apply(run, { type: 'cross' }), { type: 'accept' }), { type: 'arrive' }), { type: 'deliver' }), { type: 'settle' });
+  assert.equal(run.sous, 127);
+  assert.deepEqual(decodeSave(encodeSave(run)), run);
+});

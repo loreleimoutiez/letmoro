@@ -15,9 +15,9 @@ Implemented:
 - Health Connect daily aggregate import plus optional foreground Android step-detector events. Counter-sensor fallback may be slower. Foreground synchronization fallback runs every 3 seconds; this is not background tracking.
 - Quest progress as `current / required steps`. Existing daily activity may reveal a longer starting path, but the first quest starts only after the introduction and initial step connection. One accepted step equals one world CSS pixel at normal zoom; important choices still wait.
 - Local saves isolated by account, validated event replay, persistent step deduplication, hidden locked badges, a first-job pixel medal and an underlined-square app mark.
-- Temporary red **Reset game** control in Settings, with confirmation, clearing only the current account's local game. It is a testing utility, not production reboot rules.
+- Temporary test toolbar at the bottom of the development preview: edit coins, add fictional steps, replay introduction and confirm a game reset. These controls are removed from Settings. Fictional steps stay separate from real health totals. Normal builds omit the toolbar; explicit internal builds can enable `VITE_INTERNAL_TOOLS=true`.
 
-Full campaign, multidirectional travel and returns, return encounters, long-term letter consequences, trait/mode mechanics, life penalties, account-wide rescue, cloud save synchronization, heart-rate feedback and time-of-day presentation remain ahead. No public release, push or project license has been selected.
+Full campaign, multidirectional travel and returns, return encounters, long-term letter consequences, trait/mode mechanics, life penalties, account-wide rescue, live cloud-save deployment, heart-rate feedback and time-of-day presentation remain ahead. No public release, push or project license has been selected.
 
 New source features include arrival choices above Moro, explicit paid-work acceptance, optional job questions, first-letter opening/destruction with confirmation and persisted outcomes, and a character gallery. Postal delivery is the territory's only available employment. New narrative text and the authoring tree live in an ignored local pack; a checkout without it uses generic opening content and cannot open unread letters. See [private authoring](docs/narrative-authoring.md). No new Android APK is claimed for these changes.
 
@@ -48,9 +48,9 @@ cd android
 
 ## Data and validation
 
-Daily step checkpoints and game progress stay on the device, separated by authenticated account. The first authenticated account can claim an older local save once. Authentication tokens and PKCE verifiers use Android Keystore-backed AES-GCM encryption; passwords are never persisted. Browser preview sessions use session storage. Android backup/transfer and native logging are disabled. No game or health data is uploaded to Supabase; only authentication is connected.
+Daily step checkpoints and game progress are saved locally by authenticated account. An opt-in cloud adapter and owner-isolated database migration are implemented but not deployed; see [cloud saves](docs/cloud-saves.md). The current default remains local-only. The first authenticated account can claim an older local save once. Authentication tokens and PKCE verifiers use Android Keystore-backed AES-GCM encryption; passwords are never persisted. Browser preview sessions use session storage. Android backup/transfer and native logging are disabled. With cloud saves disabled, only authentication contacts Supabase. Enabling cloud saves also uploads persisted gameplay and daily step/checkpoint events.
 
-Current source passes TypeScript, 27 JavaScript/TypeScript behavioral tests and the production web build. The previous Android build passed 3 Kotlin unit tests and Android compilation/lint; these native checks were not repeated for the new narrative UI. App lint retains non-blocking template/dependency/KTX suggestions. npm audit reported zero known advisories. Browser tests with synthetic native events and intercepted auth requests cover account gating, signup/sign-in/sign-out/recovery, Google PKCE launch/callback, quest baseline, live updates and local reset. These tests do not create real accounts or send emails. The user has confirmed installation and a displayed Health Connect daily count on S23; new live-sensor timing and actual auth email/OAuth flows still need device tests.
+Current source passes TypeScript, 30 JavaScript/TypeScript behavioral tests and the production web build. The previous Android build passed 3 Kotlin unit tests and Android compilation/lint; these native checks were not repeated for the new narrative UI. App lint retains non-blocking template/dependency/KTX suggestions. npm audit reported zero known advisories. Browser tests with synthetic native events and intercepted auth requests cover account gating, signup/sign-in/sign-out/recovery, Google PKCE launch/callback, quest baseline, live updates and local reset. These tests do not create real accounts or send emails. The user has confirmed installation and a displayed Health Connect daily count on S23; new live-sensor timing and actual auth email/OAuth flows still need device tests.
 
 ## Structure
 
@@ -66,6 +66,6 @@ Press Start 2P is bundled locally with its [SIL Open Font License](public/fonts/
 
 ## Documentation
 
-[Product](docs/product.md) · [Narrative](docs/narrative.md) · [Architecture](docs/decisions/0001-architecture.md) · [Decisions](docs/decision-ledger.md) · [Roadmap](docs/roadmap.md) · [Health](docs/health-connect.md) · [Accounts](docs/auth.md) · [Lives and reboot](docs/lives-and-reboot.md) · [Handoff](docs/handoff.md)
+[Product](docs/product.md) · [Narrative](docs/narrative.md) · [Architecture](docs/decisions/0001-architecture.md) · [Decisions](docs/decision-ledger.md) · [Roadmap](docs/roadmap.md) · [Health](docs/health-connect.md) · [Accounts](docs/auth.md) · [Cloud saves](docs/cloud-saves.md) · [Lives and reboot](docs/lives-and-reboot.md) · [Handoff](docs/handoff.md)
 
 The supplied future GitHub repository is reserved; no remote or publication is configured. No open-source license has been chosen.

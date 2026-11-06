@@ -1,5 +1,7 @@
 export type Locale = 'en' | 'fr';
 export const en = {
+  cloudStates: { disabled: 'Cloud saves are not configured. Progress stays on this device.', loading: 'Loading cloud save…', pending: 'Saving…', saved: 'Saved to your account.', offline: 'Cloud save unavailable. Local progress is kept.', conflict: 'Two save versions need your choice.' }, cloudConflict: 'The device and account have different progress. Choose which version to continue. Using the account version keeps a local backup of this device’s progress.', keepDevice: 'Keep this device’s version', keepCloud: 'Use the account version', retryCloud: 'Retry cloud save',
+  testTools: 'Test', testCoins: 'Set coins', testSteps: 'Fictional steps to add', fictionalSteps: 'test', applyValue: 'Set', addSteps: 'Add',
   menu: 'Menu', close: 'Close menu', back: 'Back', story: 'Story', collection: 'Collection', letters: 'Letters', characters: 'Characters', badges: 'Badges', coins: 'coins', journal: 'Journal', steps: 'steps', settings: 'Settings', language: 'Language',
   begin: 'Begin', goal: 'Daily step goal', difficulty: 'Difficulty', free: 'Free', standard: 'Standard', hard: 'Hard', positive: '3 positive traits', negative: '3 negative traits',
   modeDescriptions: {
@@ -25,6 +27,8 @@ export const en = {
   traits: { attentive: 'Attentive', patient: 'Patient', curious: 'Curious', resourceful: 'Resourceful', kind: 'Kind', brave: 'Brave', impulsive: 'Impulsive', stubborn: 'Stubborn', distracted: 'Distracted', distrustful: 'Distrustful', timid: 'Timid', proud: 'Proud' },
 };
 export const fr: typeof en = {
+  cloudStates: { disabled: 'La sauvegarde en ligne n’est pas configurée. La progression reste sur cet appareil.', loading: 'Chargement de la sauvegarde…', pending: 'Sauvegarde…', saved: 'Sauvegardé sur ton compte.', offline: 'Sauvegarde en ligne indisponible. La progression locale est conservée.', conflict: 'Deux versions de la partie nécessitent ton choix.' }, cloudConflict: 'L’appareil et le compte ont des progressions différentes. Choisis la version à continuer. Choisir celle du compte conserve une copie locale de la progression de cet appareil.', keepDevice: 'Garder la version de cet appareil', keepCloud: 'Utiliser la version du compte', retryCloud: 'Réessayer la sauvegarde en ligne',
+  testTools: 'Test', testCoins: 'Définir les sous', testSteps: 'Pas fictifs à ajouter', fictionalSteps: 'fictifs', applyValue: 'Fixer', addSteps: 'Ajouter',
   menu: 'Menu', close: 'Fermer le menu', back: 'Retour', story: 'Récit', collection: 'Collection', letters: 'Lettres', characters: 'Rencontres', badges: 'Badges', coins: 'sous', journal: 'Journal', steps: 'pas', settings: 'Paramètres', language: 'Langue',
   begin: 'Commencer', goal: 'Objectif de pas quotidien', difficulty: 'Difficulté', free: 'Libre', standard: 'Standard', hard: 'Difficile', positive: '3 traits positifs', negative: '3 traits négatifs',
   modeDescriptions: {
