@@ -8,10 +8,11 @@ import type { LifeState, LifeDay } from './lives.ts';
 import { healthChanges } from './health.ts';
 import { parseProfile } from './profile.ts';
 import type { Profile } from './profile.ts';
-export const CONTENT_VERSION = 'prologue-4';
+export const CONTENT_VERSION = 'prologue-5';
 export const stages = ['street', 'job', 'delivery', 'handover', 'settlement', 'complete', 'rest', 'failed', 'neighborhood', 'square', 'workshop', 'errand', 'errand-return', 'campaign'] as const;
 export type Stage = typeof stages[number];
 type ActionData = CampaignAction
+  | { type: 'fresh-start' }
   | { type: 'set-rest-days'; weekdays: number[]; requestedAt: string }
   | { type: 'start-journey' }
   | { type: 'begin-life-accounting'; startedAt: string; zone: string }
@@ -27,6 +28,7 @@ type ActionData = CampaignAction
   | { type: 'cross' | 'accept' | 'rest' | 'arrive' | 'deliver' | 'settle' | 'reconsider' | 'open-letter' | 'destroy-letter' | 'report-loss' };
 export type Action = ActionData & { readonly at?: string };
 export interface Run {
+  readonly freshStart?: boolean;
   readonly campaign: Campaign;
   readonly life: LifeState;
   readonly navigation?: Navigation;
@@ -64,6 +66,10 @@ export function apply(run: Run, action: Action): Run {
   switch (action.type) {
     case 'enter-campaign': case 'visit-campaign-place': case 'chart-route': case 'take-letter': case 'decline-letter': case 'focus-letter': case 'open-item': case 'destroy-item': case 'deliver-item': case 'return-item': case 'report-item': case 'befriend': case 'dialogue': case 'capture-thought': case 'dismiss-thought':
       changes = reduceCampaign(run, action); break;
+    case 'fresh-start':
+      if (run.events.length) throw new Error('Fresh start is only available before setup');
+      changes = {freshStart:true};
+      break;
     case 'begin-life-accounting':
       if (run.life.calendar) throw new Error('Life accounting already initialized');
       changes = { life: beginLifeCalendar(action.startedAt, action.zone) };
@@ -214,5 +220,5 @@ export function isAction(value: unknown): value is Action {
   if (item.type === 'ask') return ['work', 'pay', 'directions'].includes(String(item.topic));
   if (item.type === 'health-sync') return typeof item.dayKey === 'string' && typeof item.total === 'number';
   return item.type === 'steps' ? typeof item.amount === 'number' && (item.source === undefined || item.source === 'health') :
-    ['enter-campaign', 'visit-campaign-place', 'dismiss-thought', 'extend-return-path', 'resume-help', 'enable-navigation', 'continue-neighborhood', 'explore-neighborhood', 'finish-conversation', 'return-to-offer', 'inspect', 'finish-errand', 'start-journey', 'cross', 'accept', 'rest', 'arrive', 'deliver', 'settle', 'reconsider', 'open-letter', 'destroy-letter', 'report-loss'].includes(String(item.type));
+    ['fresh-start', 'enter-campaign', 'visit-campaign-place', 'dismiss-thought', 'extend-return-path', 'resume-help', 'enable-navigation', 'continue-neighborhood', 'explore-neighborhood', 'finish-conversation', 'return-to-offer', 'inspect', 'finish-errand', 'start-journey', 'cross', 'accept', 'rest', 'arrive', 'deliver', 'settle', 'reconsider', 'open-letter', 'destroy-letter', 'report-loss'].includes(String(item.type));
 }

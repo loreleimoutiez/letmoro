@@ -4,7 +4,7 @@ A quiet Android walking adventure about delivering letters and finding a life of
 
 ## Status
 
-Internal Android version 0.2.0 / versionCode 5. This is a playable opening, not the complete five-arc public campaign. Postal delivery is the territory's only available employment. The local ignored manuscript adds twenty letters, seven recurring-character conversations and two optional unpaid errands beyond the easy first job/delivery. Refusing employment preserves a complete ten-request personal route.
+Internal Android version 0.2.1 / versionCode 6. This is a playable opening, not the complete five-arc public campaign. Postal delivery is the territory's only available employment. The local ignored manuscript adds twenty letters, seven recurring-character conversations and two optional unpaid errands beyond the easy first job/delivery. Refusing employment preserves a complete ten-request personal route.
 
 - Minimal square-pixel world; real-step-funded cardinal travel, reversal and returns, long journeys and a discovered cross-connection. Pinch, mouse wheel and keyboard zoom scale Moro with the terrain; no zoom buttons or percentage.
 - Above-Moro arrival decisions, dialogue details that replace initial choices, up to three carried campaign letters, opening/destruction/return/delivery/report actions, optional report journeys, trust, explicit friendships and delayed contradictory reports. Earned badges have brief restrained feedback; locked badges/skills remain hidden. Only the Basic respect skill root is implemented.
@@ -65,3 +65,7 @@ Press Start 2P is bundled locally with its [SIL Open Font License](public/fonts/
 [Product](docs/product.md) · [Narrative](docs/narrative.md) · [Architecture](docs/decisions/0001-architecture.md) · [Decisions](docs/decision-ledger.md) · [Roadmap](docs/roadmap.md) · [Navigation](docs/navigation.md) · [Health](docs/health-connect.md) · [Accounts](docs/auth.md) · [Cloud saves](docs/cloud-saves.md) · [Lives and reboot](docs/lives-and-reboot.md) · [Handoff](docs/handoff.md)
 
 The supplied future GitHub repository is reserved; no remote or publication is configured. No open-source license has been chosen.
+
+## Starting over
+
+Settings → Start over → confirm erases the game and its archives locally and in the online save while retaining the account/password. Online saving requires a working connection before local erasure. Reinstalling alone does not erase an account backup. Old daily steps become the new game's baseline rather than restoring the former path. Health Connect's own records remain unchanged. This is separate from the deferred narrative reboot/rescue system.

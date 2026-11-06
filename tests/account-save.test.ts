@@ -36,3 +36,15 @@ test('corrupt legacy data is preserved for its owner until explicit reset', () =
   resetAccountRun(first);
   assert.equal(loadAccountRun(first), null);
 });
+test('explicit game erasure clears owned progress and backups while preserving Auth and other accounts', async () => {
+  const {eraseAccountProgress}=await import('../src/adapters/account-save.ts');
+  const values=storage();saveAccountRun(first,createRun(100));saveAccountRun(second,createRun(200));
+  values.set(`letmoro.cloud.v1.${first}.backup`,'old game');values.set(`letmoro.life-history-cursor.${first}`,'7');
+  values.set('letmoro.auth.session.v1','synthetic session');
+  eraseAccountProgress(first);
+  assert.equal(loadAccountRun(first),null);assert.equal(loadAccountRun(second)?.goal,200);
+  assert.equal(values.has(`letmoro.cloud.v1.${first}.backup`),false);
+  assert.equal(values.has(`letmoro.life-history-cursor.${first}`),false);
+  assert.equal(values.get(`letmoro.fresh-start.v1.${first}`),'1');
+  assert.equal(values.get('letmoro.auth.session.v1'),'synthetic session');
+});

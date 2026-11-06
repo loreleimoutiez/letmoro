@@ -117,7 +117,28 @@ export function useCloudSave(userId: string | null, ready: boolean, run: Run | n
     } catch { if (owner.active) setStatus('offline'); }
     finally { owner.busy = false; }
   }
-  return { status, resolve, retry: () => {
+  async function eraseProgress() {
+    if (!userId || !ready) throw new Error('Save owner unavailable');
+    if (!cloudEnabled) { restoreRef.current({payload:null,locale:'en',revision:1},userId); return; }
+    const owner = session.current;
+    if (!owner?.active || owner.busy || status === 'loading') throw new Error('Save operation in progress');
+    owner.busy = true;
+    try {
+      // Complete the online reset before removing the device copy. CAS rejects races.
+      const remote = await readCloudSave(owner.userId);
+      if (!owner.active) throw new Error('Save owner changed');
+      const cleared = await writeCloudSave(owner.userId,{payload:null,locale:'en'},remote?.revision ?? 0);
+      if (!owner.active) throw new Error('Save owner changed');
+      const fingerprint = await snapshotFingerprint(null,'en');
+      if (!owner.active) throw new Error('Save owner changed');
+      restoreRef.current(cleared,owner.userId);
+      remember(owner,{revision:cleared.revision,fingerprint});
+      owner.remote=cleared; owner.synced={payload:null,locale:'en'};
+      owner.initialized=true; owner.blocked=false; owner.paused=false;
+      setStatus('saved'); setTick(value=>value+1);
+    } finally { owner.busy=false; }
+  }
+  return { status, resolve, eraseProgress, retry: () => {
     // Reinitialize ownership/reconciliation without automatically resolving conflicts.
     setAttempt(value => value + 1);
   } };

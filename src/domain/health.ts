@@ -14,7 +14,7 @@ export function healthChanges(run: Run, dayKey: string, total: number): Partial<
   const firstImport = Object.keys(run.healthLedger).length === 0;
   const changedZone = run.healthKey !== undefined && run.healthKey.split('|')[1] !== dayKey.split('|')[1];
   // Legacy saves have credits but no daily ledger. Conservatively retain those credits.
-  const baseline = firstImport ? Math.min(total, run.walkedSteps) : changedZone ? total : previous;
+  const baseline = firstImport ? run.freshStart ? total : Math.min(total, run.walkedSteps) : changedZone ? total : previous;
   const amount = Math.max(0, total - Math.max(previous, baseline));
   if (!Number.isSafeInteger(run.walkedSteps + amount)) throw new Error('Step total overflow');
   return {

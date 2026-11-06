@@ -41,3 +41,10 @@ Verified remotely: RLS enabled; all three policies constrain ownership with `aut
 The security advisor reports leaked-password protection disabled. This is separate from save isolation and has not been changed automatically. Actual account upload/restore across devices and offline recovery remain device checks before claiming operational cross-device backup.
 
 The checked-in migration filename is aligned to hosted version `20261106105934` returned by migration history. Its SQL is unchanged; this avoids a future CLI push treating the same initial schema as a new migration.
+
+
+## Explicit full erasure — 0.2.1
+
+Latest user decision: allow a full fresh start, deleting game data including paths, letters, badges, journal, relationships, profile/settings and local conflict backup while retaining Supabase Auth identity/password/session. This explicit Settings action is distinct from the still-deferred archive-preserving narrative reboot. It intentionally keeps no game archive. It requires confirmation and, when cloud saving is enabled, a successful online null-payload revision before local cleanup. Failed network/CAS writes preserve the local game for retry. Other devices with stale revisions cannot silently restore the erased snapshot. No Auth row or physical Health Connect data/permissions is deleted. Language resets to English; setup returns.
+
+A fresh-start replay marker baselines existing daily health steps instead of reconstructing the previous path; only subsequent increments supply new travel. The actual phone's daily health counter is not falsified or erased. The user authorized a temporary LAN-only APK download for their phone on the same Wi-Fi; no public publication or device install is performed by the agent.

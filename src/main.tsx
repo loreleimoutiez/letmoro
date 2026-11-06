@@ -7,7 +7,7 @@ import { prologue, journalText } from './content/prologue.en.ts';
 import { scenesFr, journalFr } from './content/prologue.fr.ts';
 import { en, fr } from './content/ui.ts';
 import type { Locale } from './content/ui.ts';
-import { loadAccountRun, saveAccountRun, resetAccountRun } from './adapters/account-save.ts';
+import { loadAccountRun, saveAccountRun, eraseAccountProgress } from './adapters/account-save.ts';
 import { recordsFor } from './domain/records.ts';
 import { useSteps } from './ui/useSteps.ts';
 import { supportsHealth, openHealthSettings } from './adapters/health.ts';
@@ -22,6 +22,7 @@ import { QuestActions } from './ui/QuestActions.tsx';
 import { LetterRecord } from './ui/LetterRecord.tsx';
 import { CampaignLetters } from './ui/CampaignPanel.tsx';
 import { campaignUI } from './content/campaign-ui.ts';
+import { RestartGame } from './ui/RestartGame.tsx';
 import { RestSettings } from './ui/RestSettings.tsx';
 import { useCloudSave } from './ui/useCloudSave.ts';
 import { decodeSave } from './adapters/save.ts';
@@ -74,7 +75,6 @@ function App() {
   }, [userId]);
   useEffect(() => { if (account.recovery) { setPage('account'); dialog.current?.showModal(); } }, [account.recovery]);
   useEffect(() => { document.documentElement.lang = locale; }, [locale]);
-  useEffect(() => { if (account.user && gameOwner === account.user.id && !run && !dialog.current?.open) dialog.current?.showModal(); }, [account.user, run, gameOwner]);
   useEffect(() => { if (dialog.current?.open) dialog.current.querySelector<HTMLElement>('h1, h2')?.focus(); }, [page, collection]);
   useEffect(() => {
     if (intro === null) return;
@@ -92,12 +92,13 @@ function App() {
   const restoreCloud = useCallback((snapshot: CloudSnapshot, ownerId: string) => {
     if (!userId || userId !== ownerId) throw new Error('Save owner changed');
     const restored = snapshot.payload === null ? null : decodeSave(snapshot.payload);
-    if (restored) saveAccountRun(userId, restored); else resetAccountRun(userId);
+    if (restored) saveAccountRun(userId, restored); else eraseAccountProgress(userId);
     localStorage.setItem('letmoro.locale.v1', snapshot.locale);
     currentRun.current = restored; setRun(restored); setLocale(snapshot.locale); setIntro(null);
     dialog.current?.close();
   }, [userId]);
   const cloud = useCloudSave(userId, Boolean(userId && gameOwner === userId && !account.recovery && warning !== 'loadError'), run, locale, restoreCloud);
+  useEffect(() => { if (account.user && gameOwner === account.user.id && !run && !dialog.current?.open) dialog.current?.showModal(); }, [account.user, run, gameOwner, cloud.status]);
   useEffect(() => {
     if (!run || !account.user || gameOwner !== userId || cloud.status === 'loading' || cloud.status === 'conflict') return;
     let next = run;
@@ -130,7 +131,7 @@ function App() {
   function leaveHealthGate() { setHealthDismissed(true); if (awaitingWalk) { setWalkCue(true); setAwaitingWalk(false); } }
   function act(action: Action) { const latest = currentRun.current; if (latest && (latest.life.lives > 0 || action.type === 'life-day')) { store(apply(latest, { ...action, at: new Date().toISOString() })); if (action.type === 'accept') setSkillNotice(true); } }
   function open(page: Page) { setPage(page); dialog.current?.showModal(); }
-  function begin(goal: number, profile: Profile) { setSkillNotice(false); const now = new Date().toISOString(); store(apply(createRun(goal, profile), { type: 'begin-life-accounting', startedAt: now, zone: Intl.DateTimeFormat().resolvedOptions().timeZone, at: now })); dialog.current?.close(); setIntro(0); }
+  function begin(goal: number, profile: Profile) { setSkillNotice(false); const now = new Date().toISOString(); let fresh = createRun(goal,profile); if (userId && localStorage.getItem(`letmoro.fresh-start.v1.${userId}`)==='1') fresh=apply(fresh,{type:'fresh-start'}); store(apply(fresh, { type: 'begin-life-accounting', startedAt: now, zone: Intl.DateTimeFormat().resolvedOptions().timeZone, at: now })); if(userId)localStorage.removeItem(`letmoro.fresh-start.v1.${userId}`); dialog.current?.close(); setIntro(0); }
   function chooseLocale(value: Locale) {
     setLocale(value);
     try { localStorage.setItem('letmoro.locale.v1', value); } catch { setWarning('saveError'); }
@@ -226,7 +227,7 @@ function App() {
         {page === 'steps'  && <section><h1 tabIndex={-1}>{t.healthTitle}</h1><p className="stat-value">{health.snapshot.count === null ? '—' : format(health.snapshot.count)}<span className="stat-unit"> {t.today}</span></p><p className="status-tag">{healthStatus}</p><p>{supportsHealth ? t.healthNative : t.healthWeb}</p><p className="muted">{t.healthNote}</p>{health.snapshot.checkedAt && <p className="muted">{t.checked}: {new Date(health.snapshot.checkedAt).toLocaleTimeString(locale)}</p>}
           {supportsHealth && <div className="actions"><button disabled={health.busy} onClick={() => { void health.refresh(true); }}>{health.snapshot.status === 'ready' && !health.snapshot.live ? t.enableLive : t.connect}</button><button disabled={health.busy} onClick={() => { void health.refresh(); }}>{t.refresh}</button><button onClick={() => { void openHealthSettings().catch(() => setWarning('settingsError')); }}>{t.manage}</button></div>}
         </section>}
-        {page === 'settings' && <section><h1 tabIndex={-1}>{t.settings}</h1>{language}<RestSettings key={`${userId}:${run.life.schedules?.length??0}`} run={run} locale={locale} act={act} /><LifeDetails run={run} text={t} historyStatus={lifeHistory} /><p role="status">{t.cloudStates[cloud.status]}</p>{cloud.status === 'offline' && <button onClick={cloud.retry}>{t.retryCloud}</button>}{run.profile && <><h2>{t.difficulty}</h2><p>{t[run.profile.mode]}</p><p>{t.modeDescriptions[run.profile.mode]}</p><p className="muted">{t.modeStatusNote}</p><h2>{t.positive}</h2><p>{run.profile.positive.map(trait => t.traits[trait as keyof typeof t.traits]).join(' · ')}</p><h2>{t.negative}</h2><p>{run.profile.negative.map(trait => t.traits[trait as keyof typeof t.traits]).join(' · ')}</p></>}<div className="actions"><button onClick={() => setPage('account')}>{t.account}</button></div></section>}
+        {page === 'settings' && <section><h1 tabIndex={-1}>{t.settings}</h1>{language}<RestSettings key={`${userId}:${run.life.schedules?.length??0}`} run={run} locale={locale} act={act} /><LifeDetails run={run} text={t} historyStatus={lifeHistory} /><p role="status">{t.cloudStates[cloud.status]}</p>{cloud.status === 'offline' && <button onClick={cloud.retry}>{t.retryCloud}</button>}{run.profile && <><h2>{t.difficulty}</h2><p>{t[run.profile.mode]}</p><p>{t.modeDescriptions[run.profile.mode]}</p><p className="muted">{t.modeStatusNote}</p><h2>{t.positive}</h2><p>{run.profile.positive.map(trait => t.traits[trait as keyof typeof t.traits]).join(' · ')}</p><h2>{t.negative}</h2><p>{run.profile.negative.map(trait => t.traits[trait as keyof typeof t.traits]).join(' · ')}</p></>}<div className="actions"><button onClick={() => setPage('account')}>{t.account}</button></div><RestartGame locale={locale} disabled={cloud.status==='loading'} erase={cloud.eraseProgress} /></section>}
 
       </>}
     </dialog>

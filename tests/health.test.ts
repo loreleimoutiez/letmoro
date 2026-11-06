@@ -86,3 +86,13 @@ test('health synchronization validates day keys and totals without interpreting 
   }
   assert.equal(creditSteps(run, ready(0)).walkedSteps, 0);
 });
+test('an explicitly erased game baselines existing daily steps without restoring old travel', async () => {
+  const {createRun,apply}=await import('../src/domain/prologue.ts');
+  let run=apply(createRun(100),{type:'fresh-start'});
+  run=apply(run,{type:'health-sync',dayKey:'2026-01-02|UTC',total:350});
+  assert.equal(run.walkedSteps,0);assert.equal(run.reserve,0);
+  run=apply(run,{type:'start-journey'});assert.equal(run.journeyOrigin,0);
+  run=apply(run,{type:'health-sync',dayKey:'2026-01-02|UTC',total:355});
+  assert.equal(run.walkedSteps,5);assert.equal(run.reserve,5);
+  assert.throws(()=>apply(run,{type:'fresh-start'}));
+});

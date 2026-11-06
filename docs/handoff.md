@@ -1,6 +1,6 @@
 # Session handoff
 
-Updated 2026-11-06. Source version 0.2.0 / Android versionCode 5. Read this file, product, narrative, decision ledger and roadmap before implementation. Older milestones are in Git history.
+Updated 2026-11-06. Source version 0.2.1 / Android versionCode 6. Read this file, product, narrative, decision ledger and roadmap before implementation. Older milestones are in Git history.
 
 ## Instructions and authorization
 
@@ -27,7 +27,7 @@ Thirty localized thoughts, filtered by known situation. One pending thought pers
 
 Four original plus twelve campaign badge conditions, brief five-second earned feedback. Basic respect only, earned through postal employment; future skills hidden. Latest encounter hollow markers, historical traces, visited place labels and abstract discovered-location squares. No live NPC tracking. Pinch/wheel/keyboard zoom, proportional Moro, square pebbles, no zoom UI. Journal newest-first with local timestamps; older undated entries stay undated.
 
-Normal coin/step counters restored. Test toolbar source removed, reset/replay absent, internal-tools flag removed. Synthetic legacy events remain decodable and automated tests still use domain fixtures; no simulation UI is shipped. No browser-preview caption remains in UI copy.
+Normal coin/step counters restored. Test toolbar source removed, intro replay absent, internal-tools flag removed. An explicit confirmed full erasure is now available in Settings. Synthetic legacy events remain decodable and automated tests still use domain fixtures; no simulation UI is shipped. No browser-preview caption remains in UI copy.
 
 ## Persistence and Supabase
 
@@ -35,7 +35,7 @@ Normal coin/step counters restored. Test toolbar source removed, reset/replay ab
 
 Ignored `.env.local` contains public client configuration and VITE_CLOUD_SAVES=true. Example remains false for unconfigured checkouts. Snapshot covers profile, events, navigation, letter outcomes, relationships, thoughts, life calendar/schedules, health checkpoints and language. Revision RPC protects stale writes; conflicts require explicit selection and retain a device backup. Offline local preservation/retry and reset tombstones remain supported. Real-account cross-device/email/OAuth verification is still pending. Never claim it is device-tested.
 
-Content generation prologue-4, schema 1, older prologue-1/2/3 accepted by deterministic replay. Private pack `src/content/private/opening.json`, vertical `tree.txt` and `skills-tree.txt` are ignored and required for the richer narrative. No private repository/backup exists; do not force-add them. APK includes local text by design. Generic checkout supports the first delivery without this manuscript.
+Content generation prologue-5, schema 1, older prologue-1/2/3/4 accepted by deterministic replay. Private pack `src/content/private/opening.json`, vertical `tree.txt` and `skills-tree.txt` are ignored and required for the richer narrative. No private repository/backup exists; do not force-add them. APK includes local text by design. Generic checkout supports the first delivery without this manuscript.
 
 ## Verification and environment
 
@@ -47,6 +47,13 @@ Latest checks and APK status are recorded in gameplay-status.md. Browser tools/s
 
 Complete physical acceptance checks, tune pacing, extend authored encounters and skill/trait effects, settle pause/rescue/reboot and goal/mode switching, implement account export/deletion/retention and durable private-content backup. Multi-day closed-app travel reconciliation and replay compaction still require design; today's import is not proof of all historical/offline travel. See gameplay-status and roadmap. Never equate missing history with zero.
 
-## Final internal artifact — 2026-11-06
+## Previous internal artifact — 0.2.0, 2026-11-06
 
 59 behavioral tests, TypeScript, synthetic browser campaign/letter/privacy/thought/rest/cloud/gesture checks, manuscript-included and generic production builds, three native unit tests, Android lint and final assembleDebug passed. Seven non-blocking Android lint warnings and the Vite main-chunk warning remain. APK 0.2.0 / versionCode 5 generated at android/app/build/outputs/apk/debug/app-debug.apk, signature verified, public backend values and local manuscript checked in packaged assets without printing client values. Existing external debug keystore reused; no phone install/distribution performed. SHA-256 and limitations are in gameplay-status.md.
+
+
+## Explicit full erasure — 0.2.1
+
+Latest user decision: allow a full fresh start, deleting game data including paths, letters, badges, journal, relationships, profile/settings and local conflict backup while retaining Supabase Auth identity/password/session. This explicit Settings action is distinct from the still-deferred archive-preserving narrative reboot. It intentionally keeps no game archive. It requires confirmation and, when cloud saving is enabled, a successful online null-payload revision before local cleanup. Failed network/CAS writes preserve the local game for retry. Other devices with stale revisions cannot silently restore the erased snapshot. No Auth row or physical Health Connect data/permissions is deleted. Language resets to English; setup returns.
+
+A fresh-start replay marker baselines existing daily health steps instead of reconstructing the previous path; only subsequent increments supply new travel. The actual phone's daily health counter is not falsified or erased. The user authorized a temporary LAN-only APK download for their phone on the same Wi-Fi; no public publication or device install is performed by the agent.

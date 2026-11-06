@@ -24,3 +24,12 @@ export function resetAccountRun(userId: string) {
   localStorage.removeItem(accountSaveKey(userId));
   if (localStorage.getItem(LEGACY_OWNER) === userId) localStorage.removeItem(SAVE_KEY);
 }
+
+// Explicit account-owned game erasure never touches Auth storage or another account.
+export function eraseAccountProgress(userId: string) {
+  accountSaveKey(userId);
+  localStorage.setItem(`letmoro.fresh-start.v1.${userId}`, '1');
+  resetAccountRun(userId);
+  localStorage.removeItem(`letmoro.cloud.v1.${userId}.backup`);
+  localStorage.removeItem(`letmoro.life-history-cursor.${userId}`);
+}
