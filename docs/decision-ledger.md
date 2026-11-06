@@ -113,3 +113,14 @@ Account creation/login now comes before preferences. Supabase Auth was selected 
 Latest layout: smaller intro text above Moro, validation controls below, manual Continue rather than timed narrative progression, and a fading “Walk…” cue after the introduction. Account-page branding is a smaller white-on-black logo at upper left with “letmoro” on its right and added spacing below. Forgot password is only a clickable text action under Password in login. The auth logo is branding, distinct from the in-world character layout.
 
 Remove player-facing trial language and simulation controls, keeping a temporary red Reset game control in Settings with confirmation. Retain truthful internal-milestone documentation. Native foreground detector events and a slower counter fallback replace reliance on a 15-second poll; activity permission is separate from Health Connect. Accounts use PKCE and encrypted Android sessions. No publication, public license or contact with third parties was authorized.
+
+
+## Year-long journey and narrative priority — 2026-11-06
+
+Latest user decisions: prioritize narrative design before new implementation; inhabitants lead, with a discreet interwoven mystery. Aim for five arcs over approximately one real year. The previous six-to-eight-week estimate is superseded; existing scene/letter counts require rescoping.
+
+Allow non-horizontal routes and freely chosen step-funded returns on traversed paths, including turning back mid-route. This supersedes a forward-only interpretation of step-only movement; manual camera dragging still does not move Moro. Keep the initial job quest easy; later travel may span several daily goals. Exact controls, quota-change semantics and reserve spending remain unresolved.
+
+Add visible above-Moro choices on arrival, branching character dialogue from the first job quest, explicit paid-work acceptance, actionable undelivered letters in Collection, and consequences for route, dialogue and item decisions. The character collection should show unboxed colored squares with names and known roles beneath. Whether every narrative choice creates a distinct physical route is still a proposal.
+
+Keep full narrative secrets out of this repository; a private content repository is being considered. No remote creation or publication is authorized. The hollow yellow office is a visual proposal awaiting preview. See product and narrative documents for details. These changes are requirements, not implemented behavior.

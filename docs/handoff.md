@@ -1,6 +1,6 @@
 # Session handoff
 
-Updated 2026-11-05. Internal Android build 0.1.3 / versionCode 4; no public release.
+Updated 2026-11-06. Internal Android build 0.1.3 / versionCode 4; no public release.
 
 ## Instructions and authorization
 
@@ -40,6 +40,12 @@ Current browser regression: `/tmp/letmoro-browser/live-auth.cjs`, external Playw
 APK: `android/app/build/outputs/apk/debug/app-debug.apk` (ignored). Temporary SDK `/tmp/letmoro-android-sdk`, Gradle `/tmp/letmoro-gradle`; ignored `android/local.properties` points to that SDK. Use your own SDK/JDK setup on a fresh system. The APK is served from an isolated `/tmp/letmoro-phone-install` directory on a temporary local server, not from the repo. User opened a narrow PC firewall rule for downloads; close temporary access after testing ends.
 
 The user confirmed installation and basic Health Connect count display on S23. USB disconnected repeatedly. Wi-Fi pairing succeeded but the debug connection port refused, so no device debugging session is established. Short-lived pairing code was interactive and never put in project files. New sensor timing, Google consent, email delivery, recovery callbacks, encrypted-session restore and native accessibility remain physical test tasks.
+
+## Latest planning session — 2026-11-06
+
+Project reviewed without runtime changes. User prioritizes a rich narrative tree before new implementation, with inhabitants foregrounded and a discreet mystery. Five arcs should target approximately one real year; the six-to-eight-week estimate is superseded. New requirements: multidirectional paths, mid-route reversal and real-step-funded returns over known paths; easy first job quest and later multi-day travel; visible choices above Moro; early branching dialogues with explicit work acceptance; opening/destruction of undelivered letters in Collection; proportionate consequences for every choice; character gallery with colored square/name/known role. A hollow larger yellow office is a proposal. No such mechanics have been implemented.
+
+Do not put secret plots or letter bodies in this intended public repository. Private content storage is undecided; no private remote has been created. Current tracked prologue content already exists. See product, narrative, ledger and roadmap for scope and unresolved controls. No new feature code or tests changed in this planning session.
 
 ## Next
 

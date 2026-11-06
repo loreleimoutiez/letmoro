@@ -6,6 +6,12 @@ Android internal build 0.1.3. Pixel presentation, account-first entry, EN/FR set
 
 Passed: TypeScript, 24 behavioral tests, 3 native reconciliation tests, browser tests with synthetic sensors/auth HTTP interception, production build, Android compilation/lint and npm audit. Device installation and basic Health Connect display are user-confirmed. Live physical latency and real account/email/Google round trips remain to verify.
 
+## Current priority — 2026-11-06
+
+Narrative planning precedes new feature implementation. Design five arcs targeting approximately a real year, led by inhabitants with a discreet mystery. Keep all secret content outside this repository; select private authoring storage before writing the manuscript to disk.
+
+Before extending the runtime, design the traversable route graph, mid-edge reversal, step-funded returns, quest effort in personal daily goals, conditional dialogues and per-letter lifecycle. Distinguish geographic branches from narrative consequences. Plan visible above-Moro decisions and the character gallery. Preserve the easy first work quest and existing saves; current linear stages cannot represent the approved journey yet. Do not claim these requirements implemented.
+
 ## Next device checks
 
 1. Install 0.1.3 as an update. Test Google and email account creation/sign-in, confirmation, recovery, session restoration and sign-out. Verify returning users keep their own local game and a second account cannot read it.

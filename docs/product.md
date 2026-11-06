@@ -78,7 +78,7 @@ The fictional map is independent of GPS. It reveals only observed paths, places,
 
 ## Campaign ambition
 
-A complete, substantial first campaign is required, not just a public prologue. Planning target: six to eight weeks at moderate activity, prologue, five acts, personalized epilogue, roughly four regions, twenty places, ten to fifteen recurring characters, thirty to forty authored letters, and 150–200 scenes across all routes. Validate these targets through writing and playtests.
+A complete, substantial first campaign is required, not just a public prologue. Latest user target: a prologue, five arcs spanning approximately one real human year, and a personalized epilogue. Earlier six-to-eight-week estimates are superseded. Earlier region, cast, letter and scene counts are obsolete scope estimates, not sufficient commitments for this longer campaign. Validate content volume and pacing through writing and playtests; calendar gating has not been approved.
 
 Every continuing major route must have depth and resolution, including refusal, non-romance, and non-political routes. Early death can shorten a run. Additional content may be downloaded independently of application binaries, with offline caching and compatibility checks. No promise of an infinitely authored story.
 
@@ -121,3 +121,19 @@ The first imported daily total can place Moro further along a visible starting p
 A foreground detector supplies low-latency events after optional physical activity permission, with counter fallback and 3-second visible Health Connect synchronization. Provider totals and live estimates are combined using a maximum rather than addition, then persistent high-water marks prevent replay. Source timing and all overlapping wearable cases are not yet hardware-verified. No life penalties run.
 
 Game progress and health checkpoints are local and separated by account. Supabase handles authentication only; no cloud game/health save exists. Session tokens and PKCE verifier use Android Keystore encryption. The temporary red Reset game action is kept in Settings with confirmation for internal testing; production reboot semantics remain separate. Player-facing trial labels and simulation controls are removed; documentation continues to state incomplete implementation honestly.
+
+
+## Journey, choices and collections — 2026-11-06
+
+These are approved design requirements, not implemented features.
+
+- Keep the first job-seeking quest as short and easy as the current prototype. Later quests can require several personal daily step goals and span days. Define travel effort relative to the user-selected goal without reducing narrative richness for lower goals.
+- Paths may extend vertically and in other directions, using square-pixel geometry. Moro may choose to turn back at any time and travel along already traversed paths using real steps at the same movement rate as outward travel. This supersedes any restriction against choosing a return route; finger dragging still does not move Moro or pay travel costs. Exact mid-route controls and reserve handling remain to design.
+- Route choices can lead to different physical paths. Dialogue and letter decisions also have consequences, but whether every such choice should create a physical fork remains an open proposal rather than a requirement.
+- Present short narrative text and available choices above Moro when a walking objective unlocks a decision. Players must not have to inspect Story in the menu to discover it. Important decisions still wait for explicit input. Story remains available for rereading. This supersedes the blanket prohibition on map prose.
+- Each entrusted, undelivered letter must offer applicable explicit collection actions, including opening and destruction before or after reading. Opening and destruction are distinct events; preserve their history and context-dependent consequences. Further actions such as redirection need authored rules. Delivered letters are historical records rather than items Moro still controls.
+- Encountered characters have short branching conversations, including during the first job-seeking quest. Accepting the first letter must explicitly communicate acceptance of paid work.
+- Every player choice, including routes, dialogue and letter handling, has one or more consequences proportionate to context and stakes. Consequences can be small or delayed; do not turn every ordinary choice into punishment or reveal hidden outcomes in the journal.
+- Character collection uses an unboxed gallery: each encountered character's colored square, name below it, then a brief known role or description. Do not reveal undiscovered identities or information.
+- The office visual proposal is a hollow yellow square slightly larger than Moro, with border thickness matching the current yellow marker's side length. Exact sizing and appearance remain to preview; this is not implemented.
+- Full story content must stay out of this intended public repository. A separate private content repository is under consideration, not created or authorized for publication. Existing tracked prologue drafts remain in the current repository; no history rewrite has been requested. Content distributed to clients is not guaranteed to remain secret.

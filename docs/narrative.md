@@ -40,3 +40,14 @@ Store immutable player events alongside versioned story content. Journal entries
 ## Still to author
 
 Origins consistent with the shared motivation; trait catalog and incompatibilities; geography; cast; central mystery; complete act outline; each romance; political routes; private-life projects; endings and reboot variations. None of these is complete simply because the engine exists.
+
+
+## Campaign direction — 2026-11-06
+
+The user selected intertwined inhabitants' lives in the foreground, with a discreet mystery running through them. The five arcs aim to sustain approximately one real human year, superseding the earlier short campaign estimate. This is an authoring and pacing target, not a finished campaign or a requirement to wait for calendar dates.
+
+Build recurring relationships, main quests, smaller quests, branching conversations and meaningful travel. Preserve complete private-life, non-romance, non-political and job-refusal routes. A return journey can revisit people and places changed by prior decisions. Each choice needs context-sensitive consequences, including modest everyday effects; severity must follow the situation.
+
+The first work encounter must clearly offer employment, with dialogue choices before accepting the letter. Letters need authored outcomes for being kept sealed, opened, destroyed unread or destroyed after reading, plus witnesses and later effects where appropriate. An opening event cannot be erased by later destruction. Character truth, Moro's knowledge and other characters' knowledge must remain distinct.
+
+Full plots, private character biographies, letter bodies, hidden conditions and endings must not be authored in this repository. Separate private storage is pending selection. Public documentation may describe mechanics and authoring requirements without spoilers. No secret campaign manuscript exists here.
