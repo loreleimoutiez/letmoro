@@ -29,4 +29,6 @@ Hosted migration is applied. Metadata and transaction-local access tests verify 
 
 Production builds include the ignored local manuscript for owner testing; generic builds without it must also compile. Full replay still has a 50,000-event limit and needs compaction before a year-long release.
 
-APK generation is the last packaging step after the current source/docs commits. Artifact: `android/app/build/outputs/apk/debug/app-debug.apk`; no distribution or device installation is implied.
+APK built successfully after source/docs commits. Version 0.2.0 / versionCode 5, application ID unchanged. Signature verification passed; packaged web assets match the final production build and include the local manuscript and correct public backend configuration. No device installation was performed. Artifact: `android/app/build/outputs/apk/debug/app-debug.apk`; no distribution or device installation is implied.
+
+APK SHA-256: `fef2e91329ab9568349875fbcfa7686348cadcef2f818ed3027c5aef2add5335`. Build uses the existing external debug keystore. Both manuscript-included and generic manuscript-free production builds pass. Vite retains a non-blocking approximately 607 kB minified main-chunk warning.

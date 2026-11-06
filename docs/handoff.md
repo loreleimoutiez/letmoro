@@ -46,3 +46,7 @@ Latest checks and APK status are recorded in gameplay-status.md. Browser tools/s
 ## Next
 
 Complete physical acceptance checks, tune pacing, extend authored encounters and skill/trait effects, settle pause/rescue/reboot and goal/mode switching, implement account export/deletion/retention and durable private-content backup. Multi-day closed-app travel reconciliation and replay compaction still require design; today's import is not proof of all historical/offline travel. See gameplay-status and roadmap. Never equate missing history with zero.
+
+## Final internal artifact — 2026-11-06
+
+59 behavioral tests, TypeScript, synthetic browser campaign/letter/privacy/thought/rest/cloud/gesture checks, manuscript-included and generic production builds, three native unit tests, Android lint and final assembleDebug passed. Seven non-blocking Android lint warnings and the Vite main-chunk warning remain. APK 0.2.0 / versionCode 5 generated at android/app/build/outputs/apk/debug/app-debug.apk, signature verified, public backend values and local manuscript checked in packaged assets without printing client values. Existing external debug keystore reused; no phone install/distribution performed. SHA-256 and limitations are in gameplay-status.md.

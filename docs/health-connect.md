@@ -4,7 +4,7 @@ Health Connect reads the daily aggregate; optional foreground sensors provide fa
 
 ## Setup
 
-Build with Node.js 22.12+, JDK 21, SDK 36 and `npm run android:build`. The package is `app.letmoro.internal`, minimum Android 9. Current update: 0.1.3 / versionCode 4. See README and account setup for local configuration and installation.
+Build with Node.js 22.12+, JDK 21, SDK 36 and `npm run android:build`. The package is `app.letmoro.internal`, minimum Android 9. Current update: 0.2.0 / versionCode 5. See README and account setup for local configuration and installation.
 
 After account login, game setup and introduction, open Step connection and authorize Health Connect step reading. On supported updated Android 14+ devices, the phone can collect steps itself; Samsung Health can also write steps with its own granted permissions. The user confirmed a daily total on S23.
 
@@ -24,7 +24,7 @@ Daily checkpoints/estimates and game progress are sensitive local data, saved pe
 
 ## Verification and next device tests
 
-TypeScript, 24 domain/auth/save tests, 3 Kotlin overlap/resume/new-day tests, browser synthetic event tests, APK compilation/lint and dependency audit pass. The user confirmed installation and basic daily count display. Live detector latency and native permission/resume behavior are not yet physically verified.
+TypeScript, 59 behavioral tests, 3 Kotlin overlap/resume/new-day tests, synthetic browser checks and Android compilation/lint pass. Earlier dependency audit found no known advisories; no dependency version changed in 0.2.0. The user confirmed installation and basic daily count display. Live detector latency and native permission/resume behavior are not yet physically verified.
 
 Test: grant/deny/revoke physical and Health Connect access; foreground walking; provider catch-up; pause/resume; midnight and zone changes; repeated starts; overlapping phone/wearable sources; offline conditions. Keep life rules disabled until data/calendar semantics are validated.
 
@@ -39,6 +39,6 @@ The app now invites a connection before the map/Walk cue when no authorized conn
 
 `readClosedDays` is a new native source method. It reads complete date ranges in the run's fixed zone, after 24 actual hours of grace, and preserves absent/inaccessible metrics as unknown. It reads a recent window and rotates through older recorded dates to pick up late corrections without adding a new permission. Read failures cannot erase an already confirmed daily total. The data is used only for day accounting, not duplicate travel credit.
 
-`VITE_LIFE_RULES` defaults false until this new historical method is physically verified. Internal day controls and mocked-native browser checks exercise the reducer and bridge protocol; they do not validate real historical Samsung/Fit3 data. Kotlin/Android compilation was not run and no new APK was produced. Existing today's-step hardware confirmation does not establish reliability of this new historical path. See [life accounting](lives-and-reboot.md).
+`VITE_LIFE_RULES` defaults false until this new historical method is physically verified. Automated synthetic-day and mocked-native browser checks exercise the reducer and bridge protocol; they do not validate real historical Samsung/Fit3 data. Kotlin/Android compilation and three native unit tests now pass. The internal day controls have been removed from the interface. Existing today's-step hardware confirmation does not establish reliability of this new historical path. See [life accounting](lives-and-reboot.md).
 
 The rationale now explains daily history, local checkpoints and optional account backup. With cloud backup enabled, persisted daily totals/checkpoints and life events are part of the player's snapshot; passwords/tokens are excluded. No actual health observations were added to this repository.
