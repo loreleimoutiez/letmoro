@@ -1,3 +1,4 @@
+import {revisitAvailable,revisitRules} from './revisits.ts';
 import type { Run } from './prologue.ts';
 import type { CampaignAction, Campaign, EntrustedLetter } from './campaign.ts';
 import { availableLetters, allLetterRules as letterRules, characterAt, resolvedLetters } from './campaign.ts';
@@ -47,6 +48,11 @@ export function reduceCampaign(run: Run, action: CampaignAction): Partial<Run> {
     if(place!=='wash-court'||!campaign.visited.includes(place)||campaign.letters.s01?.status!=='delivered'||campaign.letters.s02||campaign.washReply||!['direct','declined'].includes(action.reply))throw new Error('Reply choice unavailable');
     return {campaign:{...campaign,washReply:action.reply}};
   }
+  if(action.type==='follow-up'){
+    if(!revisitAvailable(run,action.id)||!['listen','brief'].includes(action.reply))throw new Error('Return conversation unavailable');
+    const rule=revisitRules.find(rule=>rule.id===action.id)!;
+    return {campaign:{...campaign,followups:{...campaign.followups,[rule.id]:action.reply},trust:trust(rule.character,action.reply==='listen'?1:0)}};
+  }
   if (action.type === 'chart-route') {
     if (!place || !run.navigation) throw new Error('Not at a junction');
     const edge = worldGraph(run).edges.find(edge => (edge.from === place && edge.to === action.place) || (edge.to === place && edge.from === action.place));
@@ -55,6 +61,8 @@ export function reduceCampaign(run: Run, action: CampaignAction): Partial<Run> {
   }
   if (action.type === 'visit-campaign-place') {
     if (!place || ['start','approach','outskirts'].includes(place)) throw new Error('Nothing to visit here');
+    const odometer=run.navigation?.odometer??0, previous=campaign.lastVisits?.[place];
+    const returned=previous!==undefined&&odometer>previous;
     let sous = run.sous;
     campaign = {...campaign,lastOutcome:undefined};
     const delayed = campaign.delayed.map(item => {
@@ -64,7 +72,7 @@ export function reduceCampaign(run: Run, action: CampaignAction): Partial<Run> {
       sous = Math.max(0,sous - (rule.postal ? 2 : 0));
       return {...item,settled:true};
     });
-    return {sous,campaign:{...campaign,visited:[...new Set([...campaign.visited,place])],encounters:characterAt(run,place)?[...(campaign.encounters??[]),{character:characterAt(run,place)!,place,event:run.events.length}]:campaign.encounters,delayed}};
+    return {sous,campaign:{...campaign,lastVisits:{...campaign.lastVisits,[place]:odometer},returnedAt:returned?{...campaign.returnedAt,[place]:run.events.length}:campaign.returnedAt,visited:[...new Set([...campaign.visited,place])],encounters:characterAt(run,place)?[...(campaign.encounters??[]),{character:characterAt(run,place)!,place,event:run.events.length}]:campaign.encounters,delayed}};
   }
   if (action.type === 'dialogue') {
     if (!place || !campaign.visited.includes(place) || characterAt(run,place) !== action.character || campaign.replies?.[action.character] || !['listen','press'].includes(action.reply)) throw new Error('Dialogue unavailable');

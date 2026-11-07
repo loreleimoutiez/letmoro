@@ -1,9 +1,10 @@
+import {CharacterConversation} from './CharacterConversation.tsx';
+import {RevisitPanel} from './RevisitPanel.tsx';
 import {letterCapacity} from '../domain/skills.ts';
 import {deliveryXP} from '../domain/experience.ts';
 import type { Action, Run } from '../domain/prologue.ts';
 import { availableLetters, allLetterRules as letterRules, characterAt, campaignComplete } from '../domain/campaign.ts';
 import { currentNode, worldGraph } from '../domain/navigation.ts';
-import { routeBetween } from '../domain/campaign-reducer.ts';
 import { campaignUI } from '../content/campaign-ui.ts';
 import type { OpeningContent } from '../content/narrative.ts';
 import type { Locale } from '../content/ui.ts';
@@ -19,32 +20,29 @@ export function CampaignPanel({ run, locale, content, act }: { run: Run; locale:
   const routes = worldGraph(run).edges.filter(edge => edge.id !== 'outskirts' && (edge.from === place || edge.to === place) && !run.navigation!.authorized.includes(edge.id));
   const lastDelivery=[...run.events].reverse().find(event=>event.type==='deliver-item');
   const lastDeliveryCopy=lastDelivery?.type==='deliver-item'?pack.letters[lastDelivery.id]:undefined;
-  const focus = run.campaign.focus, focused = letterRules.find(rule => rule.id === focus?.id);
-  const target = focused ? focus?.returning ? focused.from : focused.to : undefined;
-  const nextRoad = target && target !== place ? routeBetween(run,place,target)[0] : undefined;
-  const road = nextRoad ? worldGraph(run).edges.find(edge=>edge.id===nextRoad) : undefined;
   const opposite = {north:'south',south:'north',east:'west',west:'east'} as const;
   const directions = locale === 'fr' ? {north:'Nord',south:'Sud',east:'Est',west:'Ouest'} : {north:'North',south:'South',east:'East',west:'West'};
   return <div className="campaign-panel">
     {run.errand && <button onClick={()=>act({type:'resume-help'})}>{locale==='fr'?'Reprendre le service promis':'Resume the promised help'}</button>}
-    {road && <p className="muted">{pack.letters[focused!.id]?.title} · {directions[road.from===place?road.direction:opposite[road.direction]]}</p>}
-    <button onClick={()=>act({type:'visit-campaign-place'})}>{c.look}</button>
+    {!visited&&<button onClick={()=>act({type:'visit-campaign-place'})}>{c.look}</button>}
     {visited && <>
       {pack.sidePassage&&place==='square'&&!run.campaign.washPassage&&<button onClick={()=>act({type:'learn-side-passage'})}>{pack.sidePassage.discover}</button>}
-      {pack.sidePassage&&place==='square'&&run.campaign.washPassage&&<p>{pack.sidePassage.learned}</p>}
-      {pack.sidePassage&&place==='wash-court'&&run.campaign.letters.s01?.status==='delivered'&&!run.campaign.letters.s02&&<article><p>{pack.sidePassage.replyPrompt}</p>{run.campaign.washReply?<p>{run.campaign.washReply==='direct'?pack.sidePassage.directOutcome:pack.sidePassage.declineOutcome}</p>:<><button onClick={()=>act({type:'resolve-side-reply',reply:'direct'})}>{pack.sidePassage.direct}</button><button onClick={()=>act({type:'resolve-side-reply',reply:'declined'})}>{pack.sidePassage.decline}</button></>}</article>}
+      {pack.sidePassage&&place==='square'&&run.campaign.washPassage&&<details><summary>{locale==='fr'?'Revoir l’itinéraire du passage':'Review the passage directions'}</summary><p>{pack.sidePassage.learned}</p></details>}
+      {pack.sidePassage&&place==='wash-court'&&run.campaign.letters.s01?.status==='delivered'&&!run.campaign.letters.s02&&<article>{run.campaign.washReply?<p>{run.campaign.washReply==='direct'?pack.sidePassage.directOutcome:pack.sidePassage.declineOutcome}</p>:<><p>{pack.sidePassage.replyPrompt}</p><button onClick={()=>act({type:'resolve-side-reply',reply:'direct'})}>{pack.sidePassage.direct}</button><button onClick={()=>act({type:'resolve-side-reply',reply:'declined'})}>{pack.sidePassage.decline}</button></>}</article>}
 
-      <p>{waitingReturn && personal.opened ? pack.personalReturn?.prompt : place==='bridge' && personal?.returnOutcome==='loss' ? pack.personalReturn?.loss : pack.places[place]?.text ?? c.idle}</p>
+      {(waitingReturn||!run.campaign.lastOutcome)&&<p>{waitingReturn && personal.opened ? pack.personalReturn?.prompt : place==='bridge' && personal?.returnOutcome==='loss' ? pack.personalReturn?.loss : pack.places[place]?.text ?? c.idle}</p>}
       {personal?.returnOutcome==='alive' && place==='bridge' && run.campaign.lastOutcome==='personal-return' && <p>{pack.personalReturn?.alive}</p>}
       {waitingReturn && <button onClick={()=>act({type:'complete-private-return',id:'n04'})}>{personal.opened?(pack.personalReturn?.listen??c.report):c.report}</button>}
       {lastDeliveryCopy&&['delivered','opened-delivery','placed'].includes(run.campaign.lastOutcome??'')&&<p>{lastDeliveryCopy.delivered}</p>}
-      {run.campaign.lastOutcome && <p role="status">{c.outcome[run.campaign.lastOutcome]}</p>}
+      {run.campaign.lastOutcome==='opened-delivery'&&<p className="muted">{locale==='fr'?'Le sceau rompu a diminué la confiance.':'The broken seal reduced trust.'}</p>}
+      {run.campaign.lastOutcome&&c.outcome[run.campaign.lastOutcome]&&!(lastDeliveryCopy&&['delivered','opened-delivery','placed'].includes(run.campaign.lastOutcome)) && <p role="status">{c.outcome[run.campaign.lastOutcome]}</p>}
       {person && known && <p className="muted">{known.name} · {c.trust} {run.campaign.trust[person] ?? 0}{run.campaign.friends.includes(person) ? ` · ${c.friends}` : ''}</p>}
-      {person && !waitingReturn && conversation && <article><h3>{known?.name}</h3><p>{conversation.prompt}</p>{reply?<p>{reply==='listen'?conversation.listening:conversation.pressing}</p>:<><button onClick={()=>act({type:'dialogue',character:person,reply:'listen'})}>{conversation.listen}</button><button onClick={()=>act({type:'dialogue',character:person,reply:'press'})}>{conversation.press}</button></>}</article>}
+      <RevisitPanel key={place} run={run} content={content} act={act}/>
+      {person&&!waitingReturn&&conversation&&<CharacterConversation key={`${place}:${person}`} conversation={conversation} person={person} reply={reply} locale={locale} act={act}/>}
       {person && (run.campaign.trust[person]??0)>=3 && !run.campaign.friends.includes(person) && <button onClick={()=>act({type:'befriend',character:person})}>{c.friend}</button>}
-      {offers.map(rule => <details className="message-offer" key={rule.id}><summary>{pack.letters[rule.id].title}</summary><p className="muted">{content.characters[rule.sender as keyof typeof content.characters]?.name} → {content.characters[rule.recipient as keyof typeof content.characters]?.name??(locale==='fr'?'Lieu indiqué sur l’enveloppe':'Place indicated on the envelope')}</p><p>{pack.letters[rule.id].offer}</p><p className="muted">{deliveryXP(rule.id)} XP · {locale==='fr'?'à la livraison':'on delivery'}</p>
+      {offers.map(rule => <details className="message-offer" key={rule.id}><summary>{pack.letters[rule.id].title}</summary><p>{pack.letters[rule.id].offer}</p><p className="muted">{deliveryXP(rule.id)} XP · {locale==='fr'?'à la livraison':'on delivery'}</p>
         <DialogueChoices label={c.details} back={c.choices} initial={<><button disabled={Object.values(run.campaign.letters).filter(item=>item.status==='carried').length>=letterCapacity(run)} onClick={()=>act({type:'take-letter',id:rule.id})}>{c.take}</button><button onClick={()=>act({type:'decline-letter',id:rule.id})}>{c.decline}</button></>}>
-          <p>{pack.letters[rule.id].question}</p><p>{pack.letters[rule.id].answer}</p><p>{c.noDeadline}</p>{rule.postal ? <p>{c.pay}: {rule.pay} · {c.deductions}: 4</p> : <p>{c.gift}</p>}
+          <p>{pack.letters[rule.id].question}</p><p>{pack.letters[rule.id].answer}</p>{rule.postal ? <p>{c.pay}: {rule.pay} · {c.deductions}: 4</p> : <p>{c.gift}</p>}
         </DialogueChoices>
       </details>)}
       {letterRules.filter(rule=>run.campaign.letters[rule.id] && pack.letters[rule.id]).map(rule=>{
@@ -57,7 +55,7 @@ export function CampaignPanel({ run, locale, content, act }: { run: Run; locale:
         return <article key={rule.id}><h3>{copy.title}</h3><button onClick={()=>act({type:'report-item',id:rule.id,honest:true})}>{c.report}</button>{!item.senderWitnessed && (item.opened||item.status==='destroyed') && <button onClick={()=>act({type:'report-item',id:rule.id,honest:false})}>{c.lie}</button>}</article>;
       })}
       {routes.length>0 && <DialogueChoices label={c.routes} back={c.choices} initial={null}>{routes.map(edge=><button key={edge.id} onClick={()=>act({type:'chart-route',place:edge.from===place?edge.to:edge.from})}>{c.chart} · {directions[edge.from===place?edge.direction:opposite[edge.direction]]} · {(edge.length/run.goal).toLocaleString(locale)} {locale==='fr'?'objectif(s)':'goal(s)'}</button>)}</DialogueChoices>}
-      {campaignComplete(run) && <article><h3>{c.endTitle}</h3><p>{pack.ending}</p></article>}
+      {campaignComplete(run) && <details><summary>{c.endTitle}</summary><p>{pack.ending}</p></details>}
     </>}
   </div>;
 }

@@ -1,5 +1,5 @@
 import type { Action, Run } from '../domain/prologue.ts';
-import { atPlace, currentLeg, questReady, remainingQuestSteps } from '../domain/navigation.ts';
+import { atPlace, currentLeg, questReady } from '../domain/navigation.ts';
 import type { Neighborhood } from '../domain/navigation.ts';
 import type { en } from '../content/ui.ts';
 import type { OpeningContent, Topic } from '../content/narrative.ts';
@@ -21,8 +21,7 @@ export function QuestActions({ run, text: t, content, act, locale }: {
   const place = run.stage as Neighborhood, visit = content?.visits?.[place];
   return <div className="actions">
     {content?.campaign && run.navigation && currentNode(run) && ['complete','failed','rest','neighborhood','square','workshop'].includes(run.stage) && <button onClick={()=>act({type:'enter-campaign'})}>{campaignUI(locale as Locale).continue}</button>}
-    {traveling && progress}
-    {(remainingQuestSteps(run) ?? 0) > 0 && <p className="muted">{remainingQuestSteps(run)!.toLocaleString(locale)} {t.stepsRemaining}</p>}
+    {traveling && !run.navigation && progress}
     {run.errand && !['street', 'job', 'delivery', 'handover', 'settlement', 'errand', 'errand-return'].includes(run.stage) && <button onClick={() => act({ type: 'resume-help' })}>{t.resumeHelp}</button>}
     {['street', 'delivery'].includes(run.stage) && <button disabled={!ready} onClick={() => act({ type: run.stage === 'street' ? 'cross' : 'arrive' })}>{run.stage === 'street' ? t.cross : t.arrive}</button>}
     {run.stage === 'job' && atPlace(run, 'office') && (content ? <DialogueChoices key="job" label={t.askQuestions} back={t.backToChoices} initial={initialJobChoices}>

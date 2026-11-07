@@ -27,6 +27,9 @@ export const allLetterRules=[...letterRules,...sideLetterRules];
 export interface EntrustedLetter { opened: boolean; deliveredTo?: string; senderWitnessed?: 'opened' | 'destroyed'; status: 'carried' | 'delivered' | 'destroyed' | 'returned' | 'declined'; reported: boolean; returnOutcome?: 'alive' | 'loss'; honest?: boolean }
 export interface Campaign {
   readonly active: boolean;
+  readonly lastVisits?: Readonly<Partial<Record<Place,number>>>;
+  readonly returnedAt?: Readonly<Partial<Record<Place,number>>>;
+  readonly followups?: Readonly<Record<string,'listen'|'brief'>>;
   readonly washPassage?: boolean;
   readonly washReply?: 'direct' | 'declined';
   readonly xp?: number;
@@ -47,7 +50,7 @@ export interface Campaign {
   readonly thoughtMark: number;
   readonly thoughts: readonly string[];
 }
-export type CampaignAction = {type:'learn-side-passage'} | {type:'resolve-side-reply';reply:'direct'|'declined'} |  { type: 'enter-campaign' } | { type: 'visit-campaign-place' } | { type: 'chart-route'; place: Place } |
+export type CampaignAction = {type:'follow-up';id:string;reply:'listen'|'brief'} |  {type:'learn-side-passage'} | {type:'resolve-side-reply';reply:'direct'|'declined'} |  { type: 'enter-campaign' } | { type: 'visit-campaign-place' } | { type: 'chart-route'; place: Place } |
   { type: 'take-letter' | 'decline-letter' | 'open-item' | 'destroy-item' | 'deliver-item' | 'return-item' | 'complete-private-return'; id: string } |
   { type: 'focus-letter'; id: string; returning: boolean } | { type: 'report-item'; id: string; honest: boolean } |
   { type: 'dialogue'; character: string; reply: 'listen' | 'press' } | { type: 'befriend'; character: string } | { type: 'capture-thought'; id: string } | { type: 'dismiss-thought' };

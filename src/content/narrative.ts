@@ -24,6 +24,7 @@ export function openingContent(locale: Locale): OpeningContent | undefined {
 
 export interface LetterContent { title: string; offer: string; body: string; delivered: string; deliveredAfterLoss?: string; report: string; question: string; answer: string }
 export interface CampaignContent {
+  revisits?:Record<string,{title:string;prompt:string;listen:string;brief:string;listening:string;leaving:string}>;
   sidePassage?: {discover:string;learned:string;replyPrompt:string;direct:string;decline:string;directOutcome:string;declineOutcome:string};
   personalReturn?: { prompt: string; listen: string; alive: string; loss: string; aliveJournal?: string; lossJournal?: string };
   conversations?: Record<string, { prompt: string; listen: string; press: string; listening: string; pressing: string }>;

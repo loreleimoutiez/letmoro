@@ -10,7 +10,7 @@ import type { LifeState, LifeDay } from './lives.ts';
 import { healthChanges } from './health.ts';
 import { parseProfile } from './profile.ts';
 import type { Profile } from './profile.ts';
-export const CONTENT_VERSION = 'prologue-8';
+export const CONTENT_VERSION = 'prologue-9';
 export const stages = ['street', 'job', 'delivery', 'handover', 'settlement', 'complete', 'rest', 'failed', 'neighborhood', 'square', 'workshop', 'errand', 'errand-return', 'campaign'] as const;
 export type Stage = typeof stages[number];
 type ActionData = {type:'buy-skill';id:string} | CampaignAction
@@ -67,7 +67,7 @@ export function apply(run: Run, action: Action): Run {
   let changes: Partial<Run>;
   switch (action.type) {
     case 'buy-skill': changes={campaign:purchaseSkill(run,action.id)};break;
-    case 'learn-side-passage': case 'resolve-side-reply': case 'enter-campaign': case 'visit-campaign-place': case 'chart-route': case 'take-letter': case 'decline-letter': case 'focus-letter': case 'open-item': case 'destroy-item': case 'deliver-item': case 'return-item': case 'complete-private-return': case 'report-item': case 'befriend': case 'dialogue': case 'capture-thought': case 'dismiss-thought':
+    case 'follow-up': case 'learn-side-passage': case 'resolve-side-reply': case 'enter-campaign': case 'visit-campaign-place': case 'chart-route': case 'take-letter': case 'decline-letter': case 'focus-letter': case 'open-item': case 'destroy-item': case 'deliver-item': case 'return-item': case 'complete-private-return': case 'report-item': case 'befriend': case 'dialogue': case 'capture-thought': case 'dismiss-thought':
       changes = reduceCampaign(run, action); break;
     case 'fresh-start':
       if (run.events.length) throw new Error('Fresh start is only available before setup');
@@ -196,6 +196,8 @@ export function apply(run: Run, action: Action): Run {
       break;
     default: throw new Error('Unknown action');
   }
+  const legacyPlace=action.type==='cross'?'office':action.type==='arrive'?'courtyard':action.type==='meet-place'?action.place:undefined;
+  if(legacyPlace){const campaign=changes.campaign??run.campaign;changes={...changes,campaign:{...campaign,lastVisits:{...campaign.lastVisits,[legacyPlace]:run.navigation?.odometer??0}}};}
   const award=experienceAward(run,action);
   if(award) changes={...changes,campaign:{...(changes.campaign??run.campaign),xp:((changes.campaign??run.campaign).xp??0)+award}};
   let next = { ...run, ...changes, events: [...run.events, action] };
@@ -209,6 +211,7 @@ export function isAction(value: unknown): value is Action {
   if (!value || typeof value !== 'object') return false;
   const item = value as Record<string, unknown>;
   if (item.at !== undefined && (typeof item.at !== 'string' || !/^\d{4}-\d{2}-\d{2}T/.test(item.at) || !Number.isFinite(Date.parse(item.at)))) return false;
+  if(item.type==='follow-up')return typeof item.id==='string'&&['listen','brief'].includes(String(item.reply));
   if(item.type==='resolve-side-reply')return ['direct','declined'].includes(String(item.reply));
   if (['buy-skill','take-letter','decline-letter','open-item','destroy-item','deliver-item','return-item','complete-private-return','capture-thought'].includes(String(item.type))) return typeof item.id === 'string';
   if (item.type === 'report-item') return typeof item.id === 'string' && typeof item.honest === 'boolean';
