@@ -72,3 +72,8 @@ Each request should establish who asks, what Moro carries, whom or where to reac
 ## Arc I continuation authoring checkpoint
 
 The owner authorizes writing the continuation, new inhabitants/places and meaningful secondary routes branching off apparently main-only roads. An ignored English-source continuation draft now defines four new inhabitants, six secondary locations, four entrance junctions, eight connected quest outlines and four dialogue scenes with French translations. Side routes contain requests, decisions, consequences and later revisits; some reconnect with the main correspondence round. Existing characters remain central. This is authoring work only: no new scene, badge, map junction or playable arc is added to the current APK. Versioned junction migration and complete outcome localization are required before integration. Detailed identities, geography, dialogue and consequences remain private.
+
+
+### First continuation loop integrated — 0.5.0
+
+One of the drafted secondary loops is now playable through the local manuscript: explicit passage discovery, a new encounter, outward note, optional reply and a choice to leave the people to speak directly. Two optional letters share the established collection/consequence machinery. This implements one bounded loop, not all eight draft quests or the later convergence scene. The remaining draft is still clearly marked as future work. Seventeen badges remain implemented.

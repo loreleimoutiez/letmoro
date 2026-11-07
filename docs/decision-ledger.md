@@ -103,3 +103,8 @@ A fresh-start replay marker baselines existing daily health steps instead of rec
 - Base XP is retroactively restored from validated saved accomplishments; purchased effects apply only to subsequent events. First-visit/friendship rewards are unique; dialogue/revisit spam gives no XP.
 - Owner requests a clarity review of every existing dialogue. Both language packs' current opening surfaces reviewed; no new plot is claimed. The first settlement's established unexpected deductions remain intact.
 - Owner prioritizes fixing the step discrepancy and authorizes alternate phone/wearable paths if needed. Implemented complete civil-day aggregate and separately filtered Samsung shared total with diagnostic comparison; hardware matching still needs confirmation. No direct Fit3 connection, vendor SDK or permission expansion is silently claimed.
+
+
+### First secondary loop — authorized continuation
+
+Owner accepts proceeding with implementation after the private continuation draft. Implement one complete loop before the remaining draft: explicitly revealed branch on an existing road, meaningful new encounter, outgoing message and independently optional reply. Preserve old positions/paid travel and opening completion requirements. No new badge is added. Direct discussion/no new promise remain legitimate choices. Remaining shared scenes and other draft loops are not claimed implemented.

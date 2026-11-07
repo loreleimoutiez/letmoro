@@ -1,4 +1,4 @@
-# Gameplay status — 0.4.0
+# Gameplay status — 0.5.0
 
 This is an internal playable opening, not the complete public campaign. The source and local ignored manuscript include the easy first job, twenty additional letters, recurring branching conversations, two optional unpaid errands, thirty contextual thoughts, trust/friendship and seventeen badge conditions. No runtime-generated or AI-generated story is used.
 
@@ -21,7 +21,7 @@ The first round has a closing scene and outcomes for both employment and refusal
 
 ## Verification
 
-TypeScript and all 75 behavioral tests pass. Tests cover legacy replay, all twenty deliveries and reports, refusal unlocks, privacy/witnessed trust, delayed contradictory reports, optional personal rewards, one pending thought, friendship loss without badge loss, schedule timing/cooldown and corrected daily data. Native compilation, four Kotlin unit tests and Android lint passed; seven existing non-blocking lint suggestions remain. The current native checks use the in-process Kotlin compiler; older checkpoints used a fallback because their daemon home was read-only.
+TypeScript and all 82 behavioral tests pass. Tests cover legacy replay, all twenty deliveries and reports, refusal unlocks, privacy/witnessed trust, delayed contradictory reports, optional personal rewards, one pending thought, friendship loss without badge loss, schedule timing/cooldown and corrected daily data. Native compilation, four Kotlin unit tests and Android lint passed; seven existing non-blocking lint suggestions remain. The current native checks use the in-process Kotlin compiler; older checkpoints used a fallback because their daemon home was read-only.
 
 Browser campaign regression uses synthetic Auth and intercepted cloud HTTP, not a real account: startup/restore, replaced dialogue choices, sealed/opened collection, earned badge, rest settings and cooldown, proportional wheel/two-touch zoom, normal HUD, no test/zoom UI, FR and portrait/landscape. Additional browser checks cover the abstract silent-destination squares, sealed-body privacy and one persistent thought through reload without a queue. Screenshots and harness are external under `/tmp/letmoro-qa/`.
 
@@ -62,3 +62,10 @@ The five arcs are a scaffold, not five authored playable chapters. Current playa
 Full-screen encounters and objective/direction reminders, tour-notebook widget, reviewed opening requests/dialogues in both languages, spendable XP and a three-branch skill tree. Existing achievements receive base XP through replay; purchases and spent balance survive saves. Native source reads full civil-day totals, prefers shared Samsung data without summing sources and exposes query comparisons. Hardware acceptance remains required before claiming matching Fit3/Samsung totals. See handoff for artifact verification. No expanded five-arc campaign or direct band integration is implied.
 
 0.4.0 APK / versionCode 8 assembled and signature-verified; packaged assets match final dist. SHA-256: `9a0c844bb61df4068a0407c36f3095937cd5242bf59e038b1b3d76f4845a1d62`. Synthetic EN/FR mobile purchase/reload tests pass. Physical step matching is pending.
+
+
+## 0.5.0 secondary-loop checkpoint
+
+One new secondary entrance/junction and a destination encounter are implemented with two optional personal letters, separate reply acceptance and direct/no-extra-promise alternatives. Explicit reveal migrates old road intervals without changing position, reserve or odometer; old saves replay unchanged until discovery. Original twenty-letter unlocks and closure are independent of the additions. Badge count remains 17. Seven new tests cover geometry migration, hidden discovery, real outward/return travel, replay, witnessed consequences and tiny-goal fallback. Generic and manuscript-included builds pass; synthetic EN/FR mobile checks cover discovery, acceptance, delivery and optional direct reply. Other continuation quests remain draft.
+
+0.5.0 APK/versionCode 9 built and signature verified; packaged assets match dist. Four native unit tests and lint pass. SHA-256: `f23948cdbd291862ca3d92cf93061990364219097b6b74928bedadffdc9e1042`. New loop awaits owner phone playthrough; existing saves are retained.

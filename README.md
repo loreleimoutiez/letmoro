@@ -4,7 +4,7 @@ A quiet Android walking adventure about delivering letters and finding a life of
 
 ## Status
 
-Internal Android version 0.4.0 / versionCode 8. This is a playable opening, not the complete five-arc public campaign. Postal delivery is the territory's only available employment. The local ignored manuscript adds twenty letters, seven recurring-character conversations and two optional unpaid errands beyond the easy first job/delivery. Refusing employment preserves a complete ten-request personal route.
+Internal Android version 0.5.0 / versionCode 9. This is a playable opening, not the complete five-arc public campaign. Postal delivery is the territory's only available employment. The local ignored manuscript adds twenty letters, seven recurring-character conversations and two optional unpaid errands beyond the easy first job/delivery. Refusing employment preserves a complete ten-request personal route. A first secondary-path extension adds a new encounter and two optional messages without changing that round’s completion requirements.
 
 - Minimal square-pixel world; real-step-funded cardinal travel, reversal and returns, long journeys and a discovered cross-connection. Pinch, mouse wheel and keyboard zoom scale Moro with the terrain; no zoom buttons or percentage.
 - Above-Moro arrival decisions, dialogue details that replace initial choices, up to three carried campaign letters, opening/destruction/return/delivery/report actions, optional report journeys, trust, explicit friendships and delayed contradictory reports. Earned badges have brief restrained feedback; locked badges/skills remain hidden. Only the Basic respect skill root is implemented.

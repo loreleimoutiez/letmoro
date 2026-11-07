@@ -2,7 +2,7 @@
 
 ## Current milestone
 
-Version 0.4.0 is a playable opening with authored correspondence and recurring inhabitants, not the full five-arc campaign. See [gameplay status](gameplay-status.md) and [handoff](handoff.md) for implemented behavior and verification. Source/docs commits and an internal APK are authorized; publication, push and a public license are not.
+Version 0.5.0 is a playable opening with authored correspondence and recurring inhabitants, not the full five-arc campaign. See [gameplay status](gameplay-status.md) and [handoff](handoff.md) for implemented behavior and verification. Source/docs commits and an internal APK are authorized; publication, push and a public license are not.
 
 The Supabase save migration is deployed and verified. The ordinary HUD is restored; internal test/reset/replay UI and browser-preview captions are removed. The local ignored manuscript contains twenty new letters, recurring conversations and thirty thoughts. Rest weekday scheduling follows the latest confirmed next-Monday/seven-day rule.
 
@@ -38,3 +38,6 @@ A substantial complete campaign across continuing major routes; physical health/
 5. Write and implement the remaining four arcs and epilogue, then validate the year-long target. No evidence-based completion percentage or delivery date exists yet.
 
 Widget alternatives are proposals: a resumable objective/pending-choice card, carried-letter overview, an already discovered thought and a configurable discreet scene. Do not implement these as new commitments without the owner's selection. A more autonomous widget requires a separate background-data/permission and battery design.
+
+
+First secondary loop is implemented in 0.5.0. Next: physically assess its entrance/return guidance and pacing, then integrate subsequent inhabited branches and their convergence scenes from the ignored continuation draft. Preserve the original closing route and old graph coordinates as new junctions are added.

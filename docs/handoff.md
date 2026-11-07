@@ -1,6 +1,6 @@
 # Session handoff
 
-Updated 2026-11-07. Source version 0.4.0 / Android versionCode 8. Read this file, product, narrative, decision ledger and roadmap before implementation. Older milestones are in Git history.
+Updated 2026-11-07. Source version 0.5.0 / Android versionCode 9. Read this file, product, narrative, decision ledger and roadmap before implementation. Older milestones are in Git history.
 
 ## Instructions and authorization
 
@@ -35,7 +35,7 @@ Normal coin/step counters restored. Test toolbar source removed, intro replay ab
 
 Ignored `.env.local` contains public client configuration and VITE_CLOUD_SAVES=true. Example remains false for unconfigured checkouts. Snapshot covers profile, events, navigation, letter outcomes, relationships, thoughts, life calendar/schedules, health checkpoints and language. Revision RPC protects stale writes; conflicts require explicit selection and retain a device backup. Offline local preservation/retry and reset tombstones remain supported. Real-account cross-device/email/OAuth verification is still pending. Never claim it is device-tested.
 
-Content generation prologue-7, schema 1, older prologue-1/2/3/4/5/6 accepted by deterministic replay. Private pack `src/content/private/opening.json`, vertical `tree.txt` and `skills-tree.txt` are ignored and required for the richer narrative. No private repository/backup exists; do not force-add them. APK includes local text by design. Generic checkout supports the first delivery without this manuscript.
+Content generation prologue-8, schema 1, older prologue-1/2/3/4/5/6/7 accepted by deterministic replay. Private pack `src/content/private/opening.json`, vertical `tree.txt` and `skills-tree.txt` are ignored and required for the richer narrative. No private repository/backup exists; do not force-add them. APK includes local text by design. Generic checkout supports the first delivery without this manuscript.
 
 ## Verification and environment
 
@@ -116,3 +116,14 @@ The owner reports that the current phone app, Samsung Health and wearable totals
 Verified shipped badge count: 17 (four original, thirteen campaign). Do not reveal badge titles/descriptions when answering the owner's count question. No additional badge is implemented in the new continuation draft.
 
 Owner authorizes beginning the next narrative material with inhabitants, new places and meaningful secondary paths off main roads. Ignored `src/content/private/arc-one-continuation.md` contains four new inhabitants, six locations, four entrance junctions, eight linked quest outlines, four English dialogue scenes and French scene translations, plus consequences and runtime acceptance requirements. Private `tree.txt` now has a matching vertical draft subtree. All marked NOT PLAYABLE; no APK/runtime change made in this writing pass. Preserve existing road IDs/offsets via a migration before inserting junctions. No new ending/romance/political action is claimed implemented. Next: fully author outcome variants for the first secondary quest, implement/version secondary junctions and integrate that first loop with replay tests.
+
+
+## Current 0.5.0 — first playable secondary loop
+
+Implemented one explicitly learned side passage on an existing main road, a new inhabitant/location and two optional personal messages. The first delivery fulfills its own promise; accepting a reply is separate, and direct conversation/no further promise are valid alternatives. Sealed/opened/destroyed/returned letters reuse witnessed trust, truthful/false report, capacity, XP, journal, collection, widget and persistence rules. No new badges: still 17. The original twenty-request closing and unlock count exclude these optional messages; older unfinished saves do not acquire mandatory extra work. Refusing employment still permits this loop.
+
+Graph migration occurs only on the discovery event. The old edge keeps its old geometry while earlier events replay; discovery splits it, remaps current offset and walked intervals, preserves coordinates/odometer/reserve, authorizes the learned junction and stops at intersections. For tiny goals where splitting would create a zero-length edge, the entrance attaches to the original endpoint. Unknown side roads remain absent. Version prologue-8 accepts all previous generations. No database migration required.
+
+The ignored manuscript supplies all new identity/dialogue/letter content in EN/FR. The rest of the continuation remains a draft. A later shared-meal consequence, other new inhabitants and further secondary loops are not yet implemented. No fresh start is required; revisit a known central meeting place and ask about the passage. Real health rules remain unchanged and disabled pending remaining device acceptance checks.
+
+0.5.0 verification: 82 behavioral tests pass, including seven secondary-path regressions, old graph position/interval preservation, no repeated completion rewards, optional reply alternatives and employment refusal. Generic manuscript-free and restored private-manuscript production builds pass. Synthetic EN/FR mobile checks pass. Four Kotlin unit tests, Android lint and APK assembly pass; existing nonblocking bundle/lint suggestions remain. Signature verified and final packaged web assets match dist. APK/versionCode: 0.5.0/9. SHA-256: `f23948cdbd291862ca3d92cf93061990364219097b6b74928bedadffdc9e1042`. Physical playthrough of the new loop remains pending. No Supabase migration or data reset required.
