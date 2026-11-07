@@ -1,4 +1,4 @@
-# Gameplay status — 0.3.0
+# Gameplay status — 0.4.0
 
 This is an internal playable opening, not the complete public campaign. The source and local ignored manuscript include the easy first job, twenty additional letters, recurring branching conversations, two optional unpaid errands, thirty contextual thoughts, trust/friendship and seventeen badge conditions. No runtime-generated or AI-generated story is used.
 
@@ -21,7 +21,7 @@ The first round has a closing scene and outcomes for both employment and refusal
 
 ## Verification
 
-TypeScript and all 67 behavioral tests pass. Tests cover legacy replay, all twenty deliveries and reports, refusal unlocks, privacy/witnessed trust, delayed contradictory reports, optional personal rewards, one pending thought, friendship loss without badge loss, schedule timing/cooldown and corrected daily data. Native compilation, three Kotlin unit tests and Android lint passed; seven existing non-blocking lint suggestions remain. The 0.3.0 native checks use the in-process Kotlin compiler; older checkpoints used a fallback because their daemon home was read-only.
+TypeScript and all 75 behavioral tests pass. Tests cover legacy replay, all twenty deliveries and reports, refusal unlocks, privacy/witnessed trust, delayed contradictory reports, optional personal rewards, one pending thought, friendship loss without badge loss, schedule timing/cooldown and corrected daily data. Native compilation, four Kotlin unit tests and Android lint passed; seven existing non-blocking lint suggestions remain. The current native checks use the in-process Kotlin compiler; older checkpoints used a fallback because their daemon home was read-only.
 
 Browser campaign regression uses synthetic Auth and intercepted cloud HTTP, not a real account: startup/restore, replaced dialogue choices, sealed/opened collection, earned badge, rest settings and cooldown, proportional wheel/two-touch zoom, normal HUD, no test/zoom UI, FR and portrait/landscape. Additional browser checks cover the abstract silent-destination squares, sealed-body privacy and one persistent thought through reload without a queue. Screenshots and harness are external under `/tmp/letmoro-qa/`.
 
@@ -54,4 +54,11 @@ The owner confirmed downloading and installing the 0.2.1 update on the phone ove
 
 ## Planning audit — 2026-11-07
 
-The five arcs are a scaffold, not five authored playable chapters. Current playable content is the opening correspondence round. Politics has thematic seeds and planned commitments but no playable movement/strike/power-change system. Romance routes, substantial private-life/home progression, numerical trait/skill effects and the personalized campaign ending remain unfinished. XP currently has one explicit reward source and is a balance only. The widget currently previews cached state; autonomous background progression is not implemented. The current step discrepancy requires device diagnostics before further gameplay expansion. Reported personal totals are deliberately excluded from this document.
+The five arcs are a scaffold, not five authored playable chapters. Current playable content is the opening correspondence round. Politics has thematic seeds and planned commitments but no playable movement/strike/power-change system. Romance routes, substantial private-life/home progression, numerical trait effects and deeper campaign skills and the personalized campaign ending remain unfinished. XP is now earned by completed requests and discoveries, and spent in three connected two-tier branches with two choices per tier. All twelve skill alternatives have implemented bonuses. The widget currently previews cached state; autonomous background progression is not implemented. The current step discrepancy requires device diagnostics before further gameplay expansion. Reported personal totals are deliberately excluded from this document.
+
+
+## 0.4.0 current checkpoint
+
+Full-screen encounters and objective/direction reminders, tour-notebook widget, reviewed opening requests/dialogues in both languages, spendable XP and a three-branch skill tree. Existing achievements receive base XP through replay; purchases and spent balance survive saves. Native source reads full civil-day totals, prefers shared Samsung data without summing sources and exposes query comparisons. Hardware acceptance remains required before claiming matching Fit3/Samsung totals. See handoff for artifact verification. No expanded five-arc campaign or direct band integration is implied.
+
+0.4.0 APK / versionCode 8 assembled and signature-verified; packaged assets match final dist. SHA-256: `9a0c844bb61df4068a0407c36f3095937cd5242bf59e038b1b3d76f4845a1d62`. Synthetic EN/FR mobile purchase/reload tests pass. Physical step matching is pending.

@@ -96,3 +96,10 @@ A fresh-start replay marker baselines existing daily health steps instead of rec
 - Owner requests a temporary large dialogue/choice screen, allowing Moro to be hidden, with participant squares/names and readable choices. Implemented viewport encounter presentation, dismiss/reopen, expandable message offers and objective guidance. A complete speaker-by-speaker rewrite of legacy scenes remains pending.
 - Owner chooses a tour notebook as a widget complement. Implemented cached carried-letter and optional-return counts; full interactive widget quest management remains outside this pass.
 - Owner asks which actions could earn XP. Existing one-time 25 XP outcome and persistence are retained; map counter and explanation added. Additional reward sources in Product are proposals, not settled balance or implemented mechanics.
+
+### November 7 — spendable XP and reliable steps supersede balance-only proposals
+
+- Owner authorizes XP on every completed quest/promise with differing rewards, spent on skills, and progressive two-choice forks with two or three starting branches. Implemented three connected branches, two tiers each; one permanent choice per tier is disclosed in UI. Costs and bonuses are initial tuning, not a completed campaign tree. Earlier balance-only status is superseded.
+- Base XP is retroactively restored from validated saved accomplishments; purchased effects apply only to subsequent events. First-visit/friendship rewards are unique; dialogue/revisit spam gives no XP.
+- Owner requests a clarity review of every existing dialogue. Both language packs' current opening surfaces reviewed; no new plot is claimed. The first settlement's established unexpected deductions remain intact.
+- Owner prioritizes fixing the step discrepancy and authorizes alternate phone/wearable paths if needed. Implemented complete civil-day aggregate and separately filtered Samsung shared total with diagnostic comparison; hardware matching still needs confirmation. No direct Fit3 connection, vendor SDK or permission expansion is silently claimed.

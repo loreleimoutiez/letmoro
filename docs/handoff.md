@@ -1,6 +1,6 @@
 # Session handoff
 
-Updated 2026-11-07. Source version 0.3.0 / Android versionCode 7. Read this file, product, narrative, decision ledger and roadmap before implementation. Older milestones are in Git history.
+Updated 2026-11-07. Source version 0.4.0 / Android versionCode 8. Read this file, product, narrative, decision ledger and roadmap before implementation. Older milestones are in Git history.
 
 ## Instructions and authorization
 
@@ -25,7 +25,7 @@ Opening work/refusal dialogue, first letter sealed/opened/destroyed outcomes and
 
 Thirty localized thoughts, filtered by known situation. One pending thought persists until dismissal and replaces main arrival choices temporarily; Story remains available. Dismissal marks current travel, preventing backlog. Unseen suitable thoughts are prioritized; after exhaustion, spaced repeats avoid immediately repeating the last thought. Unique thought archive remains readable in Journal.
 
-Four original plus thirteen campaign badge conditions, brief five-second earned feedback. Basic respect only, earned through postal employment; future skills hidden. Latest encounter hollow markers, historical traces, visited place labels and abstract discovered-location squares. No live NPC tracking. Pinch/wheel/keyboard zoom, proportional Moro, square pebbles, no zoom UI. Journal newest-first with local timestamps; older undated entries stay undated.
+Four original plus thirteen campaign badge conditions, brief five-second earned feedback. Basic respect, earned through postal employment, roots three spendable-XP branches with two revealed choices per tier; two tiers per branch are implemented. Latest encounter hollow markers, historical traces, visited place labels and abstract discovered-location squares. No live NPC tracking. Pinch/wheel/keyboard zoom, proportional Moro, square pebbles, no zoom UI. Journal newest-first with local timestamps; older undated entries stay undated.
 
 Normal coin/step counters restored. Test toolbar source removed, intro replay absent, internal-tools flag removed. An explicit confirmed full erasure is now available in Settings. Synthetic legacy events remain decodable and automated tests still use domain fixtures; no simulation UI is shipped. No browser-preview caption remains in UI copy.
 
@@ -35,7 +35,7 @@ Normal coin/step counters restored. Test toolbar source removed, intro replay ab
 
 Ignored `.env.local` contains public client configuration and VITE_CLOUD_SAVES=true. Example remains false for unconfigured checkouts. Snapshot covers profile, events, navigation, letter outcomes, relationships, thoughts, life calendar/schedules, health checkpoints and language. Revision RPC protects stale writes; conflicts require explicit selection and retain a device backup. Offline local preservation/retry and reset tombstones remain supported. Real-account cross-device/email/OAuth verification is still pending. Never claim it is device-tested.
 
-Content generation prologue-6, schema 1, older prologue-1/2/3/4/5 accepted by deterministic replay. Private pack `src/content/private/opening.json`, vertical `tree.txt` and `skills-tree.txt` are ignored and required for the richer narrative. No private repository/backup exists; do not force-add them. APK includes local text by design. Generic checkout supports the first delivery without this manuscript.
+Content generation prologue-7, schema 1, older prologue-1/2/3/4/5/6 accepted by deterministic replay. Private pack `src/content/private/opening.json`, vertical `tree.txt` and `skills-tree.txt` are ignored and required for the richer narrative. No private repository/backup exists; do not force-add them. APK includes local text by design. Generic checkout supports the first delivery without this manuscript.
 
 ## Verification and environment
 
@@ -93,3 +93,18 @@ Implemented full-viewport encounters with participant squares/names, persistent 
 Widget adds a cached notebook with carried-letter and optional-return counts. XP counter opens Skills, explaining its limited implementation: only the existing private-return 25 XP reward exists, no levels or general reward schedule. Further XP awards are proposals in Product. No save schema or Supabase migration required. Step-count discrepancy is unchanged and still requires the documented on-device query investigation. Five complete arcs are not implemented by these UI changes.
 
 Verification for this pass: 69 Node tests pass (two new objective/notebook checks); TypeScript and production web build pass. Synthetic mobile Chromium checks at 390 × 844 verify full-height modal, named participant, close/reopen and absence of JavaScript errors. Android unit tests and lint pass; existing nonblocking lint/build warnings remain. Physical-phone readability, launcher sizing and the step-provider discrepancy still require real-device checks. No new APK is claimed by this entry.
+
+
+## November 7 — current 0.4.0 implementation supersedes the XP-only checkpoint
+
+Owner explicitly requests reliable steps, spendable XP, progressive two-choice skill forks inspired visually by a connected game skill tree, and a full clarity review of existing dialogue. Source now awards base XP for existing completions via deterministic replay; purchases are validated events, with twelve skill alternatives across three branches/two tiers. Each tier has mutually exclusive alternatives, disclosed before purchase. Owned ancestors remain visible, future tiers stay hidden. Bonuses affect capacity, postal pay, trust, private gifts and specific XP rewards; no raw-step multiplier changes real travel. No Supabase schema change is needed for the versioned event payload. Prior saves receive base rewards automatically and preserve past paths/outcomes. Future five-arc/political/romance expansion remains pending.
+
+Native steps now query full local civil-day boundaries (including 23/25-hour days), separately aggregate Samsung Health's shared source, prefer it when available, otherwise use the Health Connect deduplicated all-source total. Never add sources. Diagnostics expose Samsung, all-source and old partial-window readings without storing personal diagnostic records. The old clipped window and source-priority mismatch are addressed in source, but the actual phone's discrepancy is NOT yet proven fixed. If Samsung's exported total still lags Samsung Health itself, the vendor SDK experiment remains the next adapter; no Wearable/Bluetooth shortcut or Samsung SDK is claimed installed. Life penalties remain off.
+
+Reviewed all existing opening dialogue/request surfaces in both languages, including the first job, three topics, two legacy errands, eight conversation sets and twenty offers/details/reports. Sender/destination, unpaid help, optional returns and intentionally withheld meaning are explicit. Outcomes are shown after delivery; report prose is not presented as completed before reporting. Private manuscript changes remain ignored, included in local builds and require separate backup.
+
+
+0.4.0 verification: 75 behavioral tests pass, including validated purchases, prerequisites, mutually exclusive forks, hidden descendants, reward differences, save replay, actual postal-pay/trust bonuses and preserved missing/zero step diagnostics. TypeScript/production build pass. Four Kotlin unit tests and Android lint pass. Synthetic EN/FR 390 × 844 Chromium verifies full-screen encounters, buying a skill, hidden future choices and persisted spend on reload. No physical import/launcher acceptance is claimed. Existing web bundle-size and native lint suggestions remain nonblocking.
+
+
+0.4.0 APK / versionCode 8 assembled, signature verified with the existing signing identity, and packaged web assets byte-compared with final `dist`. SHA-256: `9a0c844bb61df4068a0407c36f3095937cd5242bf59e038b1b3d76f4845a1d62`. Includes the reviewed ignored manuscript and progressive skills UI. A temporary isolated APK-only LAN download is authorized; no device installation or matching real step total is claimed.
