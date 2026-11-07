@@ -80,3 +80,8 @@ A personal delivery now has distinct optional return outcomes and an exclusive i
 
 
 Version 0.6.0 adds explicit English/French choice before the first account/setup/intro screen, lighter interaction copy and three authored conditional return conversations. Current catalog: nine encountered-character identities excluding Moro, 23 letters including the initial delivery, and 17 badge conditions. `npm run measure:pacing` reproduces example travel workloads at a 10,000-step goal; these do not predict calendar duration or reading time.
+
+
+## Version labels
+
+Internal builds use `0.minor.patch`: `0` marks ongoing development, the middle number identifies a feature milestone, and the final number identifies smaller fixes within that milestone. For example, `0.6.1` would be a corrective update to `0.6.0`, while `0.7.0` would mark the next feature milestone. The release label describes change history; campaign completeness is documented separately. Android's `versionCode` is a separate increasing install/update counter (10 for 0.6.0).
