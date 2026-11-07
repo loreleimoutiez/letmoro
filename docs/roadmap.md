@@ -2,7 +2,7 @@
 
 ## Current milestone
 
-Version 0.5.0 is a playable opening with authored correspondence and recurring inhabitants, not the full five-arc campaign. See [gameplay status](gameplay-status.md) and [handoff](handoff.md) for implemented behavior and verification. Source/docs commits and an internal APK are authorized; publication, push and a public license are not.
+Version 0.6.0 is a playable opening with authored correspondence and recurring inhabitants, not the full five-arc campaign. See [gameplay status](gameplay-status.md) and [handoff](handoff.md) for implemented behavior and verification. Source/docs commits and an internal APK are authorized; publication, push and a public license are not.
 
 The Supabase save migration is deployed and verified. The ordinary HUD is restored; internal test/reset/replay UI and browser-preview captions are removed. The local ignored manuscript contains twenty new letters, recurring conversations and thirty thoughts. Rest weekday scheduling follows the latest confirmed next-Monday/seven-day rule.
 
@@ -41,3 +41,6 @@ Widget alternatives are proposals: a resumable objective/pending-choice card, ca
 
 
 First secondary loop is implemented in 0.5.0. Next: physically assess its entrance/return guidance and pacing, then integrate subsequent inhabited branches and their convergence scenes from the ignored continuation draft. Preserve the original closing route and old graph coordinates as new junctions are added.
+
+
+0.6.0 improves language arrival/readability and adds three selected return follow-ups; counts/pacing are documented with a reproducible script. Next narrative work remains the other inhabited secondary loops and their convergence, rather than artificially extending duration by distance or repeating existing text.

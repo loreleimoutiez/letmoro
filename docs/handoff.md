@@ -1,6 +1,6 @@
 # Session handoff
 
-Updated 2026-11-07. Source version 0.5.0 / Android versionCode 9. Read this file, product, narrative, decision ledger and roadmap before implementation. Older milestones are in Git history.
+Updated 2026-11-07. Source version 0.6.0 / Android versionCode 10. Read this file, product, narrative, decision ledger and roadmap before implementation. Older milestones are in Git history.
 
 ## Instructions and authorization
 
@@ -35,7 +35,7 @@ Normal coin/step counters restored. Test toolbar source removed, intro replay ab
 
 Ignored `.env.local` contains public client configuration and VITE_CLOUD_SAVES=true. Example remains false for unconfigured checkouts. Snapshot covers profile, events, navigation, letter outcomes, relationships, thoughts, life calendar/schedules, health checkpoints and language. Revision RPC protects stale writes; conflicts require explicit selection and retain a device backup. Offline local preservation/retry and reset tombstones remain supported. Real-account cross-device/email/OAuth verification is still pending. Never claim it is device-tested.
 
-Content generation prologue-8, schema 1, older prologue-1/2/3/4/5/6/7 accepted by deterministic replay. Private pack `src/content/private/opening.json`, vertical `tree.txt` and `skills-tree.txt` are ignored and required for the richer narrative. No private repository/backup exists; do not force-add them. APK includes local text by design. Generic checkout supports the first delivery without this manuscript.
+Content generation prologue-9, schema 1, older prologue-1/2/3/4/5/6/7/8 accepted by deterministic replay. Private pack `src/content/private/opening.json`, vertical `tree.txt` and `skills-tree.txt` are ignored and required for the richer narrative. No private repository/backup exists; do not force-add them. APK includes local text by design. Generic checkout supports the first delivery without this manuscript.
 
 ## Verification and environment
 
@@ -127,3 +127,21 @@ Graph migration occurs only on the discovery event. The old edge keeps its old g
 The ignored manuscript supplies all new identity/dialogue/letter content in EN/FR. The rest of the continuation remains a draft. A later shared-meal consequence, other new inhabitants and further secondary loops are not yet implemented. No fresh start is required; revisit a known central meeting place and ask about the passage. Real health rules remain unchanged and disabled pending remaining device acceptance checks.
 
 0.5.0 verification: 82 behavioral tests pass, including seven secondary-path regressions, old graph position/interval preservation, no repeated completion rewards, optional reply alternatives and employment refusal. Generic manuscript-free and restored private-manuscript production builds pass. Synthetic EN/FR mobile checks pass. Four Kotlin unit tests, Android lint and APK assembly pass; existing nonblocking bundle/lint suggestions remain. Signature verified and final packaged web assets match dist. APK/versionCode: 0.5.0/9. SHA-256: `f23948cdbd291862ca3d92cf93061990364219097b6b74928bedadffdc9e1042`. Physical playthrough of the new loop remains pending. No Supabase migration or data reset required.
+
+
+## Current 0.6.0 — language arrival and readable return encounters
+
+Owner requests explicit EN/FR choice before account/setup/intro, slightly smaller encounter text, less repeated copy, selected meaningful return interactions, updated counts/pacing, commits/docs/APK, and asks about a silent promotional clip. First launch now gates App mounting until a language is chosen; valid device preferences skip the gate thereafter. Account landing also has a language selector. Explicit session choice survives restoring a differently localized cloud game. Explicit full erasure still returns setup to English as previously specified; it retains Auth.
+
+Removed generic campaign instructions from encounter/Story when contextual content is present, arrival objective cards, repeated direction hint, offer identity duplication and generic delivery confirmation after an authored reaction. Broken-seal trust effects remain visible. Old dialogue and the first-round ending are collapsed for optional rereading; a just-chosen dialogue answer remains visible. Encounter prose reduced from 13 to 12 px, choices from 12 to 11 px, with 44 px touch targets retained and no nested limited-height details scroller.
+
+Campaign arrivals automatically record a place encounter once per new odometer position; no repeated visit button is needed. Legacy cross/arrival/meeting events establish visit baselines. Actual returns after specific completed deliveries unlock three authored follow-ups at selected known places. Repeated visits at unchanged position cannot manufacture a return. Each response saves once; listening can add one bounded trust, no XP/coin farming. Follow-up prose is private and localized. Other places retain available letters, reports, known conversations and route choices; not every return invents a new scene. Health/arrival/thought effects reject stale captured runs before saving to avoid overwriting another effect's progress.
+
+Current content counts: 9 encounterable characters excluding Moro, 23 distinct letters including the initial job and two side-loop letters, 17 badges. Nine is the catalog across outcomes, not a promise that all appear in every route. No new letter/badge added in this release.
+
+Reproducible pacing: `npm run measure:pacing`, 10,000-step goal, one letter at a time. All 23 deliveries with no optional reports: 596,200 steps (59.62 goal equivalents); all reports without legacy errands: 1,155,450 (115.545); all reports and both legacy errands: 1,252,450 (125.245). These are explicit nonoptimized itineraries, not min/max bounds, calendar days, active reading time or proof of fully authored months of story. Batching, skipping, other routes and later free walking change the result. Future five arcs remain unfinished.
+
+
+0.6.0 verification: 88 behavioral tests pass; TypeScript, generic and manuscript-included builds pass. Synthetic mobile EN/FR checks verify first language choice before account, persisted preference, localized setup/intro, secondary quest regression, deduplicated encounter paragraphs and a return choice saved once across reload. Four Kotlin unit tests, Android lint and assembly pass. Existing nonblocking bundle-size/native lint suggestions remain. Signature identity matches 0.5.0 and packaged web assets match final dist. APK/versionCode: 0.6.0/10; SHA-256: `bd51b703113d258da08ea95573f993ff25ecc596598fe7367bfed02a880260f4`. No reset or Supabase migration required. Physical readability/return playthrough remains to confirm on the owner's phone.
+
+A local promotional preview was also rendered at `artifacts/promo/letmoro-teaser-fr.mp4`: 21 seconds, 720 × 1280, H.264, no audio stream. It is a simple montage of genuine UI captures and a pixel/text end card, using synthetic saves, not a filmed physical playthrough. Only introductory encountered characters are shown; no letter bodies or real account/health data are included. Artifact is ignored by Git, not published, and not backed up remotely. SHA-256: `647f8a53fdaea6d489572478aee35b022caede3eb2b5b460ef0c809553883aa8`.

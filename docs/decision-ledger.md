@@ -108,3 +108,10 @@ A fresh-start replay marker baselines existing daily health steps instead of rec
 ### First secondary loop — authorized continuation
 
 Owner accepts proceeding with implementation after the private continuation draft. Implement one complete loop before the remaining draft: explicitly revealed branch on an existing road, meaningful new encounter, outgoing message and independently optional reply. Preserve old positions/paid travel and opening completion requirements. No new badge is added. Direct discussion/no new promise remain legitimate choices. Remaining shared scenes and other draft loops are not claimed implemented.
+
+
+### 0.6.0 — first language choice and selective revisits
+
+Owner requests EN/FR choice at first launch before intro/settings, smaller full-screen interaction text and less same-screen repetition. Explicit first choice is now required when no valid device preference exists, with later changes available before sign-in and in Settings. Deduplicated encounter context and slightly reduced typography retain accessible touch target size.
+
+Owner authorizes additional interactions on some known-place returns. Implement three prerequisite-based once-only follow-ups, not universal repetitive greetings or procedural dialogue. A physical return after the relevant delivery is required; clicks without movement cannot trigger it. No new letter, badge or XP award is added. Catalog remains 9 encounterable characters plus Moro, 23 letters and 17 badges. Pacing examples are measured travel workloads, never guaranteed calendar/story duration.

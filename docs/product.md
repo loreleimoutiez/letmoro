@@ -117,3 +117,12 @@ Rewards: first delivery 12 XP; an honestly closed failed first delivery 6; unpai
 A secondary entrance can be learned on a road already walked. Learning is an explicit saved event; it neither spends travel steps nor moves Moro. New junctions stop travel for a direction choice. Existing distances and walked geometry are preserved by event-time graph migration. A fallback attaches the branch to an endpoint when a very small goal would otherwise produce a zero-length segment.
 
 The first secondary loop adds two personal letters with separate acceptance and completion, plus direct-conversation/no-further-promise alternatives. Its base delivery rewards are 32 and 18 XP. These requests do not contribute to the original round's letter-unlock count or add mandatory conditions to its ending. Letter privacy, capacity, trust and reports remain consistent with the existing campaign. No new employment, timed obligation or badge is introduced.
+
+
+## Language arrival and return encounters — 0.6.0
+
+Before account, setup, health invitation or intro, a fresh installation without a valid device language presents Français/English with no preselected default. Selection persists; returning installations keep their saved language. Account landing and Settings allow changes. An explicitly chosen language has session priority when restoring cloud content; existing explicit full erasure still resets setup language to English.
+
+Encounters use 12 px prose and 11 px choices, retain 44 px touch targets, and use one primary content scroller. Objective/direction and delivery confirmations are not repeated alongside equivalent scene text. Completed conversations and round closure remain available through collapsed reread controls.
+
+Returning can reveal a specific follow-up after its prerequisite delivery, rather than replaying an identical introductory conversation. Three new localized follow-ups are implemented. Actual movement followed by arrival is required, with temporal ordering after the relevant delivery and one saved response. A short greeting is a valid option; there is no new promise or automatic XP. Other destinations need not produce new content on every visit. Existing report/reward/consequence interactions remain available independently.

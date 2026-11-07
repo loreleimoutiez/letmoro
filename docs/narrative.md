@@ -77,3 +77,8 @@ The owner authorizes writing the continuation, new inhabitants/places and meanin
 ### First continuation loop integrated — 0.5.0
 
 One of the drafted secondary loops is now playable through the local manuscript: explicit passage discovery, a new encounter, outward note, optional reply and a choice to leave the people to speak directly. Two optional letters share the established collection/consequence machinery. This implements one bounded loop, not all eight draft quests or the later convergence scene. The remaining draft is still clearly marked as future work. Seventeen badges remain implemented.
+
+
+### Return conversations and repeated copy — 0.6.0
+
+Three current inhabitants have new follow-up conversations after actual returns and specific delivered messages. They acknowledge work and practical arrangements without revealing sealed contents or granting remote knowledge. Staying to talk can strengthen trust; a brief greeting makes no new promise. These are once-only, replay-safe scenes, not a new complete quest arc. Old conversations remain optional rereads. The reusable UI no longer overlays generic campaign/arrival/delivery prose on top of equivalent authored text. All new scene prose remains in the ignored EN/FR pack.
