@@ -33,3 +33,11 @@ A native RemoteViews widget shows Moro centered on a local view of walked route 
 A bounded bitmap and minimal private snapshot are updated while the app is active, at most once per five seconds. The widget retains a last-seen date/time when the app is closed; it is not a background step reader or live offline progression engine. Android's periodic refresh repaints stored data, with outdated daily counts displayed as unknown. Signing out, erasing or switching accounts clears/replaces the snapshot. No Auth identifier/token or full save enters widget preferences. See [Android widget documentation](https://developer.android.com/develop/ui/views/appwidgets).
 
 Native launcher placement, resizing, account isolation and device refresh need physical acceptance. Source/compilation and pure snapshot tests do not replace that check.
+
+## Device diagnostic follow-up — 2026-11-07
+
+The owner clarified that Google Health is the renamed Fitbit app, not the Health Connect settings screen. Google documents the rename in its [Google Health announcement](https://blog.google/products-and-platforms/products/google-health/google-health-app/). Do not conflate these products or treat the Google Health app display as a direct reading of Letmoro's Health Connect query.
+
+The new diagnostic confirms a recent Health Connect read with Samsung Health contributing, whose aggregate is close to Letmoro's displayed estimate but materially below Samsung Health. No personal totals or exact observation timestamps are stored here. The investigation now concerns data export/source selection/query semantics rather than assuming the HUD subtracts spent travel.
+
+A concrete query hypothesis: readToday currently queries local midnight through Instant.now(). Android aggregation tests demonstrate rescaling when a record overlaps the requested window. If a provider exports a cumulative record spanning a larger interval, that could reduce a partial-day aggregate. Compare the current request with the complete local civil-day window and inspect interval/source metadata using minimal, consented diagnostics. This is not confirmed as the cause on this device and no speculative correction or manual step grant was applied. Preserve deduplication, account baseline and unknown-data protections.

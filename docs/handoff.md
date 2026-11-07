@@ -77,3 +77,11 @@ Owner says Samsung Health already matches Fit3 but Letmoro lags. The issue is no
 ## Owner audit request — 2026-11-07
 
 Owner asks for useful alternatives to a live widget, a candid development/five-arc/romance/politics audit and the next implementation order. Widget alternatives remain proposals, not feature authorization. A substantial wearable/health/Letmoro mismatch was reported; do not put the owner's totals in Git. Requested 0.3.0 provider diagnostic fields and clarification of the Google app name. No cause is established yet. Prioritize reliable step import and physical persistence checks before more mechanics; the five arcs remain planned scaffolding beyond the playable opening. Roadmap/status headers were corrected to current 0.3.0 and 67 tests.
+
+## Device diagnostic follow-up — 2026-11-07
+
+The owner clarified that Google Health is the renamed Fitbit app, not the Health Connect settings screen. Google documents the rename in its [Google Health announcement](https://blog.google/products-and-platforms/products/google-health/google-health-app/). Do not conflate these products or treat the Google Health app display as a direct reading of Letmoro's Health Connect query.
+
+The new diagnostic confirms a recent Health Connect read with Samsung Health contributing, whose aggregate is close to Letmoro's displayed estimate but materially below Samsung Health. No personal totals or exact observation timestamps are stored here. The investigation now concerns data export/source selection/query semantics rather than assuming the HUD subtracts spent travel.
+
+A concrete query hypothesis: readToday currently queries local midnight through Instant.now(). Android aggregation tests demonstrate rescaling when a record overlaps the requested window. If a provider exports a cumulative record spanning a larger interval, that could reduce a partial-day aggregate. Compare the current request with the complete local civil-day window and inspect interval/source metadata using minimal, consented diagnostics. This is not confirmed as the cause on this device and no speculative correction or manual step grant was applied. Preserve deduplication, account baseline and unknown-data protections.
