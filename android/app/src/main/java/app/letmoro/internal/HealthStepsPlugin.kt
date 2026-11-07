@@ -15,6 +15,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.PermissionController
 import androidx.health.connect.client.permission.HealthPermission
+import androidx.health.connect.client.records.metadata.DataOrigin
 import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.request.AggregateRequest
 import androidx.health.connect.client.time.TimeRangeFilter
@@ -55,6 +56,9 @@ class HealthStepsPlugin : Plugin(), SensorEventListener {
     private var providerCount: Long? = null
     private var providerCheckedAt: String? = null
     private var samsungShared = false
+    private var providerAllCount: Long? = null
+    private var providerSamsungCount: Long? = null
+    private var providerPartialCount: Long? = null
     private fun dayKey() = "${LocalDate.now()}|${ZoneId.systemDefault().id}"
 
 
@@ -76,6 +80,10 @@ class HealthStepsPlugin : Plugin(), SensorEventListener {
         put("providerCount", providerCount ?: org.json.JSONObject.NULL)
         put("providerCheckedAt", providerCheckedAt ?: org.json.JSONObject.NULL)
         put("samsungShared", samsungShared)
+        put("providerAllCount", providerAllCount ?: org.json.JSONObject.NULL)
+        put("providerSamsungCount", providerSamsungCount ?: org.json.JSONObject.NULL)
+        put("providerPartialCount", providerPartialCount ?: org.json.JSONObject.NULL)
+        put("providerSource", if (providerSamsungCount != null) "samsung" else "health-connect")
     }
 
     @PluginMethod
@@ -91,21 +99,47 @@ class HealthStepsPlugin : Plugin(), SensorEventListener {
                     stopListening()
                     lastPublished = null
                     providerCount = null
+                    providerAllCount = null
+                    providerSamsungCount = null
+                    providerPartialCount = null
                     providerCheckedAt = null
                     samsungShared = false
                     call.resolve(result("permission-required"))
                     return@launch
                 }
-                val start = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()
+                val date = LocalDate.now()
+                val zone = ZoneId.systemDefault()
+                val window = StepDayWindow.forDate(date, zone)
                 val response = client.aggregate(AggregateRequest(
                     metrics = setOf(StepsRecord.COUNT_TOTAL),
-                    timeRangeFilter = TimeRangeFilter.between(start, Instant.now())
+                    timeRangeFilter = TimeRangeFilter.between(window.start, window.end)
                 ))
-                // No result is unknown, never a confirmed zero. Let Health Connect deduplicate.
-                val count = response[StepsRecord.COUNT_TOTAL]
+                // Filtered aggregation retains Samsung's own deduplication of phone and band.
+                // Never sum it with the all-source result or the foreground phone estimate.
+                val samsung = try {
+                    client.aggregate(AggregateRequest(
+                        metrics = setOf(StepsRecord.COUNT_TOTAL),
+                        timeRangeFilter = TimeRangeFilter.between(window.start, window.end),
+                        dataOriginFilter = setOf(DataOrigin("com.sec.android.app.shealth"))
+                    ))[StepsRecord.COUNT_TOTAL]
+                } catch (cancel: CancellationException) { throw cancel } catch (_: Exception) { null }
+                // Keep the old window visible in diagnostics to validate the correction on hardware.
+                providerPartialCount = try {
+                    client.aggregate(AggregateRequest(
+                        metrics = setOf(StepsRecord.COUNT_TOTAL),
+                        timeRangeFilter = TimeRangeFilter.between(window.start, Instant.now())
+                    ))[StepsRecord.COUNT_TOTAL]
+                } catch (cancel: CancellationException) { throw cancel } catch (_: Exception) { null }
+                if (date != LocalDate.now() || zone != ZoneId.systemDefault()) {
+                    call.resolve(result("empty"))
+                    return@launch
+                }
+                providerAllCount = response[StepsRecord.COUNT_TOTAL]
+                providerSamsungCount = samsung
+                val count = samsung ?: providerAllCount
                 providerCount = count
                 providerCheckedAt = Instant.now().toString()
-                samsungShared = response.dataOrigins.any { it.packageName == "com.sec.android.app.shealth" }
+                samsungShared = samsung != null
                 if (publishedDay != dayKey()) {
                     stopListening()
                     publishedDay = dayKey()

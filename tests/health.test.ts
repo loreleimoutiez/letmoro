@@ -104,3 +104,10 @@ test('step diagnostics keep shared provider totals distinct from the combined ph
   const invalid=parseStepSnapshot({status:'ready',count:5,providerCount:-10,providerCheckedAt:'invalid'});
   assert.equal(invalid.providerCount,undefined);assert.equal(invalid.providerCheckedAt,undefined);
 });
+
+test('source diagnostics keep legitimate zero distinct from missing data and reject invalid counts',()=>{
+ const snapshot=parseStepSnapshot({status:'ready',count:120,providerSource:'samsung',providerAllCount:90,providerSamsungCount:120,providerPartialCount:70});
+ assert.equal(snapshot.providerSource,'samsung');assert.equal(snapshot.providerSamsungCount,120);assert.equal(snapshot.providerPartialCount,70);
+ const missing=parseStepSnapshot({status:'empty',count:null,providerSamsungCount:null,providerAllCount:0,providerPartialCount:-1,providerSource:'unknown'});
+ assert.equal(missing.count,null);assert.equal(missing.providerSamsungCount,null);assert.equal(missing.providerAllCount,0);assert.equal(missing.providerPartialCount,undefined);assert.equal(missing.providerSource,undefined);
+});

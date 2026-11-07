@@ -8,6 +8,10 @@ export type StepSnapshot = {
   providerCount?: number | null;
   providerCheckedAt?: string | null;
   samsungShared?: boolean;
+  providerAllCount?: number | null;
+  providerSamsungCount?: number | null;
+  providerPartialCount?: number | null;
+  providerSource?: 'samsung' | 'health-connect';
 };
 
 export function parseStepSnapshot(value: unknown): StepSnapshot {
@@ -17,6 +21,8 @@ export function parseStepSnapshot(value: unknown): StepSnapshot {
   if (data.status === 'ready' && (!Number.isSafeInteger(data.count) || Number(data.count) < 0)) throw new Error('Invalid step count');
   return {
     live: data.live === true,
+    ...Object.fromEntries(['providerAllCount','providerSamsungCount','providerPartialCount'].flatMap(key=>data[key]===null || Number.isSafeInteger(data[key])&&Number(data[key])>=0 ? [[key,data[key]]] : [])),
+    ...(data.providerSource==='samsung'||data.providerSource==='health-connect'?{providerSource:data.providerSource}:{}),
     ...(data.providerCount === null || Number.isSafeInteger(data.providerCount) && Number(data.providerCount)>=0 ? {providerCount:data.providerCount as number | null} : {}),
     ...(typeof data.providerCheckedAt==='string' && Number.isFinite(Date.parse(data.providerCheckedAt)) ? {providerCheckedAt:data.providerCheckedAt} : {}),
     ...(typeof data.samsungShared==='boolean' ? {samsungShared:data.samsungShared} : {}),
