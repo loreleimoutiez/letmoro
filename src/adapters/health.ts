@@ -10,6 +10,7 @@ interface HealthStepsPlugin {
   readToday(): Promise<unknown>;
   requestAccess(): Promise<unknown>;
   openSettings(): Promise<void>;
+  openSamsungHealth(): Promise<void>;
 }
 const native = registerPlugin<HealthStepsPlugin>('HealthSteps');
 export const supportsHealth = Capacitor.getPlatform() === 'android';
@@ -35,3 +36,5 @@ export async function stopLiveSteps() { if (supportsHealth) await native.stopLiv
 export async function readClosedStepDays(from: string, zone: string, recheck: string[] = []): Promise<unknown> {
   return supportsHealth ? native.readClosedDays({ from, zone, recheck }) : { status: 'unavailable', days: [] };
 }
+
+export async function openSamsungHealth() { if (supportsHealth) await native.openSamsungHealth(); }

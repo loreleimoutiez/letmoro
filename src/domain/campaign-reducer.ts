@@ -1,6 +1,6 @@
 import type { Run } from './prologue.ts';
 import type { CampaignAction, Campaign, EntrustedLetter } from './campaign.ts';
-import { availableLetters, letterRules, peopleAt, resolvedLetters } from './campaign.ts';
+import { availableLetters, letterRules, characterAt, resolvedLetters } from './campaign.ts';
 import { currentNode, worldGraph } from './navigation.ts';
 import type { Place, EdgeId } from './navigation.ts';
 
@@ -55,15 +55,15 @@ export function reduceCampaign(run: Run, action: CampaignAction): Partial<Run> {
       sous = Math.max(0,sous - (rule.postal ? 2 : 0));
       return {...item,settled:true};
     });
-    return {sous,campaign:{...campaign,visited:[...new Set([...campaign.visited,place])],encounters:peopleAt[place]?[...(campaign.encounters??[]),{character:peopleAt[place]!,place,event:run.events.length}]:campaign.encounters,delayed}};
+    return {sous,campaign:{...campaign,visited:[...new Set([...campaign.visited,place])],encounters:characterAt(run,place)?[...(campaign.encounters??[]),{character:characterAt(run,place)!,place,event:run.events.length}]:campaign.encounters,delayed}};
   }
   if (action.type === 'dialogue') {
-    if (!place || !campaign.visited.includes(place) || peopleAt[place] !== action.character || campaign.replies?.[action.character] || !['listen','press'].includes(action.reply)) throw new Error('Dialogue unavailable');
+    if (!place || !campaign.visited.includes(place) || characterAt(run,place) !== action.character || campaign.replies?.[action.character] || !['listen','press'].includes(action.reply)) throw new Error('Dialogue unavailable');
     const change = action.reply === 'listen' ? 1 : ['keeper','archivist','repairer'].includes(action.character) ? 1 : action.character === 'host' ? 0 : -1;
     return {campaign:{...campaign,replies:{...campaign.replies,[action.character]:action.reply},trust:trust(action.character,change)}};
   }
   if (action.type === 'befriend') {
-    if (!place || peopleAt[place] !== action.character || (campaign.trust[action.character] ?? 0) < 3 || campaign.friends.includes(action.character)) throw new Error('Friendship unavailable');
+    if (!place || characterAt(run,place) !== action.character || (campaign.trust[action.character] ?? 0) < 3 || campaign.friends.includes(action.character)) throw new Error('Friendship unavailable');
     return {campaign:{...campaign,friends:[...campaign.friends,action.character],lastOutcome:'friend'}};
   }
   const rule = letterRules.find(rule => rule.id === action.id);
@@ -88,11 +88,20 @@ export function reduceCampaign(run: Run, action: CampaignAction): Partial<Run> {
       return {campaign:{...campaign,letters:write(rule.id,{...item,status:'destroyed',...(place===rule.from?{senderWitnessed:'destroyed' as const}:{})}),focus:campaign.focus?.id===rule.id?undefined:campaign.focus,lastOutcome:'destroyed',...(place===rule.from?{trust:trust(rule.sender,-2)}:{})}};
     case 'deliver-item': {
       if (!item || item.status !== 'carried' || place !== rule.to || !campaign.visited.includes(place)) throw new Error('Delivery unavailable');
-      return {sous:run.sous+(rule.postal?Math.max(0,rule.pay-4):0),delivered:run.delivered+1,campaign:{...campaign,letters:write(rule.id,{...item,status:'delivered'}),focus:campaign.focus?.id===rule.id?undefined:campaign.focus,trust:rule.recipient==='memory'?campaign.trust:trust(rule.recipient,item.opened?-2:1),lastOutcome:rule.recipient==='memory'?'placed':item.opened?'opened-delivery':'delivered'}};
+      return {sous:run.sous+(rule.postal?Math.max(0,rule.pay-4):0),delivered:run.delivered+1,campaign:{...campaign,letters:write(rule.id,{...item,status:'delivered',deliveredTo:rule.to==='bridge'&&characterAt(run,'bridge')==='witness'?'witness':rule.recipient}),focus:campaign.focus?.id===rule.id?undefined:campaign.focus,trust:rule.recipient==='memory'?campaign.trust:trust(rule.to==='bridge'&&characterAt(run,'bridge')==='witness'?'witness':rule.recipient,item.opened?-2:1),lastOutcome:rule.recipient==='memory'?'placed':item.opened?'opened-delivery':'delivered'}};
     }
     case 'return-item':
       if (!item || item.status !== 'carried' || place !== rule.from) throw new Error('Return unavailable');
       return {campaign:{...campaign,letters:write(rule.id,{...item,status:'returned',reported:true,honest:true}),focus:campaign.focus?.id===rule.id?undefined:campaign.focus,trust:trust(rule.sender,item.opened?-2:-1),lastOutcome:'returned'}};
+    case 'complete-private-return': {
+      if (rule.id!=='n04' || !item || item.status!=='delivered' || item.reported || place!==rule.from || !campaign.visited.includes(place)) throw new Error('Personal return unavailable');
+      const loss=item.opened;
+      return {sous:run.sous+(loss?0:rule.gift),campaign:{...campaign,
+        letters:write(rule.id,{...item,reported:true,returnOutcome:loss?'loss':'alive',...(!loss?{honest:true}:{})}),
+        xp:(campaign.xp??0)+(loss?0:25), friends:loss?campaign.friends.filter(person=>person!=='traveler'):campaign.friends, trust:loss?campaign.trust:trust(rule.sender,2),
+        encounters:loss?[...(campaign.encounters??[]),{character:'witness',place,event:run.events.length}]:campaign.encounters,
+        focus:campaign.focus?.id===rule.id?undefined:campaign.focus,lastOutcome:loss?'personal-loss':'personal-return'}};
+    }
     case 'report-item': {
       if (!item || item.reported || !['delivered','destroyed'].includes(item.status) || place !== rule.from || typeof action.honest !== 'boolean') throw new Error('Report unavailable');
       const lie = !action.honest && (item.opened || item.status==='destroyed');

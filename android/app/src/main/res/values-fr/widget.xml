@@ -1,0 +1,5 @@
+<resources>
+    <string name="widget_scene">Moro sur le chemin connu</string>
+    <string name="widget_open">Ouvrir Letmoro</string>
+    <string name="widget_description">Moro, progression de marche et objectif quotidien</string>
+</resources>

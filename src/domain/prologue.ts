@@ -8,7 +8,7 @@ import type { LifeState, LifeDay } from './lives.ts';
 import { healthChanges } from './health.ts';
 import { parseProfile } from './profile.ts';
 import type { Profile } from './profile.ts';
-export const CONTENT_VERSION = 'prologue-5';
+export const CONTENT_VERSION = 'prologue-6';
 export const stages = ['street', 'job', 'delivery', 'handover', 'settlement', 'complete', 'rest', 'failed', 'neighborhood', 'square', 'workshop', 'errand', 'errand-return', 'campaign'] as const;
 export type Stage = typeof stages[number];
 type ActionData = CampaignAction
@@ -64,7 +64,7 @@ export function apply(run: Run, action: Action): Run {
   if (run.life.lives === 0 && !['health-sync', 'life-day', 'begin-life-accounting'].includes(action.type)) throw new Error('Run has ended');
   let changes: Partial<Run>;
   switch (action.type) {
-    case 'enter-campaign': case 'visit-campaign-place': case 'chart-route': case 'take-letter': case 'decline-letter': case 'focus-letter': case 'open-item': case 'destroy-item': case 'deliver-item': case 'return-item': case 'report-item': case 'befriend': case 'dialogue': case 'capture-thought': case 'dismiss-thought':
+    case 'enter-campaign': case 'visit-campaign-place': case 'chart-route': case 'take-letter': case 'decline-letter': case 'focus-letter': case 'open-item': case 'destroy-item': case 'deliver-item': case 'return-item': case 'complete-private-return': case 'report-item': case 'befriend': case 'dialogue': case 'capture-thought': case 'dismiss-thought':
       changes = reduceCampaign(run, action); break;
     case 'fresh-start':
       if (run.events.length) throw new Error('Fresh start is only available before setup');
@@ -204,7 +204,7 @@ export function isAction(value: unknown): value is Action {
   if (!value || typeof value !== 'object') return false;
   const item = value as Record<string, unknown>;
   if (item.at !== undefined && (typeof item.at !== 'string' || !/^\d{4}-\d{2}-\d{2}T/.test(item.at) || !Number.isFinite(Date.parse(item.at)))) return false;
-  if (['take-letter','decline-letter','open-item','destroy-item','deliver-item','return-item','capture-thought'].includes(String(item.type))) return typeof item.id === 'string';
+  if (['take-letter','decline-letter','open-item','destroy-item','deliver-item','return-item','complete-private-return','capture-thought'].includes(String(item.type))) return typeof item.id === 'string';
   if (item.type === 'report-item') return typeof item.id === 'string' && typeof item.honest === 'boolean';
   if (item.type === 'focus-letter') return typeof item.id === 'string' && typeof item.returning === 'boolean';
   if (item.type === 'dialogue') return typeof item.character === 'string' && ['listen','press'].includes(String(item.reply));

@@ -10,7 +10,7 @@ import type { Locale } from './content/ui.ts';
 import { loadAccountRun, saveAccountRun, eraseAccountProgress } from './adapters/account-save.ts';
 import { recordsFor } from './domain/records.ts';
 import { useSteps } from './ui/useSteps.ts';
-import { supportsHealth, openHealthSettings } from './adapters/health.ts';
+import { supportsHealth, openHealthSettings, openSamsungHealth } from './adapters/health.ts';
 import { PixelIcon } from './ui/PixelIcon.tsx';
 import { Setup } from './ui/Setup.tsx';
 import { World } from './ui/World.tsx';
@@ -34,6 +34,9 @@ import { HealthArrival } from './ui/HealthArrival.tsx';
 import { Journal } from './ui/Journal.tsx';
 import { useLifeDays } from './ui/useLifeDays.ts';
 import { LifeDetails } from './ui/LifeDetails.tsx';
+import {useWidget} from './ui/useWidget.ts';
+import {widgetSnapshot} from './domain/widget.ts';
+import { StepDiagnostics } from './ui/StepDiagnostics.tsx';
 import './style.css';
 
 function initialLocale(): Locale {
@@ -111,6 +114,7 @@ function App() {
     }
     if (next !== run) store(next);
   }, [health.snapshot, run, store, intro, account.user, gameOwner, userId, cloud.status]);
+  useWidget(userId && gameOwner===userId && !account.recovery ? userId : null, widgetSnapshot(run,health.snapshot,locale));
   const healthConnected = health.snapshot.status === 'ready' || health.snapshot.status === 'empty';
   const lifeHistory = useLifeDays(userId && gameOwner === userId ? userId : null, run?.life.calendar, healthConnected, getRun, store);
   useEffect(() => {
@@ -211,7 +215,7 @@ function App() {
           <QuestActions run={run} text={t} content={content} act={act} locale={locale} />
         </section>}
         {page === 'collection' && <section><h1 tabIndex={-1}>{t.collection}</h1><nav className="collection-tabs" aria-label={t.collection}>{(['letters', 'characters', 'badges', 'journal'] as const).map(key => <button key={key} aria-current={key === collection ? 'page' : undefined} onClick={() => setCollection(key)}>{t[key]}</button>)}</nav>
-          <h2>{t[collection]}</h2>
+          <h2>{t[collection]}</h2>{(run.campaign.xp??0)>0 && <p className="muted">{run.campaign.xp} XP</p>}
           {collection === 'letters' && <CampaignLetters run={run} locale={locale} content={content} act={act} />}
           {collection === 'letters' && records!.letters.map(letter => <LetterRecord key={letter.id} run={run} text={t} body={content?.letter} act={act} />)}
           {collection === 'characters' && <div className="character-gallery">{records!.characters.map(person => {
@@ -225,7 +229,7 @@ function App() {
         {page === 'skills' && records!.skills.length > 0 && <section><h1 tabIndex={-1}>{t.skills}</h1><p>{t.skillsUnlocked}</p><div className="skill-root"><span aria-hidden="true" /><h2>{t.basicRespect}</h2><p>{t.basicRespectDescription}</p></div></section>}
         {page === 'coins' && <section><h1 tabIndex={-1}>{t.coins}</h1><p className="stat-value">{format(run.sous)}<span className="stat-unit"> {t.coins}</span></p></section>}
         {page === 'steps'  && <section><h1 tabIndex={-1}>{t.healthTitle}</h1><p className="stat-value">{health.snapshot.count === null ? '—' : format(health.snapshot.count)}<span className="stat-unit"> {t.today}</span></p><p className="status-tag">{healthStatus}</p><p>{supportsHealth ? t.healthNative : t.healthWeb}</p><p className="muted">{t.healthNote}</p>{health.snapshot.checkedAt && <p className="muted">{t.checked}: {new Date(health.snapshot.checkedAt).toLocaleTimeString(locale)}</p>}
-          {supportsHealth && <div className="actions"><button disabled={health.busy} onClick={() => { void health.refresh(true); }}>{health.snapshot.status === 'ready' && !health.snapshot.live ? t.enableLive : t.connect}</button><button disabled={health.busy} onClick={() => { void health.refresh(); }}>{t.refresh}</button><button onClick={() => { void openHealthSettings().catch(() => setWarning('settingsError')); }}>{t.manage}</button></div>}
+          <StepDiagnostics snapshot={health.snapshot} locale={locale} supported={supportsHealth} openSamsung={()=>{void openSamsungHealth().catch(()=>setWarning('settingsError'));}} />{supportsHealth && <div className="actions"><button disabled={health.busy} onClick={() => { void health.refresh(true); }}>{health.snapshot.status === 'ready' && !health.snapshot.live ? t.enableLive : t.connect}</button><button disabled={health.busy} onClick={() => { void health.refresh(); }}>{t.refresh}</button><button onClick={() => { void openHealthSettings().catch(() => setWarning('settingsError')); }}>{t.manage}</button></div>}
         </section>}
         {page === 'settings' && <section><h1 tabIndex={-1}>{t.settings}</h1>{language}<RestSettings key={`${userId}:${run.life.schedules?.length??0}`} run={run} locale={locale} act={act} /><LifeDetails run={run} text={t} historyStatus={lifeHistory} /><p role="status">{t.cloudStates[cloud.status]}</p>{cloud.status === 'offline' && <button onClick={cloud.retry}>{t.retryCloud}</button>}{run.profile && <><h2>{t.difficulty}</h2><p>{t[run.profile.mode]}</p><p>{t.modeDescriptions[run.profile.mode]}</p><p className="muted">{t.modeStatusNote}</p><h2>{t.positive}</h2><p>{run.profile.positive.map(trait => t.traits[trait as keyof typeof t.traits]).join(' · ')}</p><h2>{t.negative}</h2><p>{run.profile.negative.map(trait => t.traits[trait as keyof typeof t.traits]).join(' · ')}</p></>}<div className="actions"><button onClick={() => setPage('account')}>{t.account}</button></div><RestartGame locale={locale} disabled={cloud.status==='loading'} erase={cloud.eraseProgress} /></section>}
 

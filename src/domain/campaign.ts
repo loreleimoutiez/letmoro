@@ -19,9 +19,10 @@ const ruleRows: readonly RuleRow[] = [
 export const letterRules: readonly LetterRule[] = ruleRows.map(([id, from, to, sender, recipient, unlock, postal, pay, gift]) => ({
   id, from, to, sender, recipient, unlock, postal: postal === 1, pay, gift,
 }));
-export interface EntrustedLetter { opened: boolean; senderWitnessed?: 'opened' | 'destroyed'; status: 'carried' | 'delivered' | 'destroyed' | 'returned' | 'declined'; reported: boolean; honest?: boolean }
+export interface EntrustedLetter { opened: boolean; deliveredTo?: string; senderWitnessed?: 'opened' | 'destroyed'; status: 'carried' | 'delivered' | 'destroyed' | 'returned' | 'declined'; reported: boolean; returnOutcome?: 'alive' | 'loss'; honest?: boolean }
 export interface Campaign {
   readonly active: boolean;
+  readonly xp?: number;
   readonly completed?: boolean;
   readonly replies?: Readonly<Record<string, 'listen' | 'press'>>;
   readonly encounters?: readonly { character: string; place: Place; event: number }[];
@@ -31,17 +32,21 @@ export interface Campaign {
   readonly visited: readonly Place[];
   readonly focus?: { id: string; returning: boolean };
   readonly delayed: readonly { id: string; due: number; settled: boolean }[];
-  readonly lastOutcome?: 'delivered' | 'opened-delivery' | 'destroyed' | 'returned' | 'reported' | 'lie' | 'contradiction' | 'friend' | 'placed';
+  readonly lastOutcome?: 'delivered' | 'opened-delivery' | 'destroyed' | 'returned' | 'reported' | 'lie' | 'contradiction' | 'friend' | 'placed' | 'personal-return' | 'personal-loss';
   readonly pendingThought?: string;
   readonly lastThought?: string;
   readonly thoughtMark: number;
   readonly thoughts: readonly string[];
 }
 export type CampaignAction = { type: 'enter-campaign' } | { type: 'visit-campaign-place' } | { type: 'chart-route'; place: Place } |
-  { type: 'take-letter' | 'decline-letter' | 'open-item' | 'destroy-item' | 'deliver-item' | 'return-item'; id: string } |
+  { type: 'take-letter' | 'decline-letter' | 'open-item' | 'destroy-item' | 'deliver-item' | 'return-item' | 'complete-private-return'; id: string } |
   { type: 'focus-letter'; id: string; returning: boolean } | { type: 'report-item'; id: string; honest: boolean } |
   { type: 'dialogue'; character: string; reply: 'listen' | 'press' } | { type: 'befriend'; character: string } | { type: 'capture-thought'; id: string } | { type: 'dismiss-thought' };
 export const peopleAt: Partial<Record<Place, string>> = { office:'clerk',courtyard:'recipient',square:'host',workshop:'repairer',garden:'host',gate:'keeper',bridge:'traveler',relay:'host',ridge:'archivist',reservoir:'keeper' };
+export function characterAt(run: Run, place: Place): string | undefined {
+  const letter=run.campaign.letters.n04;
+  return place==='bridge' && (letter?.returnOutcome==='loss' || letter?.status==='delivered' && letter.opened && !letter.reported) ? 'witness' : peopleAt[place];
+}
 export function initialCampaign(): Campaign { return { active:false, letters:{}, trust:{}, friends:[], visited:[], delayed:[], thoughtMark:0, thoughts:[] }; }
 export function resolvedLetters(run: Run): number { return Object.values(run.campaign.letters).filter(letter => letter.status !== 'carried').length; }
 export function campaignBadges(run: Run): string[] {
@@ -54,6 +59,7 @@ export function campaignBadges(run: Run): string[] {
     ...(run.events.some(event=>event.type==='befriend') ? ['first-friend'] : []),
     ...((run.navigation?.odometer ?? 0) >= run.goal * 5 ? ['long-walk'] : []),
     ...(run.campaign.letters.n04?.status === 'delivered' ? ['quiet-delivery'] : []),
+    ...(run.campaign.letters.n04?.status === 'delivered' && !run.campaign.letters.n04.opened ? ['unread-promise'] : []),
     ...(run.campaign.letters.n04?.status === 'delivered' && run.campaign.letters.n04.reported && run.campaign.letters.n04.honest ? ['kept-word'] : []),
     ...(run.campaign.delayed.some(item => item.settled) ? ['paper-trail'] : []),
     ...(entries.filter(([,letter]) => letter.status === 'declined').length >= 3 ? ['boundaries'] : []),

@@ -52,6 +52,9 @@ class HealthStepsPlugin : Plugin(), SensorEventListener {
         get() = totals.total
         set(value) { if (value == null) totals.newDay() else totals.observe(value) }
     private var publishedDay: String? = null
+    private var providerCount: Long? = null
+    private var providerCheckedAt: String? = null
+    private var samsungShared = false
     private fun dayKey() = "${LocalDate.now()}|${ZoneId.systemDefault().id}"
 
 
@@ -70,6 +73,9 @@ class HealthStepsPlugin : Plugin(), SensorEventListener {
         put("count", count ?: org.json.JSONObject.NULL)
         put("checkedAt", Instant.now().toString())
         put("live", listening)
+        put("providerCount", providerCount ?: org.json.JSONObject.NULL)
+        put("providerCheckedAt", providerCheckedAt ?: org.json.JSONObject.NULL)
+        put("samsungShared", samsungShared)
     }
 
     @PluginMethod
@@ -84,6 +90,9 @@ class HealthStepsPlugin : Plugin(), SensorEventListener {
                 if (!client.permissionController.getGrantedPermissions().containsAll(permissions)) {
                     stopListening()
                     lastPublished = null
+                    providerCount = null
+                    providerCheckedAt = null
+                    samsungShared = false
                     call.resolve(result("permission-required"))
                     return@launch
                 }
@@ -94,6 +103,9 @@ class HealthStepsPlugin : Plugin(), SensorEventListener {
                 ))
                 // No result is unknown, never a confirmed zero. Let Health Connect deduplicate.
                 val count = response[StepsRecord.COUNT_TOTAL]
+                providerCount = count
+                providerCheckedAt = Instant.now().toString()
+                samsungShared = response.dataOrigins.any { it.packageName == "com.sec.android.app.shealth" }
                 if (publishedDay != dayKey()) {
                     stopListening()
                     publishedDay = dayKey()
@@ -254,6 +266,14 @@ class HealthStepsPlugin : Plugin(), SensorEventListener {
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
     override fun handleOnPause() { stopListening(); super.handleOnPause() }
     override fun handleOnResume() { super.handleOnResume(); if (liveWanted) beginListening() }
+
+    @PluginMethod
+    fun openSamsungHealth(call: PluginCall) {
+        val intent = context.packageManager.getLaunchIntentForPackage("com.sec.android.app.shealth")
+        if (intent == null) { call.reject("Samsung Health is unavailable"); return }
+        try { activity.startActivity(intent); call.resolve() }
+        catch (_: Exception) { call.reject("Samsung Health could not be opened") }
+    }
 
     @PluginMethod
     fun openSettings(call: PluginCall) {

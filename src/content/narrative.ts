@@ -22,8 +22,9 @@ export function openingContent(locale: Locale): OpeningContent | undefined {
   return packs['./private/opening.json']?.[locale];
 }
 
-export interface LetterContent { title: string; offer: string; body: string; delivered: string; report: string; question: string; answer: string }
+export interface LetterContent { title: string; offer: string; body: string; delivered: string; deliveredAfterLoss?: string; report: string; question: string; answer: string }
 export interface CampaignContent {
+  personalReturn?: { prompt: string; listen: string; alive: string; loss: string; aliveJournal?: string; lossJournal?: string };
   conversations?: Record<string, { prompt: string; listen: string; press: string; listening: string; pressing: string }>;
   letters: Record<string, LetterContent>;
   places: Partial<Record<import('../domain/navigation.ts').Place, { title: string; text: string }>>;

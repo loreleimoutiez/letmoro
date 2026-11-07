@@ -5,6 +5,9 @@ export type StepSnapshot = {
   checkedAt: string | null;
   dayKey?: string;
   live?: boolean;
+  providerCount?: number | null;
+  providerCheckedAt?: string | null;
+  samsungShared?: boolean;
 };
 
 export function parseStepSnapshot(value: unknown): StepSnapshot {
@@ -14,6 +17,9 @@ export function parseStepSnapshot(value: unknown): StepSnapshot {
   if (data.status === 'ready' && (!Number.isSafeInteger(data.count) || Number(data.count) < 0)) throw new Error('Invalid step count');
   return {
     live: data.live === true,
+    ...(data.providerCount === null || Number.isSafeInteger(data.providerCount) && Number(data.providerCount)>=0 ? {providerCount:data.providerCount as number | null} : {}),
+    ...(typeof data.providerCheckedAt==='string' && Number.isFinite(Date.parse(data.providerCheckedAt)) ? {providerCheckedAt:data.providerCheckedAt} : {}),
+    ...(typeof data.samsungShared==='boolean' ? {samsungShared:data.samsungShared} : {}),
     status: data.status as StepSnapshot['status'],
     count: data.status === 'ready' ? data.count as number : null,
     ...(isHealthDayKey(data.dayKey) ? { dayKey: data.dayKey } : {}),

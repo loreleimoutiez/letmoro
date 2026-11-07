@@ -96,3 +96,11 @@ test('an explicitly erased game baselines existing daily steps without restoring
   assert.equal(run.walkedSteps,5);assert.equal(run.reserve,5);
   assert.throws(()=>apply(run,{type:'fresh-start'}));
 });
+test('step diagnostics keep shared provider totals distinct from the combined phone estimate',()=>{
+  const snapshot=parseStepSnapshot({status:'ready',count:130,providerCount:100,providerCheckedAt:'2026-01-02T12:00:00Z',samsungShared:true});
+  assert.equal(snapshot.count,130);assert.equal(snapshot.providerCount,100);assert.equal(snapshot.samsungShared,true);
+  const unknown=parseStepSnapshot({status:'empty',count:0,providerCount:null,samsungShared:false});
+  assert.equal(unknown.count,null);assert.equal(unknown.providerCount,null);
+  const invalid=parseStepSnapshot({status:'ready',count:5,providerCount:-10,providerCheckedAt:'invalid'});
+  assert.equal(invalid.providerCount,undefined);assert.equal(invalid.providerCheckedAt,undefined);
+});

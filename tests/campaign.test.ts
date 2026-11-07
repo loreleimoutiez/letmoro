@@ -116,3 +116,42 @@ test('resolving a second carried letter preserves the focused objective',()=>{
   run=apply(run,{type:'focus-letter',id:'p01',returning:false});run=apply(run,{type:'destroy-item',id:'n01'});
   assert.equal(run.campaign.focus?.id,'p01');
 });
+test('the sealed personal delivery earns an exclusive badge and its optional return pays once',()=>{
+  let run=opening();
+  for(const id of ['p01','p02','n01','n02']){const rule=letterRules.find(rule=>rule.id===id)!;run=travel(run,rule.from);run=apply(run,{type:'decline-letter',id});}
+  run=travel(run,'bridge');run=apply(run,{type:'take-letter',id:'n04'});run=travel(run,'cemetery');run=apply(run,{type:'deliver-item',id:'n04'});
+  assert(campaignBadges(run).includes('unread-promise'));assert.equal(run.campaign.xp??0,0);
+  assert.throws(()=>apply(run,{type:'complete-private-return',id:'n04'}));
+  run=travel(run,'bridge');const coins=run.sous,trust=run.campaign.trust.traveler??0;
+  run=apply(run,{type:'complete-private-return',id:'n04'});
+  assert.equal(run.sous,coins+5);assert.equal(run.campaign.trust.traveler,trust+2);assert.equal(run.campaign.xp,25);
+  assert.equal(run.campaign.letters.n04.returnOutcome,'alive');
+  assert.throws(()=>apply(run,{type:'complete-private-return',id:'n04'}));
+  assert.deepEqual(decodeSave(encodeSave(run)),run);
+});
+test('an opened personal delivery has a different returning witness and no return reward', async()=>{
+  const {characterAt}=await import('../src/domain/campaign.ts');
+  let run=opening();
+  for(const id of ['p01','p02','n01','n02']){const rule=letterRules.find(rule=>rule.id===id)!;run=travel(run,rule.from);run=apply(run,{type:'decline-letter',id});}
+  run=travel(run,'bridge');run=apply(run,{type:'take-letter',id:'n04'});run=travel(run,'garden');run=apply(run,{type:'open-item',id:'n04'});
+  run=travel(run,'cemetery');run=apply(run,{type:'deliver-item',id:'n04'});
+  assert(!campaignBadges(run).includes('unread-promise'));
+  run=travel(run,'bridge');assert.equal(characterAt(run,'bridge'),'witness');
+  const coins=run.sous,trust=run.campaign.trust.traveler;
+  run=apply(run,{type:'complete-private-return',id:'n04'});
+  assert.equal(run.sous,coins);assert.equal(run.campaign.trust.traveler,trust);assert.equal(run.campaign.xp??0,0);
+  assert.equal(run.campaign.letters.n04.returnOutcome,'loss');assert.equal(characterAt(run,'bridge'),'witness');
+  assert(!campaignBadges(run).includes('kept-word'));
+  assert.deepEqual(decodeSave(encodeSave(run)),run);
+});
+
+test('later addressed deliveries use the returning witness after the personal loss',()=>{
+ let run=opening();
+ for(const id of ['p01','p02','n01','n02']){const rule=letterRules.find(rule=>rule.id===id)!;run=travel(run,rule.from);run=apply(run,{type:'decline-letter',id});}
+ run=travel(run,'bridge');run=apply(run,{type:'take-letter',id:'n04'});run=travel(run,'garden');run=apply(run,{type:'open-item',id:'n04'});run=travel(run,'cemetery');run=apply(run,{type:'deliver-item',id:'n04'});run=travel(run,'bridge');
+ run=apply(run,{type:'complete-private-return',id:'n04'});
+ run=travel(run,'office');run=apply(run,{type:'take-letter',id:'p04'});run=travel(run,'bridge');
+ assert.throws(()=>apply(run,{type:'befriend',character:'traveler'}));
+ run=apply(run,{type:'deliver-item',id:'p04'});assert.equal(run.campaign.letters.p04.deliveredTo,'witness');
+ assert.equal(run.campaign.trust.witness,1);assert.equal(run.campaign.trust.traveler,undefined);
+});

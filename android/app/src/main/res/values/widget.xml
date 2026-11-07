@@ -1,0 +1,5 @@
+<resources>
+    <string name="widget_scene">Moro on the known path</string>
+    <string name="widget_open">Open Letmoro</string>
+    <string name="widget_description">Moro, walking progress and daily goal</string>
+</resources>
