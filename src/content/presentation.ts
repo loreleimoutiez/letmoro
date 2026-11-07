@@ -20,6 +20,8 @@ export function sceneCopy(run: Run, fallback: string, t: typeof en, content?: Op
 }
 export function journalCopy(event: Action, t: typeof en, original: Record<string, string>, content?: OpeningContent): string | undefined {
   switch (event.type) {
+    case 'learn-side-passage':return content?.campaign?.sidePassage?.discover??t.routeRecorded;
+    case 'resolve-side-reply':return content?.campaign?.sidePassage?.[event.reply==='direct'?'directOutcome':'declineOutcome']??t.dialogueRecorded;
     case 'buy-skill': return `${skillCopy(event.id,t===fr?'fr':'en')[0]} · XP`;
     case 'set-rest-days': return t.lifeHeading;
     case 'take-letter': case 'decline-letter': case 'open-item': case 'destroy-item': case 'deliver-item': case 'return-item': case 'report-item': return `${({ 'take-letter':t.accept, 'decline-letter':t.rest, 'open-item':t.openRecorded, 'destroy-item':t.destroyRecorded, 'deliver-item':t.deliver, 'return-item':t.back, 'report-item':t.shareFindings })[event.type]} · ${content?.campaign?.letters[event.id]?.title ?? event.id}`;

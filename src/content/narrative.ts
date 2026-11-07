@@ -14,7 +14,7 @@ export interface OpeningContent {
   scenes?: Partial<Record<Stage, string>>;
   visits?: Record<Neighborhood, { title: string; listen: string; help: string; response: string; task: string; return: string; complete: string; letterOpened?: string; letterDestroyed?: string; returningRecipient?: string }>;
   topics: Record<Topic, { question: string; answer: string; journal: string }>;
-  characters: Record<CharacterId, { name: string; role: string; color: string }>;
+  characters: Partial<Record<CharacterId, { name: string; role: string; color: string }>>;
 }
 // Optional local authoring pack. Its manuscript is deliberately excluded from Git.
 const packs = import.meta.glob<Record<Locale, OpeningContent>>('./private/opening.json', { eager: true, import: 'default' });
@@ -24,6 +24,7 @@ export function openingContent(locale: Locale): OpeningContent | undefined {
 
 export interface LetterContent { title: string; offer: string; body: string; delivered: string; deliveredAfterLoss?: string; report: string; question: string; answer: string }
 export interface CampaignContent {
+  sidePassage?: {discover:string;learned:string;replyPrompt:string;direct:string;decline:string;directOutcome:string;declineOutcome:string};
   personalReturn?: { prompt: string; listen: string; alive: string; loss: string; aliveJournal?: string; lossJournal?: string };
   conversations?: Record<string, { prompt: string; listen: string; press: string; listening: string; pressing: string }>;
   letters: Record<string, LetterContent>;

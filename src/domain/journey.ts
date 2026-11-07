@@ -1,5 +1,5 @@
 import type {Run} from './prologue.ts';
-import {letterRules} from './campaign.ts';
+import {allLetterRules as letterRules} from './campaign.ts';
 import {routeBetween} from './campaign-reducer.ts';
 import {currentNode,questPlace,remainingQuestSteps,worldGraph} from './navigation.ts';
 import type {Direction,Place} from './navigation.ts';

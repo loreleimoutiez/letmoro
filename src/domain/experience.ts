@@ -1,8 +1,8 @@
 import type {Action,Run} from './prologue.ts';
-import {letterRules} from './campaign.ts';
+import {allLetterRules as letterRules} from './campaign.ts';
 import {currentNode} from './navigation.ts';
 import {hasSkill} from './skills.ts';
-export function deliveryXP(id:string){const rule=letterRules.find(item=>item.id===id);return rule?id==='n04'?45:18+Math.floor(rule.unlock/2)*3+(rule.postal?0:4):0;}
+export function deliveryXP(id:string){const rule=letterRules.find(item=>item.id===id);return rule?id==='s01'?32:id==='s02'?18:id==='n04'?45:18+Math.floor(rule.unlock/2)*3+(rule.postal?0:4):0;}
 /** Called only after action validation. Replay restores old accomplishments once. */
 export function experienceAward(run:Run,action:Action):number {
  const promise=hasSkill(run,'promise-xp')?5:0;

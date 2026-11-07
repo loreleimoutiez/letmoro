@@ -3,7 +3,7 @@ import type {ReactNode} from 'react';
 import type {Run} from '../domain/prologue.ts';
 import type {OpeningContent} from '../content/narrative.ts';
 import type {Locale} from '../content/ui.ts';
-import {letterRules,characterAt} from '../domain/campaign.ts';
+import {allLetterRules as letterRules,characterAt} from '../domain/campaign.ts';
 import {currentNode} from '../domain/navigation.ts';
 import {en,fr} from '../content/ui.ts';
 export function EncounterScreen({run,locale,content,children}:{run:Run;locale:Locale;content?:OpeningContent;children:ReactNode}){

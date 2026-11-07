@@ -19,9 +19,16 @@ const ruleRows: readonly RuleRow[] = [
 export const letterRules: readonly LetterRule[] = ruleRows.map(([id, from, to, sender, recipient, unlock, postal, pay, gift]) => ({
   id, from, to, sender, recipient, unlock, postal: postal === 1, pay, gift,
 }));
+export const sideLetterRules:readonly LetterRule[]=[
+ {id:'s01',from:'square',to:'wash-court',sender:'host',recipient:'caretaker',unlock:0,postal:false,pay:0,gift:0},
+ {id:'s02',from:'wash-court',to:'square',sender:'caretaker',recipient:'host',unlock:0,postal:false,pay:0,gift:0},
+];
+export const allLetterRules=[...letterRules,...sideLetterRules];
 export interface EntrustedLetter { opened: boolean; deliveredTo?: string; senderWitnessed?: 'opened' | 'destroyed'; status: 'carried' | 'delivered' | 'destroyed' | 'returned' | 'declined'; reported: boolean; returnOutcome?: 'alive' | 'loss'; honest?: boolean }
 export interface Campaign {
   readonly active: boolean;
+  readonly washPassage?: boolean;
+  readonly washReply?: 'direct' | 'declined';
   readonly xp?: number;
   readonly xpSpent?: number;
   readonly skills?: readonly string[];
@@ -40,17 +47,17 @@ export interface Campaign {
   readonly thoughtMark: number;
   readonly thoughts: readonly string[];
 }
-export type CampaignAction = { type: 'enter-campaign' } | { type: 'visit-campaign-place' } | { type: 'chart-route'; place: Place } |
+export type CampaignAction = {type:'learn-side-passage'} | {type:'resolve-side-reply';reply:'direct'|'declined'} |  { type: 'enter-campaign' } | { type: 'visit-campaign-place' } | { type: 'chart-route'; place: Place } |
   { type: 'take-letter' | 'decline-letter' | 'open-item' | 'destroy-item' | 'deliver-item' | 'return-item' | 'complete-private-return'; id: string } |
   { type: 'focus-letter'; id: string; returning: boolean } | { type: 'report-item'; id: string; honest: boolean } |
   { type: 'dialogue'; character: string; reply: 'listen' | 'press' } | { type: 'befriend'; character: string } | { type: 'capture-thought'; id: string } | { type: 'dismiss-thought' };
-export const peopleAt: Partial<Record<Place, string>> = { office:'clerk',courtyard:'recipient',square:'host',workshop:'repairer',garden:'host',gate:'keeper',bridge:'traveler',relay:'host',ridge:'archivist',reservoir:'keeper' };
+export const peopleAt: Partial<Record<Place, string>> = { 'wash-court':'caretaker',office:'clerk',courtyard:'recipient',square:'host',workshop:'repairer',garden:'host',gate:'keeper',bridge:'traveler',relay:'host',ridge:'archivist',reservoir:'keeper' };
 export function characterAt(run: Run, place: Place): string | undefined {
   const letter=run.campaign.letters.n04;
   return place==='bridge' && (letter?.returnOutcome==='loss' || letter?.status==='delivered' && letter.opened && !letter.reported) ? 'witness' : peopleAt[place];
 }
 export function initialCampaign(): Campaign { return { active:false, letters:{}, trust:{}, friends:[], visited:[], delayed:[], thoughtMark:0, thoughts:[] }; }
-export function resolvedLetters(run: Run): number { return Object.values(run.campaign.letters).filter(letter => letter.status !== 'carried').length; }
+export function resolvedLetters(run: Run): number { return letterRules.filter(rule=>run.campaign.letters[rule.id]&&run.campaign.letters[rule.id].status!=='carried').length; }
 export function campaignBadges(run: Run): string[] {
   const entries = Object.entries(run.campaign.letters), delivered = entries.filter(([,letter]) => letter.status === 'delivered');
   return [
@@ -78,8 +85,9 @@ export function campaignComplete(run: Run): boolean {
 export function availableLetters(run: Run, place: Place): LetterRule[] {
   const employed = run.events.some(event => event.type === 'accept');
   const personal = letterRules.filter(rule => !rule.postal);
-  return letterRules.filter(rule => {
+  const side=run.campaign.washPassage?sideLetterRules.filter(rule=>rule.from===place&&!run.campaign.letters[rule.id]&&(rule.id==='s01'||run.campaign.letters.s01?.status==='delivered'&&!run.campaign.washReply)):[];
+  return [...side,...letterRules.filter(rule => {
     const unlock = !employed && !rule.postal ? personal.findIndex(item => item.id === rule.id) : rule.unlock;
     return rule.from === place && !run.campaign.letters[rule.id] && unlock <= resolvedLetters(run) && (!rule.postal || employed);
-  });
+  })];
 }

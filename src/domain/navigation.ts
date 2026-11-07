@@ -1,11 +1,11 @@
-import { letterRules } from './campaign.ts';
+import { allLetterRules as letterRules } from './campaign.ts';
 import type { Run } from './prologue.ts';
 
 export const directions = ['north', 'east', 'south', 'west'] as const;
 export type Direction = typeof directions[number];
-export type Place = 'start' | 'approach' | 'office' | 'courtyard' | 'square' | 'workshop' | 'garden' | 'gate' | 'outskirts' | 'bridge' | 'relay' | 'cemetery' | 'ridge' | 'reservoir';
+export type Place = 'wash-turn' | 'wash-court' | 'start' | 'approach' | 'office' | 'courtyard' | 'square' | 'workshop' | 'garden' | 'gate' | 'outskirts' | 'bridge' | 'relay' | 'cemetery' | 'ridge' | 'reservoir';
 export type Neighborhood = 'square' | 'workshop';
-export type EdgeId = 'crosslane' | 'approach' | 'street' | 'courtyard' | 'square' | 'workshop' | 'garden' | 'gate' | 'outskirts' | 'bridge' | 'relay' | 'cemetery' | 'ridge' | 'reservoir';
+export type EdgeId = 'square-west' | 'wash-lane' | 'crosslane' | 'approach' | 'street' | 'courtyard' | 'square' | 'workshop' | 'garden' | 'gate' | 'outskirts' | 'bridge' | 'relay' | 'cemetery' | 'ridge' | 'reservoir';
 export interface Point { x: number; y: number }
 export interface Edge { id: EdgeId; from: Place; to: Place; length: number; direction: Direction }
 export interface Navigation {
@@ -24,7 +24,10 @@ export function worldGraph(run: Run) {
   const street = cost(.02), courtyard = cost(.1), square = cost(.35), workshop = cost(.5), long = cost(2);
   const origin = run.journeyOrigin ?? (run.healthKey ? run.walkedSteps : 0);
   const retreat = Math.max(run.goal, (run.navigation?.walked.outskirts?.max ?? 0) + run.goal, run.navigation?.edge === 'outskirts' ? run.navigation.offset + run.goal : 0);
+  const split=run.campaign.washPassage && square>=2, half=Math.floor(square/2);
   const places: Record<Place, Point> = {
+    'wash-turn':{x:street-(square>=2?half:square),y:-courtyard},
+    'wash-court':{x:street-(square>=2?half:square),y:-courtyard+cost(.45)},
     bridge: { x: street+workshop+cost(.5),y:-courtyard-long }, relay:{x:street+workshop+cost(.5),y:-courtyard-long-cost(.5)},
     cemetery:{x:street-square-cost(1),y:-courtyard-long},ridge:{x:street-square-cost(1),y:-courtyard-long-cost(.5)},reservoir:{x:street+workshop+cost(1),y:-courtyard-long-cost(.5)},
     outskirts: { x: -origin - retreat, y: 0 },
@@ -35,7 +38,9 @@ export function worldGraph(run: Run) {
   const edges: Edge[] = [
     { id: 'street', from: 'start', to: 'office', length: street, direction: 'east' },
     { id: 'courtyard', from: 'office', to: 'courtyard', length: courtyard, direction: 'north' },
-    { id: 'square', from: 'courtyard', to: 'square', length: square, direction: 'west' },
+    { id: 'square', from: 'courtyard', to: split?'wash-turn':'square', length: split?half:square, direction: 'west' },
+    ...(split?[{id:'square-west' as const,from:'wash-turn' as const,to:'square' as const,length:square-half,direction:'west' as const}]:[]),
+    ...(run.campaign.washPassage?[{id:'wash-lane' as const,from:split?'wash-turn' as const:'square' as const,to:'wash-court' as const,length:cost(.45),direction:'south' as const}]:[]),
     { id: 'workshop', from: 'courtyard', to: 'workshop', length: workshop, direction: 'east' },
     { id: 'garden', from: 'square', to: 'garden', length: long, direction: 'north' },
     { id: 'gate', from: 'workshop', to: 'gate', length: long, direction: 'north' },
@@ -163,4 +168,19 @@ export function remainingQuestSteps(run: Run): number | undefined {
       if (other && cost + road.length < (distance.get(other) ?? Infinity)) distance.set(other, cost + road.length);
     }
   }
+}
+
+
+/** Explicit discovery migration; old events keep their original geometry until this event. */
+export function revealWashPassage(run:Run):Navigation {
+ const nav=run.navigation;if(!nav||run.campaign.washPassage)throw new Error('Passage cannot be revealed');
+ const square=worldGraph(run).edges.find(edge=>edge.id==='square')!, half=Math.floor(square.length/2);
+ const authorized=[...new Set([...nav.authorized,'wash-lane' as const,...(square.length>=2?['square-west' as const]:[])])];
+ if(square.length<2)return {...nav,authorized};
+ const walked={...nav.walked},range=walked.square;
+ delete walked.square;
+ if(range&&range.min<=half)walked.square={min:range.min,max:Math.min(range.max,half)};
+ if(range&&range.max>=half)walked['square-west']={min:Math.max(0,range.min-half),max:range.max-half};
+ const beyond=nav.edge==='square'&&nav.offset>half;
+ return {...nav,authorized,walked,...(beyond?{edge:'square-west' as const,offset:nav.offset-half}:{}),...(nav.edge==='square'&&nav.offset===half?{heading:null}:{})};
 }

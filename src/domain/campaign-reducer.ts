@@ -1,8 +1,8 @@
 import type { Run } from './prologue.ts';
 import type { CampaignAction, Campaign, EntrustedLetter } from './campaign.ts';
-import { availableLetters, letterRules, characterAt, resolvedLetters } from './campaign.ts';
+import { availableLetters, allLetterRules as letterRules, characterAt, resolvedLetters } from './campaign.ts';
 import {hasSkill,letterCapacity,giftBonus} from './skills.ts';
-import { currentNode, worldGraph } from './navigation.ts';
+import { currentNode, worldGraph, revealWashPassage } from './navigation.ts';
 import type { Place, EdgeId } from './navigation.ts';
 
 export function routeBetween(run: Run, from: Place, to: Place, authorizedOnly = false): EdgeId[] {
@@ -39,6 +39,14 @@ export function reduceCampaign(run: Run, action: CampaignAction): Partial<Run> {
     return {campaign:{...campaign,pendingThought:undefined,thoughtMark:run.navigation?.odometer ?? 0}};
   }
   if (run.stage !== 'campaign' && !['open-item','destroy-item','focus-letter'].includes(action.type)) throw new Error('Campaign is not active');
+  if(action.type==='learn-side-passage'){
+    if(place!=='square'||!campaign.visited.includes(place)||campaign.washPassage)throw new Error('Passage discovery unavailable');
+    return {navigation:revealWashPassage(run),campaign:{...campaign,washPassage:true}};
+  }
+  if(action.type==='resolve-side-reply'){
+    if(place!=='wash-court'||!campaign.visited.includes(place)||campaign.letters.s01?.status!=='delivered'||campaign.letters.s02||campaign.washReply||!['direct','declined'].includes(action.reply))throw new Error('Reply choice unavailable');
+    return {campaign:{...campaign,washReply:action.reply}};
+  }
   if (action.type === 'chart-route') {
     if (!place || !run.navigation) throw new Error('Not at a junction');
     const edge = worldGraph(run).edges.find(edge => (edge.from === place && edge.to === action.place) || (edge.to === place && edge.from === action.place));

@@ -1,7 +1,7 @@
 import {letterCapacity} from '../domain/skills.ts';
 import {deliveryXP} from '../domain/experience.ts';
 import type { Action, Run } from '../domain/prologue.ts';
-import { availableLetters, letterRules, characterAt, campaignComplete } from '../domain/campaign.ts';
+import { availableLetters, allLetterRules as letterRules, characterAt, campaignComplete } from '../domain/campaign.ts';
 import { currentNode, worldGraph } from '../domain/navigation.ts';
 import { routeBetween } from '../domain/campaign-reducer.ts';
 import { campaignUI } from '../content/campaign-ui.ts';
@@ -30,6 +30,10 @@ export function CampaignPanel({ run, locale, content, act }: { run: Run; locale:
     {road && <p className="muted">{pack.letters[focused!.id]?.title} · {directions[road.from===place?road.direction:opposite[road.direction]]}</p>}
     <button onClick={()=>act({type:'visit-campaign-place'})}>{c.look}</button>
     {visited && <>
+      {pack.sidePassage&&place==='square'&&!run.campaign.washPassage&&<button onClick={()=>act({type:'learn-side-passage'})}>{pack.sidePassage.discover}</button>}
+      {pack.sidePassage&&place==='square'&&run.campaign.washPassage&&<p>{pack.sidePassage.learned}</p>}
+      {pack.sidePassage&&place==='wash-court'&&run.campaign.letters.s01?.status==='delivered'&&!run.campaign.letters.s02&&<article><p>{pack.sidePassage.replyPrompt}</p>{run.campaign.washReply?<p>{run.campaign.washReply==='direct'?pack.sidePassage.directOutcome:pack.sidePassage.declineOutcome}</p>:<><button onClick={()=>act({type:'resolve-side-reply',reply:'direct'})}>{pack.sidePassage.direct}</button><button onClick={()=>act({type:'resolve-side-reply',reply:'declined'})}>{pack.sidePassage.decline}</button></>}</article>}
+
       <p>{waitingReturn && personal.opened ? pack.personalReturn?.prompt : place==='bridge' && personal?.returnOutcome==='loss' ? pack.personalReturn?.loss : pack.places[place]?.text ?? c.idle}</p>
       {personal?.returnOutcome==='alive' && place==='bridge' && run.campaign.lastOutcome==='personal-return' && <p>{pack.personalReturn?.alive}</p>}
       {waitingReturn && <button onClick={()=>act({type:'complete-private-return',id:'n04'})}>{personal.opened?(pack.personalReturn?.listen??c.report):c.report}</button>}
