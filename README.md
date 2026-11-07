@@ -1,4 +1,4 @@
-<img width="2172" height="724" alt="letmoroban" src="https://github.com/user-attachments/assets/ab2f9fb3-d201-4ad4-ab15-0f79fc5a4c7d" />
+<img width="1280" height="720" alt="letmoro-teaser-en-landscape" src="https://github.com/user-attachments/assets/1c2423bf-51c7-423c-94e2-c315d76a0a85" />
 
 # Letmoro
 
