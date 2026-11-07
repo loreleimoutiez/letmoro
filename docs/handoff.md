@@ -108,3 +108,11 @@ Reviewed all existing opening dialogue/request surfaces in both languages, inclu
 
 
 0.4.0 APK / versionCode 8 assembled, signature verified with the existing signing identity, and packaged web assets byte-compared with final `dist`. SHA-256: `9a0c844bb61df4068a0407c36f3095937cd5242bf59e038b1b3d76f4845a1d62`. Includes the reviewed ignored manuscript and progressive skills UI. A temporary isolated APK-only LAN download is authorized; no device installation or matching real step total is claimed.
+
+## Latest owner feedback and continuation writing
+
+The owner reports that the current phone app, Samsung Health and wearable totals now agree after synchronization. This is positive physical evidence for the foreground query correction, not validation of midnight, long background absence or closed-day history. Do not store reported health totals. Keep life penalties disabled until those acceptance checks pass.
+
+Verified shipped badge count: 17 (four original, thirteen campaign). Do not reveal badge titles/descriptions when answering the owner's count question. No additional badge is implemented in the new continuation draft.
+
+Owner authorizes beginning the next narrative material with inhabitants, new places and meaningful secondary paths off main roads. Ignored `src/content/private/arc-one-continuation.md` contains four new inhabitants, six locations, four entrance junctions, eight linked quest outlines, four English dialogue scenes and French scene translations, plus consequences and runtime acceptance requirements. Private `tree.txt` now has a matching vertical draft subtree. All marked NOT PLAYABLE; no APK/runtime change made in this writing pass. Preserve existing road IDs/offsets via a migration before inserting junctions. No new ending/romance/political action is claimed implemented. Next: fully author outcome variants for the first secondary quest, implement/version secondary junctions and integrate that first loop with replay tests.
