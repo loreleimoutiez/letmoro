@@ -4,7 +4,7 @@ A quiet Android walking adventure about delivering letters and finding a life of
 
 ## Status
 
-Internal Android version 0.2.1 / versionCode 6. This is a playable opening, not the complete five-arc public campaign. Postal delivery is the territory's only available employment. The local ignored manuscript adds twenty letters, seven recurring-character conversations and two optional unpaid errands beyond the easy first job/delivery. Refusing employment preserves a complete ten-request personal route.
+Internal Android version 0.3.0 / versionCode 7. This is a playable opening, not the complete five-arc public campaign. Postal delivery is the territory's only available employment. The local ignored manuscript adds twenty letters, seven recurring-character conversations and two optional unpaid errands beyond the easy first job/delivery. Refusing employment preserves a complete ten-request personal route.
 
 - Minimal square-pixel world; real-step-funded cardinal travel, reversal and returns, long journeys and a discovered cross-connection. Pinch, mouse wheel and keyboard zoom scale Moro with the terrain; no zoom buttons or percentage.
 - Above-Moro arrival decisions, dialogue details that replace initial choices, up to three carried campaign letters, opening/destruction/return/delivery/report actions, optional report journeys, trust, explicit friendships and delayed contradictory reports. Earned badges have brief restrained feedback; locked badges/skills remain hidden. Only the Basic respect skill root is implemented.
@@ -69,3 +69,9 @@ The supplied future GitHub repository is reserved; no remote or publication is c
 ## Starting over
 
 Settings → Start over → confirm erases the game and its archives locally and in the online save while retaining the account/password. Online saving requires a working connection before local erasure. Reinstalling alone does not erase an account backup. Old daily steps become the new game's baseline rather than restoring the former path. Health Connect's own records remain unchanged. This is separate from the deferred narrative reboot/rescue system.
+
+## Android widget and step-source investigation
+
+A native home-screen widget shows Moro on discovered local terrain, remaining quest distance or daily steps/goal, and a last-seen timestamp. It opens Letmoro on tap and retains the last app snapshot while closed; it does not independently advance the game or read steps in the background. A new step-connection detail separates the shared Health Connect aggregate from the phone estimate and identifies Samsung Health contributions. See [Fit3 and Samsung Health research](docs/fit3-and-samsung-health.md). Direct Samsung SDK access and Fit3 notifications remain investigated possibilities, not implemented integrations.
+
+A personal delivery now has distinct optional return outcomes and an exclusive intact-seal badge. XP is a persisted balance for future progression, not an implemented skill bonus. Earlier save generations remain readable; existing completed reports are not replayed into new rewards. Private scenes and the authoring tree remain ignored.

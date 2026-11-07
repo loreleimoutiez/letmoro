@@ -1,4 +1,4 @@
-# Gameplay status — 0.2.1
+# Gameplay status — 0.3.0
 
 This is an internal playable opening, not the complete public campaign. The source and local ignored manuscript include the easy first job, twenty additional letters, seven small branching conversations, two optional unpaid errands, thirty contextual thoughts, trust/friendship and sixteen badge conditions. No runtime-generated or AI-generated story is used.
 
@@ -43,3 +43,9 @@ A fresh-start replay marker baselines existing daily health steps instead of rec
 0.2.1 verification: 61 behavioral tests and TypeScript pass. The synthetic browser reset regression covers cancellation, failed network preservation, retry, cloud tombstone, local backup erasure, retained Auth, reload and a fresh new run. Final Android 0.2.1 / versionCode 6 build and APK signature verification passed; packaged web assets match the final build. SHA-256: `f08a10cef7121c9f7003ca94df7b87fbecc04dc535179fa7c8e713ae1a26ce2a`. An isolated APK-only temporary Wi-Fi download is authorized; no phone installation is claimed.
 
 The owner confirmed downloading and installing the 0.2.1 update on the phone over local Wi-Fi. This confirms the update installation only; actual reset, cloud round trip and historical health validation are not yet confirmed. The temporary download server is stopped after delivery.
+
+## 0.3.0 source checkpoint
+
+67 behavioral tests cover the revised return's exclusive badge and one-time reward, alternate witness and later redirected receipts, replay, widget privacy/known geometry/remaining distance, and distinct provider diagnostics. Source adds a native widget and step-source details; browser checks exercise both revised return scenes and earned-badge visibility using synthetic accounts. Native and packaged checks are recorded after completion below. Physical launcher/health verification remains required; no step mismatch is claimed solved. See fit3-and-samsung-health.md.
+
+0.3.0 checks: TypeScript, 67 behavioral tests and synthetic browser checks for both optional returns pass. Native compilation, three Kotlin unit tests and Android lint pass. Launcher rendering/resizing, actual widget refresh and the Samsung/Health Connect mismatch still require physical validation. The initial native attempt lacked SDK 36/build tools; after restoring those temporary tools, the checks passed.

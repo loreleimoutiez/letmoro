@@ -1,0 +1,35 @@
+# Fit3, Samsung Health and Android surfaces
+
+Research checked against official Samsung/Android sources on 2026-11-07. No partner application was submitted and no person/company was contacted. Direct Samsung SDK access and live Fit3 sensor streaming are not implemented.
+
+## Current mismatch and diagnosis
+
+The owner reports that Samsung Health matches the Fit3 while Letmoro lags. That narrows investigation to phone-side sharing/import but does not prove which component is responsible. Current Letmoro reads Health Connect, not Google Fit or the Google Health cloud API. Its optional phone sensor is an additional estimate and is not a Fit3 sensor reading.
+
+The native response now separately reports the provider aggregate, provider-read timestamp and whether the contributing data origins include Samsung Health. The connection screen exposes these values without persisting extra diagnostic health records in game saves. No missing aggregate becomes zero. A read timestamp is not the source's ingestion timestamp. These probes identify the boundary; they do not prove the issue fixed.
+
+Samsung documents step sharing through Health Connect and instructs checking permissions from Samsung Health's settings. Reopen Samsung Health after granting permissions, then refresh Letmoro. Check both Samsung Health write-steps and Letmoro read-steps access. See [Samsung Health Connect FAQ](https://developer.samsung.com/health/health-connect-faq.html).
+
+The relevant comparison is Fit3 → Samsung Health → the shared total shown in Letmoro's diagnostic details → combined displayed estimate. If the shared total lags, investigate export/permissions; if the shared total matches but displayed/travel state does not, investigate Letmoro's reconciliation. Never sum overlapping sources to force a match or enable life penalties to test missing data.
+
+## Direct Samsung Health access
+
+Samsung Health Data SDK can query the phone's Samsung Health store, including aggregate steps from connected accessories. This is access through the phone, not a Bluetooth sensor stream from the band. Official requirements include Android 10+ and Samsung Health. Development can use Samsung Health developer mode; distribution without that test setting requires Samsung partner registration matching package name/signature and permission scope. Developer mode must not become a production player requirement. See [SDK FAQ](https://developer.samsung.com/health/data/faq.html), [developer mode](https://developer.samsung.com/health/data/guide/developer-mode.html) and [official step-data sample](https://developer.samsung.com/codelab/health/steps-data.html).
+
+Recommendation: first compare the actual shared aggregate using the new diagnostics. If export is the bottleneck, prototype a separate Samsung-only read adapter with the owner in development mode and compare identical date/zone totals on hardware. Do not promise faster delivery before measurement. Keep Health Connect for other devices and never credit the same day twice when switching adapters. SDK licensing/distribution, package signature registration, permission flow and historical reconciliation need validation before adding the vendor library. No vendor binary or secret has been added.
+
+## Fit3 notifications and further communication
+
+Samsung supports choosing phone apps whose notifications are mirrored on Fit3 through Galaxy Wearable → Band settings → Notifications → App notifications. Thus a normal Android notification from Letmoro can be forwarded by the existing Samsung bridge; a custom direct-band protocol is unnecessary for that minimum. See [Samsung Fit3 notification guide](https://www.samsung.com/ae/support/mobile-devices/how-to-manage-notifications-on-the-galaxy-fit3/).
+
+Letmoro does not yet post game notifications. Implementation needs opt-in channels, Android notification permission where applicable, spoiler-safe pending-choice text, deduplication, account/reset cleanup and a physical mirror test. Opening a notification should open the app; narrative decisions remain explicit there. An inactive app cannot detect new game milestones without an authorized background-computation design. No always-on background service or notification permission was silently added.
+
+No supported public Fit3 application/sensor SDK was established by this research. Do not treat Galaxy Watch/Wear OS APIs as Fit3 support or promise an installable band application. Unofficial firmware tools are not part of this project. Heart-rate/live band sensor access remains unverified rather than promised.
+
+## Implemented home-screen widget
+
+A native RemoteViews widget shows Moro centered on a local view of walked route segments and visited landmarks. The summary uses remaining distance when an objective is active, otherwise the last known daily steps/goal. Tapping opens Letmoro. It never renders unknown places, letter bodies or future choices. Black, white and square geometry match the app.
+
+A bounded bitmap and minimal private snapshot are updated while the app is active, at most once per five seconds. The widget retains a last-seen date/time when the app is closed; it is not a background step reader or live offline progression engine. Android's periodic refresh repaints stored data, with outdated daily counts displayed as unknown. Signing out, erasing or switching accounts clears/replaces the snapshot. No Auth identifier/token or full save enters widget preferences. See [Android widget documentation](https://developer.android.com/develop/ui/views/appwidgets).
+
+Native launcher placement, resizing, account isolation and device refresh need physical acceptance. Source/compilation and pure snapshot tests do not replace that check.

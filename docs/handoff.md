@@ -1,6 +1,6 @@
 # Session handoff
 
-Updated 2026-11-06. Source version 0.2.1 / Android versionCode 6. Read this file, product, narrative, decision ledger and roadmap before implementation. Older milestones are in Git history.
+Updated 2026-11-07. Source version 0.3.0 / Android versionCode 7. Read this file, product, narrative, decision ledger and roadmap before implementation. Older milestones are in Git history.
 
 ## Instructions and authorization
 
@@ -25,7 +25,7 @@ Opening work/refusal dialogue, first letter sealed/opened/destroyed outcomes and
 
 Thirty localized thoughts, filtered by known situation. One pending thought persists until dismissal and replaces main arrival choices temporarily; Story remains available. Dismissal marks current travel, preventing backlog. Unseen suitable thoughts are prioritized; after exhaustion, spaced repeats avoid immediately repeating the last thought. Unique thought archive remains readable in Journal.
 
-Four original plus twelve campaign badge conditions, brief five-second earned feedback. Basic respect only, earned through postal employment; future skills hidden. Latest encounter hollow markers, historical traces, visited place labels and abstract discovered-location squares. No live NPC tracking. Pinch/wheel/keyboard zoom, proportional Moro, square pebbles, no zoom UI. Journal newest-first with local timestamps; older undated entries stay undated.
+Four original plus thirteen campaign badge conditions, brief five-second earned feedback. Basic respect only, earned through postal employment; future skills hidden. Latest encounter hollow markers, historical traces, visited place labels and abstract discovered-location squares. No live NPC tracking. Pinch/wheel/keyboard zoom, proportional Moro, square pebbles, no zoom UI. Journal newest-first with local timestamps; older undated entries stay undated.
 
 Normal coin/step counters restored. Test toolbar source removed, intro replay absent, internal-tools flag removed. An explicit confirmed full erasure is now available in Settings. Synthetic legacy events remain decodable and automated tests still use domain fixtures; no simulation UI is shipped. No browser-preview caption remains in UI copy.
 
@@ -35,7 +35,7 @@ Normal coin/step counters restored. Test toolbar source removed, intro replay ab
 
 Ignored `.env.local` contains public client configuration and VITE_CLOUD_SAVES=true. Example remains false for unconfigured checkouts. Snapshot covers profile, events, navigation, letter outcomes, relationships, thoughts, life calendar/schedules, health checkpoints and language. Revision RPC protects stale writes; conflicts require explicit selection and retain a device backup. Offline local preservation/retry and reset tombstones remain supported. Real-account cross-device/email/OAuth verification is still pending. Never claim it is device-tested.
 
-Content generation prologue-5, schema 1, older prologue-1/2/3/4 accepted by deterministic replay. Private pack `src/content/private/opening.json`, vertical `tree.txt` and `skills-tree.txt` are ignored and required for the richer narrative. No private repository/backup exists; do not force-add them. APK includes local text by design. Generic checkout supports the first delivery without this manuscript.
+Content generation prologue-6, schema 1, older prologue-1/2/3/4/5 accepted by deterministic replay. Private pack `src/content/private/opening.json`, vertical `tree.txt` and `skills-tree.txt` are ignored and required for the richer narrative. No private repository/backup exists; do not force-add them. APK includes local text by design. Generic checkout supports the first delivery without this manuscript.
 
 ## Verification and environment
 
@@ -61,3 +61,13 @@ A fresh-start replay marker baselines existing daily health steps instead of rec
 0.2.1 verification: 61 behavioral tests and TypeScript pass. The synthetic browser reset regression covers cancellation, failed network preservation, retry, cloud tombstone, local backup erasure, retained Auth, reload and a fresh new run. Final Android 0.2.1 / versionCode 6 build and APK signature verification passed; packaged web assets match the final build. SHA-256: `f08a10cef7121c9f7003ca94df7b87fbecc04dc535179fa7c8e713ae1a26ce2a`. An isolated APK-only temporary Wi-Fi download is authorized; no phone installation is claimed.
 
 The owner confirmed downloading and installing the 0.2.1 update on the phone over local Wi-Fi. This confirms the update installation only; actual reset, cloud round trip and historical health validation are not yet confirmed. The temporary download server is stopped after delivery.
+
+## Android surfaces and personal-return revision — 2026-11-07
+
+User chose a native widget showing Moro on the discovered local route, remaining steps while following a quest, otherwise daily steps/goal. Source implements a bounded square-only bitmap in RemoteViews, tap-to-open, last-seen timestamp, five-second foreground snapshot publishing and periodic stored-state repaint. It is not independent background health import/progression. Snapshot excludes Auth identity/tokens, full saves, letters and unknown map content; clear/publish calls are ordered across sign-out/reset/account changes. Launcher placement/resizing needs a phone test.
+
+Personal return variants are implemented through a new explicit replay event, an exclusive unopened-delivery badge, a one-time private reward (+5 coins, +2 trust, 25 XP) and an alternate witness. XP is a saved balance only; no new skill effects. Branch prose is private. Old report events remain replayable and do not receive the new reward again. Later addressed letters use the witness when appropriate, with the actual delivery recipient preserved in history.
+
+Owner says Samsung Health already matches Fit3 but Letmoro lags. The issue is not established fixed. New in-memory diagnostics expose Health Connect provider total/read time and Samsung Health origin separately from the combined phone estimate; an explicit button opens Samsung Health. No new health permission, vendor SDK, direct band connection or punitive rule was added. Official-source research and acceptance steps are in fit3-and-samsung-health.md. Samsung direct data access is possible with development/partner constraints; Fit3 can mirror ordinary Android notifications through Galaxy Wearable, but Letmoro does not post game notifications yet. No partner request, company contact, public publication or vendor binary was added.
+
+0.3.0 checks: TypeScript, 67 behavioral tests and synthetic browser checks for both optional returns pass. Native compilation, three Kotlin unit tests and Android lint pass. Launcher rendering/resizing, actual widget refresh and the Samsung/Health Connect mismatch still require physical validation. The initial native attempt lacked SDK 36/build tools; after restoring those temporary tools, the checks passed.
