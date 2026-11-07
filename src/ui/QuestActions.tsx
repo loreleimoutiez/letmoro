@@ -40,7 +40,7 @@ export function QuestActions({ run, text: t, content, act, locale }: {
     {visit && ['square', 'workshop'].includes(run.stage) && atPlace(run, place) && <>
       {run.completedErrands.includes(place) && <p>{visit.complete}</p>}
       <DialogueChoices key={place} label={t.askDetails} back={t.backToChoices} initial={<>
-        {!run.replies.includes(`${place}:help`) && !run.errand && <><p className="muted">{t.helpEffort}</p><button onClick={() => act({ type: 'reply', reply: 'help' })}>{visit.help}</button></>}
+        {!run.replies.includes(`${place}:help`) && !run.errand && <><p className="muted">{t.helpEffort} · {place==='square'?35:40} XP</p><button onClick={() => act({ type: 'reply', reply: 'help' })}>{visit.help}</button></>}
         <button onClick={() => act({ type: 'finish-conversation' })}>{t.leaveConversation}</button>
       </>}>
         {run.replies.includes(`${place}:listen`) ? <p role="status">{visit.response}</p> : <button onClick={() => act({ type: 'reply', reply: 'listen' })}>{visit.listen}</button>}

@@ -14,7 +14,7 @@ export function journeyCopy(run:Run,journey:Journey,locale:Locale,content?:Openi
     journey.kind==='help-return'?(french?'Revenir raconter ce que tu as trouvé':'Return to share what you found'):
     journey.kind==='report'?(french?`Revenir donner des nouvelles${sender?` à ${sender}`:''}`:`Return with news${sender?` for ${sender}`:''}`):
     journey.kind==='explore'?(french?'Aller à la rencontre du quartier':'Meet the neighborhood'):
-    journey.letterId?(french?`Remettre ${sender?`le message de ${sender}`:'la lettre'}${recipient?` à ${recipient}`:''}`:`Deliver ${sender?`${sender}’s message`:'the letter'}${recipient?` to ${recipient}`:''}`):
+    journey.letterId?(french?`Remettre ${sender?`le message confié par ${sender}`:'la lettre'}${recipient?` à ${recipient}`:''}`:`Deliver ${sender?`the letter entrusted by ${sender}`:'the letter'}${recipient?` to ${recipient}`:''}`):
       (french?'Remettre la première lettre dans la cour':'Deliver the first letter in the courtyard');
   const instruction=journey.remaining===0?(french?'Tu es au point de rendez-vous. Ouvre la rencontre pour continuer.':'You have reached the meeting point. Open the encounter to continue.'):
     journey.heading?(french?`Direction choisie : ${t.directions[journey.heading]}. Tes pas font avancer Moro.`:`Chosen direction: ${t.directions[journey.heading]}. Your steps move Moro.`):

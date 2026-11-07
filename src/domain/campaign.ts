@@ -23,6 +23,8 @@ export interface EntrustedLetter { opened: boolean; deliveredTo?: string; sender
 export interface Campaign {
   readonly active: boolean;
   readonly xp?: number;
+  readonly xpSpent?: number;
+  readonly skills?: readonly string[];
   readonly completed?: boolean;
   readonly replies?: Readonly<Record<string, 'listen' | 'press'>>;
   readonly encounters?: readonly { character: string; place: Place; event: number }[];

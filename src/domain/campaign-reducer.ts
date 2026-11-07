@@ -1,6 +1,7 @@
 import type { Run } from './prologue.ts';
 import type { CampaignAction, Campaign, EntrustedLetter } from './campaign.ts';
 import { availableLetters, letterRules, characterAt, resolvedLetters } from './campaign.ts';
+import {hasSkill,letterCapacity,giftBonus} from './skills.ts';
 import { currentNode, worldGraph } from './navigation.ts';
 import type { Place, EdgeId } from './navigation.ts';
 
@@ -59,7 +60,7 @@ export function reduceCampaign(run: Run, action: CampaignAction): Partial<Run> {
   }
   if (action.type === 'dialogue') {
     if (!place || !campaign.visited.includes(place) || characterAt(run,place) !== action.character || campaign.replies?.[action.character] || !['listen','press'].includes(action.reply)) throw new Error('Dialogue unavailable');
-    const change = action.reply === 'listen' ? 1 : ['keeper','archivist','repairer'].includes(action.character) ? 1 : action.character === 'host' ? 0 : -1;
+    const change = action.reply === 'listen' ? 1+(hasSkill(run,'listen-trust')?1:0) : ['keeper','archivist','repairer'].includes(action.character) ? 1 : action.character === 'host' ? 0 : -1;
     return {campaign:{...campaign,replies:{...campaign.replies,[action.character]:action.reply},trust:trust(action.character,change)}};
   }
   if (action.type === 'befriend') {
@@ -72,7 +73,7 @@ export function reduceCampaign(run: Run, action: CampaignAction): Partial<Run> {
   switch (action.type) {
     case 'take-letter': case 'decline-letter': {
       if (!place || !campaign.visited.includes(place) || !availableLetters(run,place).some(offer => offer.id === rule.id) || !run.navigation) throw new Error('Offer unavailable');
-      if (action.type === 'take-letter' && Object.values(campaign.letters).filter(letter => letter.status === 'carried').length >= 3) throw new Error('Letter bag is full');
+      if (action.type === 'take-letter' && Object.values(campaign.letters).filter(letter => letter.status === 'carried').length >= letterCapacity(run)) throw new Error('Letter bag is full');
       const accepted = action.type === 'take-letter';
       const path = accepted ? routeBetween(run,place,rule.to) : [];
       return {navigation:{...run.navigation,authorized:[...new Set([...run.navigation.authorized,...path])]},campaign:{...campaign,letters:write(rule.id,{opened:false,status:accepted?'carried':'declined',reported:false}),...(accepted?{focus:{id:rule.id,returning:false}}:{})}};
@@ -88,7 +89,7 @@ export function reduceCampaign(run: Run, action: CampaignAction): Partial<Run> {
       return {campaign:{...campaign,letters:write(rule.id,{...item,status:'destroyed',...(place===rule.from?{senderWitnessed:'destroyed' as const}:{})}),focus:campaign.focus?.id===rule.id?undefined:campaign.focus,lastOutcome:'destroyed',...(place===rule.from?{trust:trust(rule.sender,-2)}:{})}};
     case 'deliver-item': {
       if (!item || item.status !== 'carried' || place !== rule.to || !campaign.visited.includes(place)) throw new Error('Delivery unavailable');
-      return {sous:run.sous+(rule.postal?Math.max(0,rule.pay-4):0),delivered:run.delivered+1,campaign:{...campaign,letters:write(rule.id,{...item,status:'delivered',deliveredTo:rule.to==='bridge'&&characterAt(run,'bridge')==='witness'?'witness':rule.recipient}),focus:campaign.focus?.id===rule.id?undefined:campaign.focus,trust:rule.recipient==='memory'?campaign.trust:trust(rule.to==='bridge'&&characterAt(run,'bridge')==='witness'?'witness':rule.recipient,item.opened?-2:1),lastOutcome:rule.recipient==='memory'?'placed':item.opened?'opened-delivery':'delivered'}};
+      return {sous:run.sous+(rule.postal?Math.max(0,rule.pay-4)+(hasSkill(run,'wages')?1:0):0),delivered:run.delivered+1,campaign:{...campaign,...(rule.recipient!=='memory'?{encounters:[...(campaign.encounters??[]),{character:rule.to==='bridge'&&characterAt(run,'bridge')==='witness'?'witness':rule.recipient,place,event:run.events.length}]}:{}),letters:write(rule.id,{...item,status:'delivered',deliveredTo:rule.to==='bridge'&&characterAt(run,'bridge')==='witness'?'witness':rule.recipient}),focus:campaign.focus?.id===rule.id?undefined:campaign.focus,trust:rule.recipient==='memory'?campaign.trust:trust(rule.to==='bridge'&&characterAt(run,'bridge')==='witness'?'witness':rule.recipient,item.opened?-2:1),lastOutcome:rule.recipient==='memory'?'placed':item.opened?'opened-delivery':'delivered'}};
     }
     case 'return-item':
       if (!item || item.status !== 'carried' || place !== rule.from) throw new Error('Return unavailable');
@@ -96,9 +97,9 @@ export function reduceCampaign(run: Run, action: CampaignAction): Partial<Run> {
     case 'complete-private-return': {
       if (rule.id!=='n04' || !item || item.status!=='delivered' || item.reported || place!==rule.from || !campaign.visited.includes(place)) throw new Error('Personal return unavailable');
       const loss=item.opened;
-      return {sous:run.sous+(loss?0:rule.gift),campaign:{...campaign,
+      return {sous:run.sous+(loss?0:rule.gift+giftBonus(run)),campaign:{...campaign,
         letters:write(rule.id,{...item,reported:true,returnOutcome:loss?'loss':'alive',...(!loss?{honest:true}:{})}),
-        xp:(campaign.xp??0)+(loss?0:25), friends:loss?campaign.friends.filter(person=>person!=='traveler'):campaign.friends, trust:loss?campaign.trust:trust(rule.sender,2),
+        friends:loss?campaign.friends.filter(person=>person!=='traveler'):campaign.friends, trust:loss?campaign.trust:trust(rule.sender,2+(hasSkill(run,'report-trust')?1:0)),
         encounters:loss?[...(campaign.encounters??[]),{character:'witness',place,event:run.events.length}]:campaign.encounters,
         focus:campaign.focus?.id===rule.id?undefined:campaign.focus,lastOutcome:loss?'personal-loss':'personal-return'}};
     }
@@ -106,10 +107,10 @@ export function reduceCampaign(run: Run, action: CampaignAction): Partial<Run> {
       if (!item || item.reported || !['delivered','destroyed'].includes(item.status) || place !== rule.from || typeof action.honest !== 'boolean') throw new Error('Report unavailable');
       const lie = !action.honest && (item.opened || item.status==='destroyed');
       if (lie && item.senderWitnessed) throw new Error('Sender already witnessed the breach');
-      const reward = rule.gift && (item.status==='delivered' || lie) ? rule.gift : 0;
+      const reward = rule.gift && (item.status==='delivered' || lie) ? rule.gift+giftBonus(run) : 0;
       const wages = lie && item.status==='destroyed' && rule.postal ? Math.max(0,rule.pay-4) : 0;
       const reputation = lie ? 1 : item.status==='destroyed' ? item.senderWitnessed==='destroyed'?0:-2 : item.opened ? item.senderWitnessed?0:-1 : 1;
-      return {sous:run.sous+reward+wages,campaign:{...campaign,letters:write(rule.id,{...item,reported:true,honest:!lie}),focus:campaign.focus?.id===rule.id?undefined:campaign.focus,trust:trust(rule.sender,reputation),lastOutcome:lie?'lie':'reported',delayed:lie?[...campaign.delayed,{id:rule.id,due:resolvedLetters(run)+2,settled:false}]:campaign.delayed}};
+      return {sous:run.sous+reward+wages,campaign:{...campaign,letters:write(rule.id,{...item,reported:true,honest:!lie}),focus:campaign.focus?.id===rule.id?undefined:campaign.focus,trust:trust(rule.sender,reputation+(!lie&&item.status==='delivered'&&hasSkill(run,'report-trust')?1:0)),lastOutcome:lie?'lie':'reported',delayed:lie?[...campaign.delayed,{id:rule.id,due:resolvedLetters(run)+2,settled:false}]:campaign.delayed}};
     }
   }
 }

@@ -235,3 +235,26 @@ dialog.encounter-dialog { position:fixed; inset:0; margin:0; width:100%; max-wid
 .message-offer { margin:16px 0; padding:12px 0; border-bottom:1px solid #333; }
 .message-offer summary { cursor:pointer; min-height:36px; line-height:1.8; }
 @media (max-height:600px) { .journey-reminder { top:auto; bottom:100px; max-width:50%; font-size:8px; } }
+.skill-tree { margin:32px 0; overflow-x:auto; padding:12px 4px; }
+.skill-trunk { display:flex; flex-direction:column; align-items:center; gap:12px; font-size:12px; }
+.skill-trunk i { width:24px; height:24px; background:#fff; }
+.skill-trunk small { color:#aaa; font-size:9px; }
+.skill-branches { display:grid; grid-template-columns:repeat(3,minmax(175px,1fr)); gap:20px; min-width:560px; padding-top:40px; position:relative; }
+.skill-branches:before { content:''; position:absolute; top:20px; left:16%; right:16%; border-top:1px solid #666; }
+.skill-branch { position:relative; }
+.skill-branch:before { content:''; position:absolute; height:20px; border-left:1px solid #666; left:50%; top:-20px; }
+.skill-branch h2 { text-align:center; font-size:11px; min-height:28px; }
+.skill-fork { display:flex; gap:8px; justify-content:center; position:relative; padding-top:20px; margin-bottom:24px; }
+.skill-fork:before { content:''; position:absolute; top:0; left:25%; right:25%; border-top:1px solid #555; }
+.skill-fork button { flex:1; display:flex; flex-direction:column; align-items:center; gap:10px; padding:12px 5px; font-size:9px; min-width:0; }
+.skill-fork button i { width:18px; height:18px; border:2px solid #777; }
+.skill-fork button.owned i { background:#fff; border-color:#fff; }
+.skill-fork button[aria-pressed=true] { border-color:#fff; }
+.skill-fork small { color:#aaa; }
+.skill-inspector { position:sticky; bottom:0; background:#000; border-top:1px solid #777; padding:16px 0; }
+.skills-page { max-width:900px; }
+.xp-toast { position:fixed; top:92px; left:24px; color:#ccc; font-size:10px; pointer-events:none; z-index:30; animation:badge-fade 4s forwards; }
+.encounter-dialog .xp-toast { position:sticky; }
+dialog:has(.skills-page) { width:calc(100% - 24px); max-width:1100px; }
+@media (min-width:800px) { .skill-pan-hint { display:none; } }
+@media (prefers-reduced-motion:reduce) { .xp-toast { animation:none; } }

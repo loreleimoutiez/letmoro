@@ -120,11 +120,11 @@ test('the sealed personal delivery earns an exclusive badge and its optional ret
   let run=opening();
   for(const id of ['p01','p02','n01','n02']){const rule=letterRules.find(rule=>rule.id===id)!;run=travel(run,rule.from);run=apply(run,{type:'decline-letter',id});}
   run=travel(run,'bridge');run=apply(run,{type:'take-letter',id:'n04'});run=travel(run,'cemetery');run=apply(run,{type:'deliver-item',id:'n04'});
-  assert(campaignBadges(run).includes('unread-promise'));assert.equal(run.campaign.xp??0,0);
+  assert(campaignBadges(run).includes('unread-promise'));assert((run.campaign.xp??0)>=45);
   assert.throws(()=>apply(run,{type:'complete-private-return',id:'n04'}));
-  run=travel(run,'bridge');const coins=run.sous,trust=run.campaign.trust.traveler??0;
+  run=travel(run,'bridge');const coins=run.sous,trust=run.campaign.trust.traveler??0,xp=run.campaign.xp??0;
   run=apply(run,{type:'complete-private-return',id:'n04'});
-  assert.equal(run.sous,coins+5);assert.equal(run.campaign.trust.traveler,trust+2);assert.equal(run.campaign.xp,25);
+  assert.equal(run.sous,coins+5);assert.equal(run.campaign.trust.traveler,trust+2);assert.equal(run.campaign.xp,xp+25);
   assert.equal(run.campaign.letters.n04.returnOutcome,'alive');
   assert.throws(()=>apply(run,{type:'complete-private-return',id:'n04'}));
   assert.deepEqual(decodeSave(encodeSave(run)),run);
@@ -137,9 +137,9 @@ test('an opened personal delivery has a different returning witness and no retur
   run=travel(run,'cemetery');run=apply(run,{type:'deliver-item',id:'n04'});
   assert(!campaignBadges(run).includes('unread-promise'));
   run=travel(run,'bridge');assert.equal(characterAt(run,'bridge'),'witness');
-  const coins=run.sous,trust=run.campaign.trust.traveler;
+  const coins=run.sous,trust=run.campaign.trust.traveler,xp=run.campaign.xp??0;
   run=apply(run,{type:'complete-private-return',id:'n04'});
-  assert.equal(run.sous,coins);assert.equal(run.campaign.trust.traveler,trust);assert.equal(run.campaign.xp??0,0);
+  assert.equal(run.sous,coins);assert.equal(run.campaign.trust.traveler,trust);assert.equal(run.campaign.xp??0,xp);
   assert.equal(run.campaign.letters.n04.returnOutcome,'loss');assert.equal(characterAt(run,'bridge'),'witness');
   assert(!campaignBadges(run).includes('kept-word'));
   assert.deepEqual(decodeSave(encodeSave(run)),run);
@@ -154,4 +154,15 @@ test('later addressed deliveries use the returning witness after the personal lo
  assert.throws(()=>apply(run,{type:'befriend',character:'traveler'}));
  run=apply(run,{type:'deliver-item',id:'p04'});assert.equal(run.campaign.letters.p04.deliveredTo,'witness');
  assert.equal(run.campaign.trust.witness,1);assert.equal(run.campaign.trust.traveler,undefined);
+});
+
+test('purchased practical and relational bonuses affect real deliveries and reports once',()=>{
+ let run=travel(opening(),'office');
+ run=apply(run,{type:'buy-skill',id:'paid-practice'});
+ run=apply(run,{type:'take-letter',id:'p01'});run=travel(run,'square');
+ const before=run.sous;run=apply(run,{type:'deliver-item',id:'p01'});assert.equal(run.sous,before+5);
+ run=apply(run,{type:'buy-skill',id:'word-kept'});
+ run=travel(run,'office');const trust=run.campaign.trust.clerk??0,xp=run.campaign.xp??0;
+ run=apply(run,{type:'report-item',id:'p01',honest:true});assert.equal(run.campaign.trust.clerk,trust+2);assert.equal(run.campaign.xp,xp+8);
+ assert.throws(()=>apply(run,{type:'report-item',id:'p01',honest:true}));assert.deepEqual(decodeSave(encodeSave(run)),run);
 });
