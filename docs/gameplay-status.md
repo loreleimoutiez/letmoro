@@ -1,6 +1,6 @@
 # Gameplay status — 0.3.0
 
-This is an internal playable opening, not the complete public campaign. The source and local ignored manuscript include the easy first job, twenty additional letters, seven small branching conversations, two optional unpaid errands, thirty contextual thoughts, trust/friendship and sixteen badge conditions. No runtime-generated or AI-generated story is used.
+This is an internal playable opening, not the complete public campaign. The source and local ignored manuscript include the easy first job, twenty additional letters, recurring branching conversations, two optional unpaid errands, thirty contextual thoughts, trust/friendship and seventeen badge conditions. No runtime-generated or AI-generated story is used.
 
 ## Playable and saved
 
@@ -21,7 +21,7 @@ The first round has a closing scene and outcomes for both employment and refusal
 
 ## Verification
 
-TypeScript and all 61 behavioral tests pass. Tests cover legacy replay, all twenty deliveries and reports, refusal unlocks, privacy/witnessed trust, delayed contradictory reports, optional personal rewards, one pending thought, friendship loss without badge loss, schedule timing/cooldown and corrected daily data. Native compilation, three Kotlin unit tests and Android lint passed; seven existing non-blocking lint suggestions remain. Kotlin used its fallback compiler because its home daemon directory is read-only.
+TypeScript and all 67 behavioral tests pass. Tests cover legacy replay, all twenty deliveries and reports, refusal unlocks, privacy/witnessed trust, delayed contradictory reports, optional personal rewards, one pending thought, friendship loss without badge loss, schedule timing/cooldown and corrected daily data. Native compilation, three Kotlin unit tests and Android lint passed; seven existing non-blocking lint suggestions remain. The 0.3.0 native checks use the in-process Kotlin compiler; older checkpoints used a fallback because their daemon home was read-only.
 
 Browser campaign regression uses synthetic Auth and intercepted cloud HTTP, not a real account: startup/restore, replaced dialogue choices, sealed/opened collection, earned badge, rest settings and cooldown, proportional wheel/two-touch zoom, normal HUD, no test/zoom UI, FR and portrait/landscape. Additional browser checks cover the abstract silent-destination squares, sealed-body privacy and one persistent thought through reload without a queue. Screenshots and harness are external under `/tmp/letmoro-qa/`.
 
@@ -51,3 +51,7 @@ The owner confirmed downloading and installing the 0.2.1 update on the phone ove
 0.3.0 checks: TypeScript, 67 behavioral tests and synthetic browser checks for both optional returns pass. Native compilation, three Kotlin unit tests and Android lint pass. Launcher rendering/resizing, actual widget refresh and the Samsung/Health Connect mismatch still require physical validation. The initial native attempt lacked SDK 36/build tools; after restoring those temporary tools, the checks passed.
 
 0.3.0 APK / versionCode 7 assembled and signature-verified. Packaged web assets match the final build, include the ignored local return scenes/badge text, and include native widget resources. SHA-256: `fbc5be93756b5be0bd047b60a24db8c017e533c692cbf4b3c24fa7ab8c21f268`. The owner’s previous Wi-Fi delivery preference is retained using an isolated temporary APK-only server; no new device install is claimed.
+
+## Planning audit — 2026-11-07
+
+The five arcs are a scaffold, not five authored playable chapters. Current playable content is the opening correspondence round. Politics has thematic seeds and planned commitments but no playable movement/strike/power-change system. Romance routes, substantial private-life/home progression, numerical trait/skill effects and the personalized campaign ending remain unfinished. XP currently has one explicit reward source and is a balance only. The widget currently previews cached state; autonomous background progression is not implemented. The current step discrepancy requires device diagnostics before further gameplay expansion. Reported personal totals are deliberately excluded from this document.
