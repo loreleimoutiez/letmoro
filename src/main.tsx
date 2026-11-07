@@ -37,6 +37,8 @@ import { LifeDetails } from './ui/LifeDetails.tsx';
 import {useWidget} from './ui/useWidget.ts';
 import {widgetSnapshot} from './domain/widget.ts';
 import { StepDiagnostics } from './ui/StepDiagnostics.tsx';
+import {EncounterScreen} from './ui/EncounterScreen.tsx';
+import {JourneyReminder} from './ui/JourneyReminder.tsx';
 import './style.css';
 
 function initialLocale(): Locale {
@@ -186,15 +188,16 @@ function App() {
     {run && <World run={run} label={`${t.world} ${node ? t.places[node] : t.onPath}`} text={t} content={content} act={act} controls={intro === null && run.life.lives > 0} choiceVisible={readyChoice} />}
     {run && intro === null && <>
       <div className="lives" role="img" aria-label={`${run.life.lives} / 3 ${t.lifeWord}`}>{Array.from({ length: 3 }, (_, index) => <i key={index} className={index >= run.life.lives ? 'lost' : undefined} />)}</div>
+      <button className="xp-counter" onClick={()=>open('skills')}>{run.campaign.xp??0} XP</button>
       <button className="coin-counter" onClick={() => open('coins')} aria-label={`${run.sous} ${t.coins}`}>{format(run.sous)}<span className="step-label">{t.coins}</span></button>
       <button className="step-counter" onClick={() => open('steps')} aria-label={`${health.snapshot.count === null ? t.unknownSteps : format(health.snapshot.count)} ${t.steps}`}><span className="step-value">{health.snapshot.count === null ? '—' : format(health.snapshot.count)}</span><span className="step-label">{t.steps}</span></button>
       <button className="menu-button" aria-label={t.menu} aria-haspopup="dialog" onClick={() => open('menu')}><span aria-hidden="true" className="menu-icon" /></button>
     </>}
     {intro !== null && <section className="introduction" aria-live="polite"><div className="intro-copy"><h1 ref={introFocus} tabIndex={-1} key={intro} className={intro === 0 ? 'meet-moro' : ''}>{[t.meet, t.intro1, t.intro2, t.intro3][intro]}</h1></div><div className="intro-actions"><button onClick={() => { if (intro < 3) setIntro(intro + 1); else finishIntro(); }}>{t.next}</button><button className="back-button" onClick={finishIntro}>{t.skip}</button></div></section>}
-    {run && run.life.lives > 0 && intro === null && readyChoice && !pendingThought && <section className="world-choice" aria-label={t.story}><p aria-live="polite">{sceneText}</p>{skillNotice && <p className="muted" role="status">{t.skillsUnlocked}</p>}<QuestActions run={run} text={t} content={content} act={act} locale={locale} /></section>}
+    {run && run.life.lives > 0 && intro === null && readyChoice && !pendingThought && <EncounterScreen run={run} locale={locale} content={content}><p aria-live="polite">{sceneText}</p>{skillNotice && <p className="muted" role="status">{t.skillsUnlocked}</p>}<QuestActions run={run} text={t} content={content} act={act} locale={locale} /></EncounterScreen>}
     {run && run.life.lives === 0 && <aside className="run-ended" role="alert"><p>{t.lifeEnded}</p></aside>}
     {skillNotice && intro === null && !readyChoice && <p className="skill-notice" role="status">{t.skillsUnlocked}</p>}
-    {run && run.life.lives > 0 && intro === null && remaining !== undefined && remaining > 0 && <p className="remaining-steps" role="status">{format(remaining)} {t.stepsRemaining}</p>}
+    {run && run.life.lives > 0 && intro === null && remaining !== undefined && remaining > 0 && <JourneyReminder run={run} locale={locale} content={content} compact open={()=>open('story')} />}
     {badgeNotice && intro===null && <p key={badgeNotice} className="badge-toast" role="status"><PixelIcon name="medal" />{content?.campaign?.badges[badgeNotice]?.title ?? t.badgeText[badgeNotice as keyof typeof t.badgeText]?.title}</p>}
     {pendingThought && run && intro===null && <aside className="travel-thought"><p>{pendingThought.text}</p><button onClick={()=>act({type:'dismiss-thought'})}>{campaignUI(locale).closeThought}</button></aside>}
     {walkCue && !pendingThought && !readyChoice && intro === null && <p className="walk-cue">{t.walkCue}</p>}
@@ -212,6 +215,7 @@ function App() {
         </nav>}
         {page === 'story' && <section className="story" aria-labelledby="scene-title"><div aria-live="polite" aria-atomic="true"><h1 id="scene-title" tabIndex={-1}>{scene!.title}</h1><p className="lead">{sceneText}</p><p>{run.letterOpened || run.letterDestroyed ? '' : scene!.detail}</p></div>
 
+          <JourneyReminder run={run} locale={locale} content={content} act={act} />
           <QuestActions run={run} text={t} content={content} act={act} locale={locale} />
         </section>}
         {page === 'collection' && <section><h1 tabIndex={-1}>{t.collection}</h1><nav className="collection-tabs" aria-label={t.collection}>{(['letters', 'characters', 'badges', 'journal'] as const).map(key => <button key={key} aria-current={key === collection ? 'page' : undefined} onClick={() => setCollection(key)}>{t[key]}</button>)}</nav>
@@ -226,7 +230,7 @@ function App() {
           {collection === 'journal' && run.campaign.thoughts.length>0 && <section><h3>{campaignUI(locale).thoughts}</h3>{[...run.campaign.thoughts].reverse().map(id=><p key={id}>{content?.campaign?.thoughts.find(thought=>thought.id===id)?.text}</p>)}{pendingThought && <button onClick={()=>act({type:'dismiss-thought'})}>{campaignUI(locale).closeThought}</button>}</section>}
           {collection === 'journal' && <Journal run={run} text={t} locale={locale} original={journals} content={content} />}
         </section>}
-        {page === 'skills' && records!.skills.length > 0 && <section><h1 tabIndex={-1}>{t.skills}</h1><p>{t.skillsUnlocked}</p><div className="skill-root"><span aria-hidden="true" /><h2>{t.basicRespect}</h2><p>{t.basicRespectDescription}</p></div></section>}
+        {page === 'skills' && <section><h1 tabIndex={-1}>{t.skills}</h1><p>{run.campaign.xp??0} XP</p><p>{locale==='fr'?'L’expérience récompense certains engagements accomplis. Pour le moment, une seule conclusion de quête en donne ; les niveaux et les autres gains ne sont pas encore disponibles.':'Experience rewards certain fulfilled commitments. Currently, only one quest outcome awards it; levels and other awards are not available yet.'}</p>{records!.skills.length>0&&<><p>{t.skillsUnlocked}</p><div className="skill-root"><span aria-hidden="true" /><h2>{t.basicRespect}</h2><p>{t.basicRespectDescription}</p></div></>}</section>}
         {page === 'coins' && <section><h1 tabIndex={-1}>{t.coins}</h1><p className="stat-value">{format(run.sous)}<span className="stat-unit"> {t.coins}</span></p></section>}
         {page === 'steps'  && <section><h1 tabIndex={-1}>{t.healthTitle}</h1><p className="stat-value">{health.snapshot.count === null ? '—' : format(health.snapshot.count)}<span className="stat-unit"> {t.today}</span></p><p className="status-tag">{healthStatus}</p><p>{supportsHealth ? t.healthNative : t.healthWeb}</p><p className="muted">{t.healthNote}</p>{health.snapshot.checkedAt && <p className="muted">{t.checked}: {new Date(health.snapshot.checkedAt).toLocaleTimeString(locale)}</p>}
           <StepDiagnostics snapshot={health.snapshot} locale={locale} supported={supportsHealth} openSamsung={()=>{void openSamsungHealth().catch(()=>setWarning('settingsError'));}} />{supportsHealth && <div className="actions"><button disabled={health.busy} onClick={() => { void health.refresh(true); }}>{health.snapshot.status === 'ready' && !health.snapshot.live ? t.enableLive : t.connect}</button><button disabled={health.busy} onClick={() => { void health.refresh(); }}>{t.refresh}</button><button onClick={() => { void openHealthSettings().catch(() => setWarning('settingsError')); }}>{t.manage}</button></div>}

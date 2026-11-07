@@ -2,7 +2,7 @@ import type { Stage } from '../domain/prologue.ts';
 
 // French translation of the versioned English draft; Moro has no specified gender.
 export const scenesFr = {
-    campaign: { title:'Correspondances', place:'Chemins connus', text:'Que veux-tu emporter pour la suite du chemin ?', detail:'' },
+    campaign: { title:'Correspondances', place:'Chemins connus', text:'Tu peux parler aux personnes présentes, accepter un message à livrer ou explorer un chemin. Une lettre acceptée devient ton objectif ; choisis ensuite sa direction sur la boussole.', detail:'' },
     'neighborhood': { title: 'Le quartier', place: 'Chemins connus', text: 'Choisis une destination, puis sa direction.', detail: 'Chaque aller et chaque retour utilise tes pas.' },
     'square': { title: 'Une rencontre', place: 'Place', text: 'Une conversation attend.', detail: 'Choisis ce dont tu souhaites parler.' },
     'workshop': { title: 'Une rencontre', place: 'Atelier', text: 'Une conversation attend.', detail: 'Choisis ce dont tu souhaites parler.' },

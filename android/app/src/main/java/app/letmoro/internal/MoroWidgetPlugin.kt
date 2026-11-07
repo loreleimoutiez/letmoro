@@ -18,7 +18,7 @@ class MoroWidgetPlugin : Plugin() {
                 require(raw.length <= 20000)
                 val source = JSONObject(raw)
                 val snapshot = JSONObject()
-                for (key in listOf("locale", "segments", "places", "remaining", "count", "day", "goal", "updatedAt")) snapshot.put(key, source.opt(key))
+                for (key in listOf("notebook", "locale", "segments", "places", "remaining", "count", "day", "goal", "updatedAt")) snapshot.put(key, source.opt(key))
                 prefs.putString("snapshot", snapshot.toString())
             }
             prefs.apply()

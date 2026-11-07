@@ -68,6 +68,7 @@ class MoroWidgetProvider : AppWidgetProvider() {
                     "$count / ${data.optLong("goal")} " + if (french) "pas du jour" else "steps today"
                 }
             view.setTextViewText(R.id.widget_summary, summary)
+            view.setTextViewText(R.id.widget_notebook, data?.optString("notebook", "") ?: "")
             val updated = data?.optLong("updatedAt", 0) ?: 0
             view.setTextViewText(R.id.widget_updated, if (updated > 0) (if (french) "Dernière vue : " else "Last seen: ") + DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(Date(updated)) else "")
             val intent = PendingIntent.getActivity(context, 0, Intent(context, MainActivity::class.java), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)

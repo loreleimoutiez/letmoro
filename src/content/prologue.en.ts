@@ -5,7 +5,7 @@ export const prologue = {
   locale: 'en',
   version: 'prologue-1',
   scenes: {
-    campaign: { title:'Correspondence', place:'Known paths', text:'Choose what to carry next.', detail:'' },
+    campaign: { title:'Correspondence', place:'Known paths', text:'Talk to the people here, accept a message to deliver, or explore a path. An accepted letter becomes your objective; then choose its direction on the compass.', detail:'' },
     'neighborhood': { title: 'The neighborhood', place: 'Known paths', text: 'Choose a destination, then follow its direction.', detail: 'Your steps pay for every outward and return journey.' },
     'square': { title: 'A meeting', place: 'Square', text: 'A conversation waits.', detail: 'Choose what you wish to discuss.' },
     'workshop': { title: 'A meeting', place: 'Workshop', text: 'A conversation waits.', detail: 'Choose what you wish to discuss.' },

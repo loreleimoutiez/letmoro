@@ -4,8 +4,8 @@ import { availableLetters, letterRules, characterAt, resolvedLetters } from './c
 import { currentNode, worldGraph } from './navigation.ts';
 import type { Place, EdgeId } from './navigation.ts';
 
-export function routeBetween(run: Run, from: Place, to: Place): EdgeId[] {
-  const roads = worldGraph(run).edges.filter(edge => edge.id !== 'outskirts');
+export function routeBetween(run: Run, from: Place, to: Place, authorizedOnly = false): EdgeId[] {
+  const roads = worldGraph(run).edges.filter(edge => edge.id !== 'outskirts' && (!authorizedOnly || run.navigation?.authorized.includes(edge.id)));
   const queue: { place: Place; path: EdgeId[]; cost:number }[] = [{ place:from,path:[],cost:0 }], seen = new Set<Place>();
   while (queue.length) {
     queue.sort((a,b)=>a.cost-b.cost);

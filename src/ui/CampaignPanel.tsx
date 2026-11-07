@@ -31,13 +31,13 @@ export function CampaignPanel({ run, locale, content, act }: { run: Run; locale:
       {waitingReturn && <button onClick={()=>act({type:'complete-private-return',id:'n04'})}>{personal.opened?(pack.personalReturn?.listen??c.report):c.report}</button>}
       {run.campaign.lastOutcome && <p role="status">{c.outcome[run.campaign.lastOutcome]}</p>}
       {person && known && <p className="muted">{known.name} · {c.trust} {run.campaign.trust[person] ?? 0}{run.campaign.friends.includes(person) ? ` · ${c.friends}` : ''}</p>}
-      {person && !waitingReturn && conversation && <article><p>{conversation.prompt}</p>{reply?<p>{reply==='listen'?conversation.listening:conversation.pressing}</p>:<><button onClick={()=>act({type:'dialogue',character:person,reply:'listen'})}>{conversation.listen}</button><button onClick={()=>act({type:'dialogue',character:person,reply:'press'})}>{conversation.press}</button></>}</article>}
+      {person && !waitingReturn && conversation && <article><h3>{known?.name}</h3><p>{conversation.prompt}</p>{reply?<p>{reply==='listen'?conversation.listening:conversation.pressing}</p>:<><button onClick={()=>act({type:'dialogue',character:person,reply:'listen'})}>{conversation.listen}</button><button onClick={()=>act({type:'dialogue',character:person,reply:'press'})}>{conversation.press}</button></>}</article>}
       {person && (run.campaign.trust[person]??0)>=3 && !run.campaign.friends.includes(person) && <button onClick={()=>act({type:'befriend',character:person})}>{c.friend}</button>}
-      {offers.map(rule => <article key={rule.id}><h3>{pack.letters[rule.id].title}</h3><p>{pack.letters[rule.id].offer}</p>
+      {offers.map(rule => <details className="message-offer" key={rule.id}><summary>{pack.letters[rule.id].title}</summary><p className="muted">{content.characters[rule.sender as keyof typeof content.characters]?.name} → {content.characters[rule.recipient as keyof typeof content.characters]?.name}</p><p>{pack.letters[rule.id].offer}</p>
         <DialogueChoices label={c.details} back={c.choices} initial={<><button disabled={Object.values(run.campaign.letters).filter(item=>item.status==='carried').length>=3} onClick={()=>act({type:'take-letter',id:rule.id})}>{c.take}</button><button onClick={()=>act({type:'decline-letter',id:rule.id})}>{c.decline}</button></>}>
           <p>{pack.letters[rule.id].question}</p><p>{pack.letters[rule.id].answer}</p><p>{c.noDeadline}</p>{rule.postal ? <p>{c.pay}: {rule.pay} · {c.deductions}: 4</p> : <p>{c.gift}</p>}
         </DialogueChoices>
-      </article>)}
+      </details>)}
       {letterRules.filter(rule=>run.campaign.letters[rule.id] && pack.letters[rule.id]).map(rule=>{
         const item=run.campaign.letters[rule.id], copy=pack.letters[rule.id];
         if (item.status==='carried' && rule.to===place) return <article key={rule.id}><h3>{copy.title}</h3><button onClick={()=>act({type:'deliver-item',id:rule.id})}>{c.deliver}</button></article>;

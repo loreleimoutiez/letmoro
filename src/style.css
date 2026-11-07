@@ -214,3 +214,24 @@ main { --map-clearance: 68px; }
 .rest-settings legend {font-size:14px}
 .grave-marker {position:absolute; width:12px; height:12px}
 .letter-body {white-space:pre-line; line-height:1.9}
+
+/* Encounters temporarily own the screen; the map remains available on dismissal. */
+dialog.encounter-dialog { position:fixed; inset:0; margin:0; width:100%; max-width:none; height:100dvh; max-height:none; border:0; padding:24px max(24px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)); box-sizing:border-box; background:#000; color:#fff; }
+.encounter-dialog[open] { display:flex; flex-direction:column; }
+.encounter-dialog header,.encounter-dialog footer { flex-shrink:0; width:100%; max-width:640px; margin:0 auto; }
+.encounter-body { overflow-y:auto; flex:1; width:100%; max-width:640px; margin:20px auto; padding:0 4px; box-sizing:border-box; line-height:1.8; }
+.encounter-body button { min-height:44px; font-size:12px; padding:12px; margin:6px 0; }
+.encounter-body p { font-size:13px; }
+.encounter-dialog footer button { width:100%; min-height:48px; }
+.encounter-cast { display:flex; flex-wrap:wrap; gap:24px; }
+.encounter-cast span { display:flex; align-items:center; gap:10px; }
+.encounter-cast i { display:inline-block; width:20px; height:20px; }
+.encounter-open { position:fixed; top:25%; left:50%; transform:translateX(-50%); max-width:80%; }
+.journey-reminder { position:fixed; top:calc(50svh + 40px); left:20px; right:20px; margin:auto; max-width:420px; background:#000; text-align:center; font-size:9px; line-height:1.6; }
+.journey-reminder p { margin:4px 0; }
+.journey-reminder button { font-size:9px; padding:6px; }
+.journey-card { border-left:2px solid #777; padding:4px 16px; margin:20px 0; }
+.xp-counter { position:fixed; top:66px; left:24px; border:0; font-size:9px; color:#aaa; padding:4px 0; }
+.message-offer { margin:16px 0; padding:12px 0; border-bottom:1px solid #333; }
+.message-offer summary { cursor:pointer; min-height:36px; line-height:1.8; }
+@media (max-height:600px) { .journey-reminder { top:auto; bottom:100px; max-width:50%; font-size:8px; } }

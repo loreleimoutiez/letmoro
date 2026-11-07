@@ -100,3 +100,11 @@ A fresh-start replay marker baselines existing daily health steps instead of rec
 The Android widget previews Moro's actual saved location on discovered route segments, with remaining objective distance or daily steps/goal. It opens the app on tap and displays the snapshot time. Account changes/erasure remove stale account imagery. No unknown places, bodies or future choices are exposed. The current implementation uses foreground app snapshots, not an independent background game engine.
 
 Step-connection details distinguish the Health Connect aggregate from combined foreground phone estimates and report whether Samsung Health data contributed. Owner-observed Samsung/Letmoro divergence remains to diagnose physically. Samsung-specific SDK and notification mirroring research is documented separately; neither is silently enabled.
+
+## Encounter readability and tour reminders (November 7)
+
+Encounters temporarily use the full viewport, with a participant strip, scrollable main reading area and a persistent return-to-path action. Closing the encounter preserves the decision; it can be reopened from the map. A new stage, location or selected letter reopens it. Campaign letter offers are individually expandable; their heading identifies sender and recipient without revealing sealed contents.
+
+An active walking objective has a compact map reminder and a fuller Story card: purpose, destination, remaining travel and current or suggested direction. Guidance uses authorized roads only and does not unlock shortcuts. Choosing a letter as the objective does not itself choose a walking direction. The Android widget adds a cached tour notebook (letters carried and optional returns) alongside its route preview and distance/day summary. It is not a live background simulation.
+
+XP is persisted and visible on the map and Skills page. Only the existing sealed private-return outcome awards 25 XP. No levels, generalized XP rewards or XP skill spending exist yet. Proposed future sources, pending balancing: completed deliveries, fulfilled promises, first meaningful discoveries and consequential quest resolutions. Rewards should be recorded once per accomplishment, never farmable by reopening dialogues or repeating buttons. Trust remains a separate relationship value. Do not infer a working XP progression system from the counter.

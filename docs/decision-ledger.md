@@ -90,3 +90,9 @@ A fresh-start replay marker baselines existing daily health steps instead of rec
 - A personal delivery adds an exclusive unopened-delivery badge and different optional return outcomes. Preserve replayed historical reports; use a new explicit return event for the revised outcome. Full scene/letter details remain in ignored private content. A successful new return gives money, trust and XP once; exact current tuning is 5 private coins, +2 trust and 25 XP.
 - Create a native Android home-screen widget with Moro on a local preview of known terrain, remaining quest steps when applicable, otherwise today's steps/daily goal. Timestamp the last app snapshot; do not imply live background progress that is not implemented. Tap opens the app.
 - Investigate Fit3 communication, at minimum notification mirroring, and Samsung Health as a possible direct step source. Owner reports Samsung Health is already current. Retain the distinction between Samsung Health, Health Connect and the phone's live estimate. Research is not evidence that real import is fixed; validate the data boundary on the phone.
+
+### November 7 — encounter screen, notebook and XP visibility
+
+- Owner requests a temporary large dialogue/choice screen, allowing Moro to be hidden, with participant squares/names and readable choices. Implemented viewport encounter presentation, dismiss/reopen, expandable message offers and objective guidance. A complete speaker-by-speaker rewrite of legacy scenes remains pending.
+- Owner chooses a tour notebook as a widget complement. Implemented cached carried-letter and optional-return counts; full interactive widget quest management remains outside this pass.
+- Owner asks which actions could earn XP. Existing one-time 25 XP outcome and persistence are retained; map counter and explanation added. Additional reward sources in Product are proposals, not settled balance or implemented mechanics.

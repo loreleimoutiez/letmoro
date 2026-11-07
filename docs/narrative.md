@@ -64,3 +64,7 @@ Seven short character dialogues provide deliberate listening/direct-question cho
 Twelve additional campaign badge conditions supplement the four original badges. Only Basic respect is implemented in the skill tree. The broader political, relational, professional and personal skill directions, five major arcs, substantial romances, private-life projects and personalized ending remain to author/implement. No automatic romance or political commitment is introduced.
 
 The private vertical tree records actual playable branches separately from planned arcs. It is ignored alongside bodies and character text. Public documentation describes mechanics without reproducing plot/letter text. See narrative-authoring and gameplay-status. Continuing west of arrival is supported geometrically; a substantial authored reverse-road arc remains future work.
+
+## Opening clarity review (November 7)
+
+Each request should establish who asks, what Moro carries, whom or where to reach, whether it is paid, and what completion means. Literary letter titles may remain evocative; they cannot replace the practical instruction. The kettle request carries a message, not a kettle; the private opening offer now makes this explicit. Choosing a delivery selects its objective; walking direction is a separate compass decision. Deliberately withheld information must be framed as uncertainty within an otherwise intelligible task. This first correction is not a completed editorial audit of every conversation or of the five arcs.
