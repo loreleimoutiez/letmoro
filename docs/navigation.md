@@ -12,11 +12,11 @@ The initial office quest remains 2% of the daily goal, followed by a 10% northbo
 
 ## Replay and compatibility
 
-New saves use content generation `prologue-4`; decoding also accepts `prologue-1`, `prologue-2` and `prologue-3`. Existing events replay with their original linear credit rules until a single `enable-navigation` event materializes the already visible progress and charges it once. Existing delivery/letter outcomes remain unchanged. The primary street stays horizontal; the courtyard extends north. This is a geometry update for the prototype, not preservation of old screen coordinates.
+New saves use content generation `prologue-9`; decoding also accepts `prologue-1` through `prologue-8`. Existing events replay with their original linear credit rules until a single `enable-navigation` event materializes the already visible progress and charges it once. Existing delivery/letter outcomes remain unchanged. The primary street stays horizontal; the courtyard extends north. This is a geometry update for the prototype, not preservation of old screen coordinates.
 
 Imported activity before the quest origin forms an earlier known approach, not completed first-quest travel. Native aggregate/high-water reconciliation remains unchanged. Direction, destination, encounter, dialogue and errand events are saved through the same validated replay stream. Cloud decoding normalizes older saves before comparing current content fingerprints. The hosted save migration is applied; real-account cross-device verification remains pending.
 
-Do not infer another quest's discovery from a previous inspection: known locations are derived from the actual inspection/encounter event sequence. The campaign uses a fixed opening graph with a discovered cross-connection and up to three campaign letters. Further geography, content migrations, event compaction and longer-term save scalability remain work before a year-long campaign.
+Do not infer another quest's discovery from a previous inspection: known locations are derived from the actual inspection/encounter event sequence. The campaign uses an opening graph with a discovered cross-connection and an explicitly learned secondary passage. Its discovery event splits the existing road and migrates position/walked intervals without changing paid distance; tiny goals use an endpoint fallback. Campaign capacity is three letters, or four with the capacity skill. Further geography, content migrations, event compaction and longer-term save scalability remain work before a year-long campaign.
 
 ## Discovery and representation
 
@@ -34,11 +34,11 @@ No fit/reset button or percentage is visible; gestures and the wheel control mag
 
 Reusable dialogue details temporarily replace initial choices, with an explicit return. The local pack extends the opening with two encounter locations and optional unpaid errands; listening, promised help, observations, completion and letter-related memories persist. Secrets, full text and the vertical tree remain in `src/content/private/`, ignored by Git.
 
-Letter delivery, opening and destruction each award one first-action badge with localized title/description. Undiscovered badges remain absent. Accepting work unlocks the visible `Basic respect` skill root, a short notice and a journal entry. There are no visible future nodes or placeholder branches, and no unimplemented numerical skill bonuses are claimed.
+Letter delivery, opening and destruction each award one first-action badge with localized title/description. Undiscovered badges remain absent. Accepting work unlocks the visible `Basic respect` skill root, a short notice and a journal entry. The root unlocks three branches with two tiers and twelve implemented skill alternatives. Acquired nodes and the current pair of alternatives are visible; later tiers remain hidden until their prerequisite is purchased.
 
 ## Verification
 
-Behavioral tests cover reversal, one-step/one-pixel spending, reserve stops, disabled branches, physical scene guards, legacy conversion, health deduplication, encounter history, unpaid return costs, refusal exploration, first-action badges and zoom bounds. Browser checks use synthetic accounts and intercepted auth/cloud HTTP, including real Chromium two-touch input, wheel/buttons, portrait/landscape, both locales, persistent errands and marker relocation. They are not physical Android validation.
+Behavioral tests cover reversal, one-step/one-pixel spending, reserve stops, disabled branches, physical scene guards, legacy conversion, health deduplication, encounter history, unpaid return costs, refusal exploration, first-action badges and zoom bounds. Browser checks use synthetic accounts and intercepted auth/cloud HTTP, including real Chromium two-touch input, wheel, portrait/landscape, both locales, persistent errands and marker relocation. They are not physical Android validation.
 
 
 ## Continuing return, distance and journal revision

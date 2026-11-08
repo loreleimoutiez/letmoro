@@ -6,9 +6,9 @@ Version 0.6.0 is a playable opening with authored correspondence and recurring i
 
 The Supabase save migration is deployed and verified. The ordinary HUD is restored; internal test/reset/replay UI and browser-preview captions are removed. The local ignored manuscript contains twenty new letters, recurring conversations and thirty thoughts. Rest weekday scheduling follows the latest confirmed next-Monday/seven-day rule.
 
-## Immediate priority — reliable step import
+## Immediate priority — complete physical step acceptance
 
-The owner reports a material mismatch between the wearable/Samsung Health and Letmoro. Actual reported health values must not be copied into project files. Verify the installed app version and retain the established distinction between Google Health (the renamed Fitbit app) and Health Connect. Version 0.4.0 reads the full civil-day window and prefers the separately aggregated shared Samsung source, with all-source and old partial-window diagnostics for physical comparison. Do not assume this is normal sync lag or equate the daily counter with spent travel reserve. Keep life penalties disabled. Fix and physically verify the boundary before adding background widget reads or punitive gameplay.
+The owner initially reported a material mismatch, then confirmed matching wearable/Samsung Health/Letmoro totals after synchronization following the 0.4.0 query correction. Actual reported health values must not be copied into project files. Verify the installed app version and retain the established distinction between Google Health (the renamed Fitbit app) and Health Connect. Version 0.4.0 reads the full civil-day window and prefers the separately aggregated shared Samsung source, with all-source and old partial-window diagnostics for physical comparison. Do not assume this is normal sync lag or equate the daily counter with spent travel reserve. Keep life penalties disabled. Validate repeatability, midnight, prolonged absence and closed-day history/corrections before adding background widget reads or punitive gameplay.
 
 ## Physical acceptance before enabling penalties
 
@@ -29,7 +29,7 @@ The owner reports a material mismatch between the wearable/Samsung Health and Le
 
 A substantial complete campaign across continuing major routes; physical health/auth/cloud validation; accessibility and account-data controls; production signing/update strategy; complete localized copy and honest documentation. An internal APK is a milestone, not the promised public release.
 
-## Proposed next milestones after reliable import
+## Proposed next milestones after remaining import acceptance
 
 1. Validate cloud/reset and multi-day offline reconciliation with real devices, without duplicate credits or lost local progress.
 2. Finish a complete first authored arc with recurring-character scenes, narrative route consequences and a real ending; pace content rather than using distance alone as duration.

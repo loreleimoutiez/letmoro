@@ -2,9 +2,9 @@
 
 Research checked against official Samsung/Android sources on 2026-11-07. No partner application was submitted and no person/company was contacted. Direct Samsung SDK access and live Fit3 sensor streaming are not implemented.
 
-## Current mismatch and diagnosis
+## Current status and diagnostic approach
 
-The owner reports that Samsung Health matches the Fit3 while Letmoro lags. That narrows investigation to phone-side sharing/import but does not prove which component is responsible. Current Letmoro reads Health Connect, not Google Fit or the Google Health cloud API. Its optional phone sensor is an additional estimate and is not a Fit3 sensor reading.
+The owner initially reported that Samsung Health matched the Fit3 while Letmoro lagged. After the 0.4.0 query correction, the owner confirmed matching totals after synchronization. Midnight, prolonged absence, closed-day history/corrections and repeatability remain to validate; the earlier mismatch must not be presented as the latest unresolved observation. Current Letmoro reads Health Connect, not Google Fit or the Google Health cloud API. Its optional phone sensor is an additional estimate and is not a Fit3 sensor reading.
 
 The native response now separately reports the provider aggregate, provider-read timestamp and whether the contributing data origins include Samsung Health. The connection screen exposes these values without persisting extra diagnostic health records in game saves. No missing aggregate becomes zero. A read timestamp is not the source's ingestion timestamp. These probes identify the boundary; they do not prove the issue fixed.
 
@@ -34,18 +34,18 @@ A bounded bitmap and minimal private snapshot are updated while the app is activ
 
 Native launcher placement, resizing, account isolation and device refresh need physical acceptance. Source/compilation and pure snapshot tests do not replace that check.
 
-## Device diagnostic follow-up — 2026-11-07
+## Historical device diagnostic follow-up — before the 0.4.0 correction
 
 The owner clarified that Google Health is the renamed Fitbit app, not the Health Connect settings screen. Google documents the rename in its [Google Health announcement](https://blog.google/products-and-platforms/products/google-health/google-health-app/). Do not conflate these products or treat the Google Health app display as a direct reading of Letmoro's Health Connect query.
 
 The new diagnostic confirms a recent Health Connect read with Samsung Health contributing, whose aggregate is close to Letmoro's displayed estimate but materially below Samsung Health. No personal totals or exact observation timestamps are stored here. The investigation now concerns data export/source selection/query semantics rather than assuming the HUD subtracts spent travel.
 
-A concrete query hypothesis: readToday currently queries local midnight through Instant.now(). Android aggregation tests demonstrate rescaling when a record overlaps the requested window. If a provider exports a cumulative record spanning a larger interval, that could reduce a partial-day aggregate. Compare the current request with the complete local civil-day window and inspect interval/source metadata using minimal, consented diagnostics. This is not confirmed as the cause on this device and no speculative correction or manual step grant was applied. Preserve deduplication, account baseline and unknown-data protections.
+Historical hypothesis before 0.4.0: readToday queried local midnight through Instant.now(). Android aggregation tests demonstrate rescaling when a record overlaps the requested window. If a provider exports a cumulative record spanning a larger interval, that could reduce a partial-day aggregate. Compare the current request with the complete local civil-day window and inspect interval/source metadata using minimal, consented diagnostics. This is not confirmed as the cause on this device and no speculative correction or manual step grant was applied. Preserve deduplication, account baseline and unknown-data protections.
 
 ## 0.4.0 query correction and acceptance
 
 The foreground query now uses the entire local civil day instead of clipping at the read time. A separately filtered aggregate for `com.sec.android.app.shealth` is preferred when present; the unfiltered aggregate is a fallback for other devices, not a number added to Samsung's. The foreground phone estimate and persisted travel high-water mark continue to avoid duplicate credit. Null remains unknown; actual zero is preserved. Diagnostics show the selected source, full-day Samsung/all-source totals and the old partial-day result for comparison. No additional permissions, raw record export or diagnostic health storage was added.
 
-This addresses the two concrete query/source-selection boundaries; it does not establish that Samsung exports every current step. Physical acceptance: compare the updated diagnostics with Samsung Health immediately after refresh, after walking and after background/resume; then repeat after local midnight. If the full-day Samsung shared total itself remains materially behind Samsung Health, proceed with a separate Samsung Data SDK development adapter under the documented partner/developer-mode constraints. Galaxy Wearable notification mirroring is not a step-reading API. Do not enable life penalties from this patch alone.
+The owner subsequently confirmed agreement between the app, Samsung Health and wearable totals after synchronization, as recorded in [handoff](handoff.md). This is positive foreground evidence, not proof of complete export in every condition. Remaining physical acceptance: compare the updated diagnostics with Samsung Health immediately after refresh, after walking and after background/resume; then repeat after local midnight. If the full-day Samsung shared total itself remains materially behind Samsung Health, proceed with a separate Samsung Data SDK development adapter under the documented partner/developer-mode constraints. Galaxy Wearable notification mirroring is not a step-reading API. Do not enable life penalties from this patch alone.
 
 Official aggregation semantics and source priority: [Android Health Connect aggregate data](https://developer.android.com/health-and-fitness/health-connect/aggregate-data). Samsung's direct store alternative and connected-wearable sample: [Samsung steps codelab](https://developer.samsung.com/codelab/health/steps-data.html). These documents establish API behavior/options, not the cause on the owner's hardware.

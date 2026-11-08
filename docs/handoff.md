@@ -1,6 +1,6 @@
 # Session handoff
 
-Updated 2026-11-07. Source version 0.6.0 / Android versionCode 10. Read this file, product, narrative, decision ledger and roadmap before implementation. Older milestones are in Git history.
+Updated 2026-11-08. Source version 0.6.0 / Android versionCode 10. Read this file, product, narrative, decision ledger and roadmap before implementation. Older milestones are in Git history.
 
 ## Instructions and authorization
 
@@ -45,7 +45,9 @@ Latest checks and APK status are recorded in gameplay-status.md. Browser tools/s
 
 ## Next
 
-Complete physical acceptance checks, tune pacing, extend authored encounters and skill/trait effects, settle pause/rescue/reboot and goal/mode switching, implement account export/deletion/retention and durable private-content backup. Multi-day closed-app travel reconciliation and replay compaction still require design; today's import is not proof of all historical/offline travel. See gameplay-status and roadmap. Never equate missing history with zero.
+The owner confirmed matching Letmoro/Samsung Health/wearable totals after synchronization following 0.4.0; do not describe the original mismatch as still unconfirmed. Complete remaining midnight/prolonged-absence/history acceptance checks, tune pacing, extend authored encounters and skill/trait effects, settle pause/rescue/reboot and goal/mode switching, implement account export/deletion/retention and durable private-content backup. Multi-day closed-app travel reconciliation and replay compaction still require design; today's import is not proof of all historical/offline travel. See gameplay-status and roadmap. Never equate missing history with zero.
+
+The entries below are historical session checkpoints in sequence. Their then-current limits are superseded by later entries and the current summary above.
 
 ## Previous internal artifact — 0.2.0, 2026-11-06
 
@@ -95,7 +97,7 @@ Widget adds a cached notebook with carried-letter and optional-return counts. XP
 Verification for this pass: 69 Node tests pass (two new objective/notebook checks); TypeScript and production web build pass. Synthetic mobile Chromium checks at 390 × 844 verify full-height modal, named participant, close/reopen and absence of JavaScript errors. Android unit tests and lint pass; existing nonblocking lint/build warnings remain. Physical-phone readability, launcher sizing and the step-provider discrepancy still require real-device checks. No new APK is claimed by this entry.
 
 
-## November 7 — current 0.4.0 implementation supersedes the XP-only checkpoint
+## Historical November 7 — 0.4.0 superseded the XP-only checkpoint
 
 Owner explicitly requests reliable steps, spendable XP, progressive two-choice skill forks inspired visually by a connected game skill tree, and a full clarity review of existing dialogue. Source now awards base XP for existing completions via deterministic replay; purchases are validated events, with twelve skill alternatives across three branches/two tiers. Each tier has mutually exclusive alternatives, disclosed before purchase. Owned ancestors remain visible, future tiers stay hidden. Bonuses affect capacity, postal pay, trust, private gifts and specific XP rewards; no raw-step multiplier changes real travel. No Supabase schema change is needed for the versioned event payload. Prior saves receive base rewards automatically and preserve past paths/outcomes. Future five-arc/political/romance expansion remains pending.
 
@@ -155,3 +157,8 @@ Owner asks what version numbers mean and requests a second silent teaser after l
 ## English landscape teaser revision
 
 Owner requests an English GitHub-oriented landscape teaser, retaining Moro walking with square pebbles and “Walk. Meet. Choose.”, removing the cluttered map overview and small-text interaction screenshot. Rendered `artifacts/promo/letmoro-teaser-en-landscape.mp4`: 24 seconds, 1280 × 720/16:9, 24 fps/576 frames, H.264, no audio stream. It uses only code-rendered square/path/pebble animations, three introductory character names/colors and large English text; neither rejected screenshot is included. Existing identity colors/font are preserved. Representative frames checked for readability. Matching PNG preview is `artifacts/promo/letmoro-teaser-en-landscape.png`. Files remain ignored and unpublished; no README embed or remote upload performed. App remains 0.6.0. Video SHA-256: `4744185937c6816dcaf3394ae75c34bd04651bda7be419a14e54b93da11f3414`.
+
+
+## Documentation consistency review — 2026-11-08
+
+Reconciled current README/product, health, auth/cloud, navigation, private-authoring and architecture summaries with 0.6.0. Corrected current skill effects/capacity, full erasure, cloud health-data uploads, prologue-9 compatibility, catalog/badge counts, verification totals and full-day Samsung-priority reads. Preserved explicitly historical milestones. Foreground step agreement was already confirmed by the owner after 0.4.0; remaining midnight/prolonged-absence/history tests are not complete. The previous conversational audit incorrectly described matching totals as wholly unconfirmed; this is corrected, not a new device test. No runtime, manuscript, schema or APK change. The preceding review reran 88 behavioral tests, TypeScript, manuscript-included build and pacing measurements; this documentation-only pass checks diffs, local links and source consistency without rerunning Android/browser/device checks.

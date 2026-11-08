@@ -53,7 +53,9 @@ The first work encounter must clearly offer employment, with dialogue choices be
 Full plots, private character biographies, letter bodies, hidden conditions and endings must not be tracked in this repository. Separate private storage is pending selection. Public documentation may describe mechanics and authoring requirements without spoilers. No full campaign manuscript is tracked here.
 
 
-## Implemented opening — 0.2.0
+## Implemented opening — 0.6.0
+
+Current totals: 23 letters including the initial delivery and two secondary-loop messages, nine encounterable characters excluding Moro, and seventeen badges. The sections below distinguish the original round from its later extensions.
 
 The approved neighborhood and cast are authored in the ignored local pack. Postal delivery is the only available employment. The first job has explicit questions/refusal/acceptance and a short initial delivery; two optional unpaid errands remain. Twenty further letters connect recurring inhabitants and new places, with a complete personal-request route when employment is refused. The round has a closing scene; this is not a completed first major arc.
 
@@ -61,7 +63,7 @@ Each campaign item can be declined, carried sealed, opened, destroyed, returned 
 
 Seven short character dialogues provide deliberate listening/direct-question choices with context-specific trust effects. Details replace initial choices. Thirty travel thoughts cover hope, ordinary uncertainty, society and known relationships without revealing an undiscovered plot or inventing a detailed traumatic past. Only one pending thought is shown until dismissed; no queued catch-up. Unique thought texts remain in the archive. Repeats are spaced farther apart after suitable unseen thoughts are exhausted.
 
-Twelve additional campaign badge conditions supplement the four original badges. Basic respect roots three implemented skill branches with two progressively revealed alternatives per tier, two tiers each. The broader political, relational, professional and personal skill directions, five major arcs, substantial romances, private-life projects and personalized ending remain to author/implement. No automatic romance or political commitment is introduced.
+Thirteen campaign badge conditions supplement the four original badges, for seventeen in total. Basic respect roots three implemented skill branches with two progressively revealed alternatives per tier, two tiers each. The broader political, relational, professional and personal skill directions, five major arcs, substantial romances, private-life projects and personalized ending remain to author/implement. No automatic romance or political commitment is introduced.
 
 The private vertical tree records actual playable branches separately from planned arcs. It is ignored alongside bodies and character text. Public documentation describes mechanics without reproducing plot/letter text. See narrative-authoring and gameplay-status. Continuing west of arrival is supported geometrically; a substantial authored reverse-road arc remains future work.
 
@@ -71,7 +73,7 @@ Each request should establish who asks, what Moro carries, whom or where to reac
 
 ## Arc I continuation authoring checkpoint
 
-The owner authorizes writing the continuation, new inhabitants/places and meaningful secondary routes branching off apparently main-only roads. An ignored English-source continuation draft now defines four new inhabitants, six secondary locations, four entrance junctions, eight connected quest outlines and four dialogue scenes with French translations. Side routes contain requests, decisions, consequences and later revisits; some reconnect with the main correspondence round. Existing characters remain central. This is authoring work only: no new scene, badge, map junction or playable arc is added to the current APK. Versioned junction migration and complete outcome localization are required before integration. Detailed identities, geography, dialogue and consequences remain private.
+The owner authorizes writing the continuation, new inhabitants/places and meaningful secondary routes branching off apparently main-only roads. An ignored English-source continuation draft now defines four new inhabitants, six secondary locations, four entrance junctions, eight connected quest outlines and four dialogue scenes with French translations. Side routes contain requests, decisions, consequences and later revisits; some reconnect with the main correspondence round. Existing characters remain central. The initial draft was authoring work only. Since 0.5.0, one loop and its versioned junction migration/localized outcomes are integrated as described below; the other draft loops and convergence scenes remain unimplemented. Detailed identities, geography, dialogue and consequences remain private.
 
 
 ### First continuation loop integrated — 0.5.0

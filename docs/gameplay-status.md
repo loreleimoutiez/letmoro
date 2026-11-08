@@ -5,7 +5,7 @@ This is an internal playable opening, not the complete public campaign. The sour
 ## Playable and saved
 
 - Real-step-funded exploration, cardinal movement, reversal, route learning, long trips, cross-connection and optional sender returns. Remaining objective distance follows actual position. Learned routes stay available; rendering reveals only walked segments and visited places.
-- Three campaign-letter slots; explicit acceptance/refusal, sealed/opened/destroyed/returned/delivered outcomes. Delivered items cannot be opened or destroyed. Bodies never appear without opening. Collection preserves known text after destruction.
+- Three campaign-letter slots by default, four with the capacity skill; explicit acceptance/refusal, sealed/opened/destroyed/returned/delivered outcomes. Delivered items cannot be opened or destroyed. Bodies never appear without opening. Collection preserves known text after destruction.
 - Recipient trust changes only on witnessed delivery; sender trust changes on returns, reports and witnessed destruction. Lies can produce later contradictory reports, trust loss and a bounded postal deduction. Friendship requires a choice; negative trust can break it. Trust is a small opening system, not a complete romance/political simulation.
 - Optional private thank-you gifts are paid only after return/report, once and without postal deductions. Postal gross pay and four-coin total deductions are disclosed for subsequent jobs. First settlement retains its original reveal.
 - Refusing employment supports all ten personal requests without paid alternatives. Declining/destroying/returning letters resolves a request and does not freeze unlocks. Closing the round depends on outcomes, not perfect delivery or accepting every task.
@@ -34,6 +34,8 @@ Previous 0.2.0 APK built successfully after source/docs commits. Version 0.2.0 /
 Previous 0.2.0 APK SHA-256: `fef2e91329ab9568349875fbcfa7686348cadcef2f818ed3027c5aef2add5335`. Build uses the existing external debug keystore. Both manuscript-included and generic manuscript-free production builds pass. Vite retains a non-blocking approximately 607 kB minified main-chunk warning.
 
 
+The versioned checkpoints below retain historical checks and limitations. The latest 0.6.0 checkpoint and the current summary above take precedence.
+
 ## Explicit full erasure — 0.2.1
 
 Latest user decision: allow a full fresh start, deleting game data including paths, letters, badges, journal, relationships, profile/settings and local conflict backup while retaining Supabase Auth identity/password/session. This explicit Settings action is distinct from the still-deferred archive-preserving narrative reboot. It intentionally keeps no game archive. It requires confirmation and, when cloud saving is enabled, a successful online null-payload revision before local cleanup. Failed network/CAS writes preserve the local game for retry. Other devices with stale revisions cannot silently restore the erased snapshot. No Auth row or physical Health Connect data/permissions is deleted. Language resets to English; setup returns.
@@ -54,14 +56,14 @@ The owner confirmed downloading and installing the 0.2.1 update on the phone ove
 
 ## Planning audit — 2026-11-07
 
-The five arcs are a scaffold, not five authored playable chapters. Current playable content is the opening correspondence round. Politics has thematic seeds and planned commitments but no playable movement/strike/power-change system. Romance routes, substantial private-life/home progression, numerical trait effects and deeper campaign skills and the personalized campaign ending remain unfinished. XP is now earned by completed requests and discoveries, and spent in three connected two-tier branches with two choices per tier. All twelve skill alternatives have implemented bonuses. The widget currently previews cached state; autonomous background progression is not implemented. The current step discrepancy requires device diagnostics before further gameplay expansion. Reported personal totals are deliberately excluded from this document.
+The five arcs are a scaffold, not five authored playable chapters. Current playable content is the opening correspondence round. Politics has thematic seeds and planned commitments but no playable movement/strike/power-change system. Romance routes, substantial private-life/home progression, numerical trait effects and deeper campaign skills and the personalized campaign ending remain unfinished. XP is now earned by completed requests and discoveries, and spent in three connected two-tier branches with two choices per tier. All twelve skill alternatives have implemented bonuses. The widget currently previews cached state; autonomous background progression is not implemented. This audit preceded the owner’s subsequent confirmation of matching step totals after the 0.4.0 query correction. Remaining device acceptance concerns midnight, prolonged absence and closed-day history/corrections. Reported personal totals are deliberately excluded from this document.
 
 
-## 0.4.0 current checkpoint
+## Historical 0.4.0 checkpoint
 
-Full-screen encounters and objective/direction reminders, tour-notebook widget, reviewed opening requests/dialogues in both languages, spendable XP and a three-branch skill tree. Existing achievements receive base XP through replay; purchases and spent balance survive saves. Native source reads full civil-day totals, prefers shared Samsung data without summing sources and exposes query comparisons. Hardware acceptance remains required before claiming matching Fit3/Samsung totals. See handoff for artifact verification. No expanded five-arc campaign or direct band integration is implied.
+Full-screen encounters and objective/direction reminders, tour-notebook widget, reviewed opening requests/dialogues in both languages, spendable XP and a three-branch skill tree. Existing achievements receive base XP through replay; purchases and spent balance survive saves. Native source reads full civil-day totals, prefers shared Samsung data without summing sources and exposes query comparisons. At this checkpoint, hardware matching was pending; the owner subsequently confirmed agreement after synchronization. The remaining lifecycle/history checks are still required. See handoff for artifact verification. No expanded five-arc campaign or direct band integration is implied.
 
-0.4.0 APK / versionCode 8 assembled and signature-verified; packaged assets match final dist. SHA-256: `9a0c844bb61df4068a0407c36f3095937cd5242bf59e038b1b3d76f4845a1d62`. Synthetic EN/FR mobile purchase/reload tests pass. Physical step matching is pending.
+0.4.0 APK / versionCode 8 assembled and signature-verified; packaged assets match final dist. SHA-256: `9a0c844bb61df4068a0407c36f3095937cd5242bf59e038b1b3d76f4845a1d62`. Synthetic EN/FR mobile purchase/reload tests pass. The owner subsequently confirmed matching Letmoro/Samsung Health/wearable totals after synchronization. Midnight, prolonged absence and historical-data acceptance remain pending.
 
 
 ## 0.5.0 secondary-loop checkpoint

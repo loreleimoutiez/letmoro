@@ -1,6 +1,6 @@
 # Account setup and current limits
 
-Supabase Auth is the selected identity service. Authentication is required before game preferences. Testers only sign in or create an account in Letmoro; they never need access to the owner's Supabase or Google Cloud consoles.
+Supabase Auth is the selected identity service. A device-level EN/FR choice precedes authentication on first launch. Authentication is required before character setup and game progress. Testers only sign in or create an account in Letmoro; they never need access to the owner's Supabase or Google Cloud consoles.
 
 ## Application configuration
 
@@ -26,7 +26,7 @@ Google sign-in requests identity access through Supabase, not Gmail messages or 
 
 Android sessions and PKCE verifiers use AES-GCM with an Android Keystore key and per-entry authenticated data. Encrypted values reside in private app preferences; backup/transfer and native logging are disabled. There is no plaintext native token fallback. Browser preview uses ephemeral session storage. Password fields clear after requests and are never written to a game save.
 
-Game saves are keyed separately per authenticated user on the device. An older unscoped save is claimed once by the first authenticated user. Claim ownership precedes copying so a failed write cannot expose it to another account. Invalid saves remain for that owner until explicit reset. Sign-out hides the game and stops live observation; it does not delete game saves. Legacy reset tombstones remain supported for replay/synchronization, but no test reset or production reboot control is currently exposed.
+Game saves are keyed separately per authenticated user on the device. An older unscoped save is claimed once by the first authenticated user. Claim ownership precedes copying so a failed write cannot expose it to another account. Invalid saves remain for that owner until explicit reset. Sign-out hides the game and stops live observation; it does not delete game saves. Settings exposes confirmed full game erasure while retaining Auth identity/session. Revision tombstones protect that erasure across devices; legacy reset events remain replayable. No simulator reset or archive-preserving production reboot is exposed.
 
 An opt-in cloud-save adapter and owner-isolated migration now exist; see [cloud saves](cloud-saves.md) for configuration, uploaded fields and conflict handling. The initial migration is applied and remotely verified; the owner’s ignored configuration enables cloud saves. Fresh checkouts still default to local-only until configured. Real-account cross-device restoration remains a physical acceptance check. No account-deletion endpoint or production archive/rescue service exists. Never add a service-role key to work around client authorization.
 

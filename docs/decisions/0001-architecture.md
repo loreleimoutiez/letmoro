@@ -9,7 +9,7 @@ Status: accepted initial direction; device integration remains to validate.
 - Capacitor for an Android application sharing the web interface.
 - Kotlin for a small native health integration, isolated behind an interface.
 - Prefer Health Connect for authorized aggregate step reads; validate Samsung Health / Fit3 export behavior on the actual devices before committing to coverage or latency claims.
-- Local-first progress with versioned saves. Accounts and cross-device synchronization require a separate architecture and privacy decision before implementation.
+- Local-first progress with versioned saves. The subsequently authorized Supabase Auth and owner-isolated cloud snapshot implementation is documented in [account setup](../auth.md) and [cloud saves](../cloud-saves.md); real-account cross-device acceptance remains pending.
 - Authored, versioned narrative content with localization keys and explicit preconditions/effects. English source; no translated string concatenation.
 - Lightweight CSS square pixels for the initial world. Evaluate canvas only if scene complexity demonstrates a need.
 - Unit tests for domain behavior; browser validation for interaction and accessibility; real-device tests for health import.
@@ -22,7 +22,7 @@ The product prioritizes readable narrative, a deliberately minimal world, and sh
 
 ## Data and privacy
 
-Request the minimum health permissions needed, initially step reads only. Do not assume GPS, heart rate, sleep, or location access. Never commit imported health records. Decide explicitly what, if anything, leaves the phone before enabling synchronization. Narrative saves, account rescue use, and health data have different trust and retention requirements.
+Request the minimum health permissions needed, initially step reads only. Do not assume GPS, heart rate, sleep, or location access. Never commit imported health records. Cloud synchronization was subsequently authorized: enabling it uploads persisted daily health totals/checkpoints and life events with game progress, as documented in [cloud saves](../cloud-saves.md). Raw sensor streams and authentication tokens are excluded from game snapshots. Narrative saves, account rescue use, and health data have different trust and retention requirements.
 
 ## References
 

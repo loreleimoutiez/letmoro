@@ -102,7 +102,7 @@ A fresh-start replay marker baselines existing daily health steps instead of rec
 - Owner authorizes XP on every completed quest/promise with differing rewards, spent on skills, and progressive two-choice forks with two or three starting branches. Implemented three connected branches, two tiers each; one permanent choice per tier is disclosed in UI. Costs and bonuses are initial tuning, not a completed campaign tree. Earlier balance-only status is superseded.
 - Base XP is retroactively restored from validated saved accomplishments; purchased effects apply only to subsequent events. First-visit/friendship rewards are unique; dialogue/revisit spam gives no XP.
 - Owner requests a clarity review of every existing dialogue. Both language packs' current opening surfaces reviewed; no new plot is claimed. The first settlement's established unexpected deductions remain intact.
-- Owner prioritizes fixing the step discrepancy and authorizes alternate phone/wearable paths if needed. Implemented complete civil-day aggregate and separately filtered Samsung shared total with diagnostic comparison; hardware matching still needs confirmation. No direct Fit3 connection, vendor SDK or permission expansion is silently claimed.
+- Owner prioritizes fixing the step discrepancy and authorizes alternate phone/wearable paths if needed. Implemented complete civil-day aggregate and separately filtered Samsung shared total with diagnostic comparison; the owner subsequently confirmed matching totals after synchronization. Midnight, prolonged absence and closed-day history/corrections remain to validate. No direct Fit3 connection, vendor SDK or permission expansion is silently claimed.
 
 
 ### First secondary loop — authorized continuation
