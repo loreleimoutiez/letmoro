@@ -17,7 +17,7 @@ Internal Android version 0.6.0 / versionCode 10. This is a playable opening, not
 
 The twenty-request sequential round with every optional report return costs about 113 personal daily goals in a deterministic simulation; carrying several letters and skipping optional reports changes effort considerably. This is a route-cost observation, not a measured real-world duration or evidence of a finished year-long campaign. See [current gameplay status](docs/gameplay-status.md).
 
-Private manuscripts and vertical authoring trees remain under Git ignore; no private remote or durable manuscript backup was created. A checkout without them provides the generic first delivery. See [private authoring](docs/narrative-authoring.md). No publication, remote push or public license is authorized.
+Private manuscripts and vertical authoring trees remain under Git ignore; the owner has created a separate private manuscript repository, and an ignored local Git copy is prepared. Its first authenticated push and an independent backup remain pending. A checkout without them provides the generic first delivery. See [private authoring](docs/narrative-authoring.md). No public publication, application remote push or public license is authorized; the selected private manuscript backup is separate.
 
 ## Development
 

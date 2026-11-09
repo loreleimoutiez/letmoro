@@ -11,6 +11,7 @@
     "check": "tsc --noEmit",
     "test": "node --experimental-strip-types --test tests/*.test.ts",
     "measure:pacing": "node --experimental-strip-types scripts/measure-campaign.ts",
+    "manuscript:import": "node scripts/import-manuscript.mjs",
     "build": "npm run check && vite build",
     "preview": "vite preview --host 127.0.0.1",
     "android:sync": "npm run build && cap sync android",

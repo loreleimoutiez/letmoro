@@ -1,6 +1,6 @@
 # Session handoff
 
-Updated 2026-11-08. Source version 0.6.0 / Android versionCode 10. Read this file, product, narrative, decision ledger and roadmap before implementation. Older milestones are in Git history.
+Updated 2026-11-09. Source version 0.6.0 / Android versionCode 10. Read this file, product, narrative, decision ledger and roadmap before implementation. Older milestones are in Git history.
 
 ## Instructions and authorization
 
@@ -35,7 +35,7 @@ Normal coin/step counters restored. Test toolbar source removed, intro replay ab
 
 Ignored `.env.local` contains public client configuration and VITE_CLOUD_SAVES=true. Example remains false for unconfigured checkouts. Snapshot covers profile, events, navigation, letter outcomes, relationships, thoughts, life calendar/schedules, health checkpoints and language. Revision RPC protects stale writes; conflicts require explicit selection and retain a device backup. Offline local preservation/retry and reset tombstones remain supported. Real-account sign-in and game restoration on a Samsung tablet were confirmed by the owner on 2026-11-09. Reverse synchronization, offline recovery, concurrent conflicts and untested email/OAuth flows remain pending. Never claim it is device-tested.
 
-Content generation prologue-9, schema 1, older prologue-1/2/3/4/5/6/7/8 accepted by deterministic replay. Private pack `src/content/private/opening.json`, vertical `tree.txt` and `skills-tree.txt` are ignored and required for the richer narrative. No private repository/backup exists; do not force-add them. APK includes local text by design. Generic checkout supports the first delivery without this manuscript.
+Content generation prologue-9, schema 1, older prologue-1/2/3/4/5/6/7/8 accepted by deterministic replay. Private pack `src/content/private/opening.json`, vertical `tree.txt` and `skills-tree.txt` are ignored and required for the richer narrative. The owner created the private `letmoro-manuscript` repository; a separate ignored local Git copy is prepared, but authenticated push/remote restoration and independent backup remain pending. Do not force-add manuscripts to the application repository. APK includes local text by design. Generic checkout supports the first delivery without this manuscript.
 
 ## Verification and environment
 
@@ -174,3 +174,12 @@ The owner plans a real-account restore check on a Samsung tablet and requested t
 ## Samsung tablet restoration confirmed — 2026-11-09
 
 The owner confirms installing Letmoro, signing in and recovering the existing game on the Samsung tablet. This is real-device evidence of account restoration, not a synthetic test. No sign-in provider or exhaustive field-by-field verification was specified. Reverse synchronization, simultaneous edits/conflicts, offline retry and tablet health-source behavior remain separate acceptance checks. Current documentation summaries are updated accordingly. The temporary APK server is stopped after confirmed delivery. Documentation-only change; no new APK or runtime tests.
+
+
+## Private manuscript repository preparation — 2026-11-09
+
+Owner created `https://github.com/loreleimoutiez/letmoro-manuscript.git` as a private repository for manuscript protection. Prepared separate ignored `.manuscript/` Git repository with four original files plus an English README and ignore rules; initial commit `db3ef9eb221fdee5cfbb8281e2ea1a811b4139a2`. Original runtime files remain intact. `git ls-remote` failed because HTTPS credentials are unavailable; `gh` is not installed. Remote visibility, existing branches and first upload cannot be verified. Do not claim cloud backup complete or force-push over unknown remote history. Owner can fetch/push from an authenticated terminal after checking visibility. Application repository push remains outside this authorization.
+
+Added `npm run manuscript:import` with committed-source validation, divergent-local protection, optional backup-before-replace, and an ignored source-commit/hash manifest. Future edits belong in the separate manuscript repository; import creates runtime copies. No automatic fetch/push or background backup is installed. An independent backup still needs a destination. Local Git clone restoration verified all four files byte for byte. All 89 tests (including import/refusal/backup regression), TypeScript and manuscript-included production build pass; existing Vite bundle warning remains. Native/browser checks and a fresh manuscript-free build were not run for this tooling-only change; no new APK.
+
+Owner defers tablet testing while playtesting over several weeks. After manuscript protection, prioritize finishing the first arc and deepening existing systems. Do not restart tablet tests as the next task.

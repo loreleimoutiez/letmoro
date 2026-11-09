@@ -13,6 +13,8 @@ android/local.properties
 
 # Private narrative manuscripts; never stage campaign spoilers.
 /src/content/private/
+/.manuscript/
+/.manuscript-backups/
 
 # Kotlin compiler session cache
 android/.kotlin/

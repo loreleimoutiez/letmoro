@@ -23,7 +23,7 @@ The owner initially reported a material mismatch, then confirmed matching wearab
 - Expand contextual consequences beyond the opening's trust/witness/report model, with authored scenes and recoverable relationships. Add discovered skill branches and real trait effects, preserving unknown nodes and avoiding automatic commitments.
 - Design goal/mode switching, emergency-pause boundaries, account-wide rescue and archive-preserving reboot. Follow lives-and-reboot; user deferred these while implementing life/rest/recovery first. Never silently refresh rests/rescue through mode or account-local resets.
 - Reconcile multi-day closed-app travel, old corrections and travel-zone overlap without duplicate credit. Preserve missing data as unknown. Compact replay and version content/save migrations before year-long scale.
-- Meaningful spending/home/customization, archive export/deletion/retention and durable private-content backup. Private remote remains an owner decision; no manuscript is backed up by Git ignore.
+- Meaningful spending/home/customization, archive export/deletion/retention and durable private-content backup. The owner selected `letmoro-manuscript` as a private remote. Complete its authenticated first push and remote restoration check, then add an independent backup; Git ignore alone is not backup.
 
 ## Public release gate
 
