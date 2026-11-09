@@ -20,6 +20,10 @@ export function sceneCopy(run: Run, fallback: string, t: typeof en, content?: Op
 }
 export function journalCopy(event: Action, t: typeof en, original: Record<string, string>, content?: OpeningContent): string | undefined {
   switch (event.type) {
+    case 'learn-stair-passage': case 'learn-stair-link': case 'volunteer-stair-work': case 'disclose-stair-claim':
+      return content?.campaign?.stairPassage?.journal[event.type] ?? t.dialogueRecorded;
+    case 'choose-stair-request': case 'resolve-stair-response':
+      return content?.campaign?.stairPassage?.journal[`${event.type}:${event.reply}`] ?? t.dialogueRecorded;
     case 'follow-up':return content?.campaign?.revisits?.[event.id]?.[event.reply==='listen'?'listening':'leaving']??t.dialogueRecorded;
     case 'learn-side-passage':return content?.campaign?.sidePassage?.discover??t.routeRecorded;
     case 'resolve-side-reply':return content?.campaign?.sidePassage?.[event.reply==='direct'?'directOutcome':'declineOutcome']??t.dialogueRecorded;

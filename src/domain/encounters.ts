@@ -1,6 +1,6 @@
 import type { Run } from './prologue.ts';
 import type { Place } from './navigation.ts';
-export type CharacterId = 'caretaker' | 'clerk' | 'recipient' | 'host' | 'repairer' | 'keeper' | 'traveler' | 'archivist' | 'witness';
+export type CharacterId = 'resident' | 'caretaker' | 'clerk' | 'recipient' | 'host' | 'repairer' | 'keeper' | 'traveler' | 'archivist' | 'witness';
 export interface Encounter { character: CharacterId; place: Place; event: number }
 export function encountersFor(run: Run): Encounter[] {
   return run.events.flatMap((event, index): Encounter[] => {

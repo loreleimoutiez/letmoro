@@ -2,7 +2,12 @@ import type {Action,Run} from './prologue.ts';
 import {allLetterRules as letterRules} from './campaign.ts';
 import {currentNode} from './navigation.ts';
 import {hasSkill} from './skills.ts';
-export function deliveryXP(id:string){const rule=letterRules.find(item=>item.id===id);return rule?id==='s01'?32:id==='s02'?18:id==='n04'?45:18+Math.floor(rule.unlock/2)*3+(rule.postal?0:4):0;}
+const sideDeliveryXP: Readonly<Record<string, number>> = { s01: 32, s02: 18, s03: 24, s04: 30, s05: 30, s06: 22, s07: 22, s08: 18 };
+export function deliveryXP(id: string): number {
+  const rule = letterRules.find(item => item.id === id);
+  if (!rule) return 0;
+  return sideDeliveryXP[id] ?? (id === 'n04' ? 45 : 18 + Math.floor(rule.unlock / 2) * 3 + (rule.postal ? 0 : 4));
+}
 /** Called only after action validation. Replay restores old accomplishments once. */
 export function experienceAward(run:Run,action:Action):number {
  const promise=hasSkill(run,'promise-xp')?5:0;

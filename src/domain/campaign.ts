@@ -1,3 +1,5 @@
+import type { StairState, StairAction } from './stairs.ts';
+import { stairLetterIds } from './stairs.ts';
 import type { Run } from './prologue.ts';
 import type { Place } from './navigation.ts';
 
@@ -23,9 +25,18 @@ export const sideLetterRules:readonly LetterRule[]=[
  {id:'s01',from:'square',to:'wash-court',sender:'host',recipient:'caretaker',unlock:0,postal:false,pay:0,gift:0},
  {id:'s02',from:'wash-court',to:'square',sender:'caretaker',recipient:'host',unlock:0,postal:false,pay:0,gift:0},
 ];
-export const allLetterRules=[...letterRules,...sideLetterRules];
+export const stairLetterRules: readonly LetterRule[] = [
+ {id:'s03',from:'workshop',to:'stair-houses',sender:'repairer',recipient:'resident',unlock:0,postal:false,pay:0,gift:0},
+ {id:'s04',from:'stair-houses',to:'workshop',sender:'resident',recipient:'repairer',unlock:0,postal:false,pay:0,gift:0},
+ {id:'s05',from:'stair-houses',to:'workshop',sender:'resident',recipient:'repairer',unlock:0,postal:false,pay:0,gift:0},
+ {id:'s06',from:'workshop',to:'stair-houses',sender:'repairer',recipient:'resident',unlock:0,postal:false,pay:0,gift:0},
+ {id:'s07',from:'workshop',to:'stair-houses',sender:'repairer',recipient:'resident',unlock:0,postal:false,pay:0,gift:0},
+ {id:'s08',from:'stair-houses',to:'workshop',sender:'resident',recipient:'repairer',unlock:0,postal:false,pay:0,gift:0},
+];
+export const allLetterRules=[...letterRules,...sideLetterRules,...stairLetterRules];
 export interface EntrustedLetter { opened: boolean; deliveredTo?: string; senderWitnessed?: 'opened' | 'destroyed'; status: 'carried' | 'delivered' | 'destroyed' | 'returned' | 'declined'; reported: boolean; returnOutcome?: 'alive' | 'loss'; honest?: boolean }
 export interface Campaign {
+  readonly stair?: StairState;
   readonly active: boolean;
   readonly lastVisits?: Readonly<Partial<Record<Place,number>>>;
   readonly returnedAt?: Readonly<Partial<Record<Place,number>>>;
@@ -43,18 +54,18 @@ export interface Campaign {
   readonly friends: readonly string[];
   readonly visited: readonly Place[];
   readonly focus?: { id: string; returning: boolean };
-  readonly delayed: readonly { id: string; due: number; settled: boolean }[];
+  readonly delayed: readonly { id: string; due: number; settled: boolean; travelDue?: number }[];
   readonly lastOutcome?: 'delivered' | 'opened-delivery' | 'destroyed' | 'returned' | 'reported' | 'lie' | 'contradiction' | 'friend' | 'placed' | 'personal-return' | 'personal-loss';
   readonly pendingThought?: string;
   readonly lastThought?: string;
   readonly thoughtMark: number;
   readonly thoughts: readonly string[];
 }
-export type CampaignAction = {type:'follow-up';id:string;reply:'listen'|'brief'} |  {type:'learn-side-passage'} | {type:'resolve-side-reply';reply:'direct'|'declined'} |  { type: 'enter-campaign' } | { type: 'visit-campaign-place' } | { type: 'chart-route'; place: Place } |
+export type CampaignAction = StairAction | {type:'follow-up';id:string;reply:'listen'|'brief'} |  {type:'learn-side-passage'} | {type:'resolve-side-reply';reply:'direct'|'declined'} |  { type: 'enter-campaign' } | { type: 'visit-campaign-place' } | { type: 'chart-route'; place: Place } |
   { type: 'take-letter' | 'decline-letter' | 'open-item' | 'destroy-item' | 'deliver-item' | 'return-item' | 'complete-private-return'; id: string } |
   { type: 'focus-letter'; id: string; returning: boolean } | { type: 'report-item'; id: string; honest: boolean } |
   { type: 'dialogue'; character: string; reply: 'listen' | 'press' } | { type: 'befriend'; character: string } | { type: 'capture-thought'; id: string } | { type: 'dismiss-thought' };
-export const peopleAt: Partial<Record<Place, string>> = { 'wash-court':'caretaker',office:'clerk',courtyard:'recipient',square:'host',workshop:'repairer',garden:'host',gate:'keeper',bridge:'traveler',relay:'host',ridge:'archivist',reservoir:'keeper' };
+export const peopleAt: Partial<Record<Place, string>> = { 'stair-houses':'resident','wash-court':'caretaker',office:'clerk',courtyard:'recipient',square:'host',workshop:'repairer',garden:'host',gate:'keeper',bridge:'traveler',relay:'host',ridge:'archivist',reservoir:'keeper' };
 export function characterAt(run: Run, place: Place): string | undefined {
   const letter=run.campaign.letters.n04;
   return place==='bridge' && (letter?.returnOutcome==='loss' || letter?.status==='delivered' && letter.opened && !letter.reported) ? 'witness' : peopleAt[place];
@@ -89,7 +100,8 @@ export function availableLetters(run: Run, place: Place): LetterRule[] {
   const employed = run.events.some(event => event.type === 'accept');
   const personal = letterRules.filter(rule => !rule.postal);
   const side=run.campaign.washPassage?sideLetterRules.filter(rule=>rule.from===place&&!run.campaign.letters[rule.id]&&(rule.id==='s01'||run.campaign.letters.s01?.status==='delivered'&&!run.campaign.washReply)):[];
-  return [...side,...letterRules.filter(rule => {
+  const stair = stairLetterIds(run);
+  return [...stairLetterRules.filter(rule => rule.from === place && stair.includes(rule.id) && !run.campaign.letters[rule.id]),...side,...letterRules.filter(rule => {
     const unlock = !employed && !rule.postal ? personal.findIndex(item => item.id === rule.id) : rule.unlock;
     return rule.from === place && !run.campaign.letters[rule.id] && unlock <= resolvedLetters(run) && (!rule.postal || employed);
   })];

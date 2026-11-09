@@ -3,9 +3,9 @@ import type { Run } from './prologue.ts';
 
 export const directions = ['north', 'east', 'south', 'west'] as const;
 export type Direction = typeof directions[number];
-export type Place = 'wash-turn' | 'wash-court' | 'start' | 'approach' | 'office' | 'courtyard' | 'square' | 'workshop' | 'garden' | 'gate' | 'outskirts' | 'bridge' | 'relay' | 'cemetery' | 'ridge' | 'reservoir';
+export type Place = 'stair-turn' | 'stair-houses' | 'stair-link' | 'wash-turn' | 'wash-court' | 'start' | 'approach' | 'office' | 'courtyard' | 'square' | 'workshop' | 'garden' | 'gate' | 'outskirts' | 'bridge' | 'relay' | 'cemetery' | 'ridge' | 'reservoir';
 export type Neighborhood = 'square' | 'workshop';
-export type EdgeId = 'square-west' | 'wash-lane' | 'crosslane' | 'approach' | 'street' | 'courtyard' | 'square' | 'workshop' | 'garden' | 'gate' | 'outskirts' | 'bridge' | 'relay' | 'cemetery' | 'ridge' | 'reservoir';
+export type EdgeId = 'workshop-east' | 'stair-lane' | 'stair-link' | 'gate-north' | 'square-west' | 'wash-lane' | 'crosslane' | 'approach' | 'street' | 'courtyard' | 'square' | 'workshop' | 'garden' | 'gate' | 'outskirts' | 'bridge' | 'relay' | 'cemetery' | 'ridge' | 'reservoir';
 export interface Point { x: number; y: number }
 export interface Edge { id: EdgeId; from: Place; to: Place; length: number; direction: Direction }
 export interface Navigation {
@@ -25,7 +25,13 @@ export function worldGraph(run: Run) {
   const origin = run.journeyOrigin ?? (run.healthKey ? run.walkedSteps : 0);
   const retreat = Math.max(run.goal, (run.navigation?.walked.outskirts?.max ?? 0) + run.goal, run.navigation?.edge === 'outskirts' ? run.navigation.offset + run.goal : 0);
   const split=run.campaign.washPassage && square>=2, half=Math.floor(square/2);
+  const stairSplit = Boolean(run.campaign.stair?.passage) && workshop >= 2;
+  const stairOffset = workshop >= 2 ? Math.floor(workshop / 2) : 0;
+  const stairHeight = cost(.45);
   const places: Record<Place, Point> = {
+    'stair-turn': { x: street + stairOffset, y: -courtyard },
+    'stair-houses': { x: street + stairOffset, y: -courtyard - stairHeight },
+    'stair-link': { x: street + workshop, y: -courtyard - stairHeight },
     'wash-turn':{x:street-(square>=2?half:square),y:-courtyard},
     'wash-court':{x:street-(square>=2?half:square),y:-courtyard+cost(.45)},
     bridge: { x: street+workshop+cost(.5),y:-courtyard-long }, relay:{x:street+workshop+cost(.5),y:-courtyard-long-cost(.5)},
@@ -41,9 +47,13 @@ export function worldGraph(run: Run) {
     { id: 'square', from: 'courtyard', to: split?'wash-turn':'square', length: split?half:square, direction: 'west' },
     ...(split?[{id:'square-west' as const,from:'wash-turn' as const,to:'square' as const,length:square-half,direction:'west' as const}]:[]),
     ...(run.campaign.washPassage?[{id:'wash-lane' as const,from:split?'wash-turn' as const:'square' as const,to:'wash-court' as const,length:cost(.45),direction:'south' as const}]:[]),
-    { id: 'workshop', from: 'courtyard', to: 'workshop', length: workshop, direction: 'east' },
+    { id: 'workshop', from: 'courtyard', to: stairSplit ? 'stair-turn' : 'workshop', length: stairSplit ? stairOffset : workshop, direction: 'east' },
+    ...(stairSplit ? [{ id: 'workshop-east' as const, from: 'stair-turn' as const, to: 'workshop' as const, length: workshop - stairOffset, direction: 'east' as const }] : []),
+    ...(run.campaign.stair?.passage ? [{ id: 'stair-lane' as const, from: stairSplit ? 'stair-turn' as const : 'courtyard' as const, to: 'stair-houses' as const, length: stairHeight, direction: 'north' as const }] : []),
+    ...(run.campaign.stair?.link ? [{ id: 'stair-link' as const, from: 'stair-houses' as const, to: 'stair-link' as const, length: workshop - stairOffset, direction: 'east' as const }] : []),
     { id: 'garden', from: 'square', to: 'garden', length: long, direction: 'north' },
-    { id: 'gate', from: 'workshop', to: 'gate', length: long, direction: 'north' },
+    { id: 'gate', from: 'workshop', to: run.campaign.stair?.link ? 'stair-link' : 'gate', length: run.campaign.stair?.link ? stairHeight : long, direction: 'north' },
+    ...(run.campaign.stair?.link ? [{ id: 'gate-north' as const, from: 'stair-link' as const, to: 'gate' as const, length: long - stairHeight, direction: 'north' as const }] : []),
     {id:'crosslane',from:'garden',to:'gate',length:square+workshop,direction:'east'},
     {id:'bridge',from:'gate',to:'bridge',length:cost(.5),direction:'east'},
     {id:'relay',from:'bridge',to:'relay',length:cost(.5),direction:'north'},
@@ -183,4 +193,28 @@ export function revealWashPassage(run:Run):Navigation {
  if(range&&range.max>=half)walked['square-west']={min:Math.max(0,range.min-half),max:range.max-half};
  const beyond=nav.edge==='square'&&nav.offset>half;
  return {...nav,authorized,walked,...(beyond?{edge:'square-west' as const,offset:nav.offset-half}:{}),...(nav.edge==='square'&&nav.offset===half?{heading:null}:{})};
+}
+
+
+/** Split only when discovery occurs, preserving earlier event geometry and paid travel. */
+function splitDiscoveredRoad(nav: Navigation, edge: EdgeId, remainder: EdgeId, split: number): Navigation {
+  const walked = { ...nav.walked }, range = walked[edge];
+  delete walked[edge];
+  if (range && range.min <= split) walked[edge] = { min: range.min, max: Math.min(range.max, split) };
+  if (range && range.max >= split) walked[remainder] = { min: Math.max(0, range.min - split), max: range.max - split };
+  const beyond = nav.edge === edge && nav.offset > split;
+  return { ...nav, walked, authorized: [...new Set([...nav.authorized, ...(nav.authorized.includes(edge) ? [remainder] : [])])],
+    ...(beyond ? { edge: remainder, offset: nav.offset - split } : {}),
+    ...(nav.edge === edge && nav.offset === split ? { heading: null } : {}) };
+}
+export function revealStairPassage(run: Run): Navigation {
+  if (!run.navigation || run.campaign.stair?.passage) throw new Error('Passage cannot be revealed');
+  const road = worldGraph(run).edges.find(edge => edge.id === 'workshop')!;
+  const nav = road.length >= 2 ? splitDiscoveredRoad(run.navigation, 'workshop', 'workshop-east', Math.floor(road.length / 2)) : run.navigation;
+  return { ...nav, authorized: [...new Set([...nav.authorized, 'stair-lane' as const])] };
+}
+export function revealStairLink(run: Run): Navigation {
+  if (!run.navigation || !run.campaign.stair?.passage || run.campaign.stair.link) throw new Error('Link cannot be revealed');
+  const nav = splitDiscoveredRoad(run.navigation, 'gate', 'gate-north', Math.max(1, Math.ceil(run.goal * .45)));
+  return { ...nav, authorized: [...new Set([...nav.authorized, 'stair-link' as const, 'gate' as const])] };
 }

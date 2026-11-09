@@ -10,7 +10,7 @@ import type { LifeState, LifeDay } from './lives.ts';
 import { healthChanges } from './health.ts';
 import { parseProfile } from './profile.ts';
 import type { Profile } from './profile.ts';
-export const CONTENT_VERSION = 'prologue-9';
+export const CONTENT_VERSION = 'prologue-10';
 export const stages = ['street', 'job', 'delivery', 'handover', 'settlement', 'complete', 'rest', 'failed', 'neighborhood', 'square', 'workshop', 'errand', 'errand-return', 'campaign'] as const;
 export type Stage = typeof stages[number];
 type ActionData = {type:'buy-skill';id:string} | CampaignAction
@@ -67,6 +67,7 @@ export function apply(run: Run, action: Action): Run {
   let changes: Partial<Run>;
   switch (action.type) {
     case 'buy-skill': changes={campaign:purchaseSkill(run,action.id)};break;
+    case 'learn-stair-passage': case 'learn-stair-link': case 'choose-stair-request': case 'volunteer-stair-work': case 'disclose-stair-claim': case 'resolve-stair-response':
     case 'follow-up': case 'learn-side-passage': case 'resolve-side-reply': case 'enter-campaign': case 'visit-campaign-place': case 'chart-route': case 'take-letter': case 'decline-letter': case 'focus-letter': case 'open-item': case 'destroy-item': case 'deliver-item': case 'return-item': case 'complete-private-return': case 'report-item': case 'befriend': case 'dialogue': case 'capture-thought': case 'dismiss-thought':
       changes = reduceCampaign(run, action); break;
     case 'fresh-start':
@@ -211,6 +212,8 @@ export function isAction(value: unknown): value is Action {
   if (!value || typeof value !== 'object') return false;
   const item = value as Record<string, unknown>;
   if (item.at !== undefined && (typeof item.at !== 'string' || !/^\d{4}-\d{2}-\d{2}T/.test(item.at) || !Number.isFinite(Date.parse(item.at)))) return false;
+  if (item.type === 'choose-stair-request') return ['diagram', 'meeting', 'declined'].includes(String(item.reply));
+  if (item.type === 'resolve-stair-response') return ['accepted', 'declined'].includes(String(item.reply));
   if(item.type==='follow-up')return typeof item.id==='string'&&['listen','brief'].includes(String(item.reply));
   if(item.type==='resolve-side-reply')return ['direct','declined'].includes(String(item.reply));
   if (['buy-skill','take-letter','decline-letter','open-item','destroy-item','deliver-item','return-item','complete-private-return','capture-thought'].includes(String(item.type))) return typeof item.id === 'string';
@@ -229,5 +232,5 @@ export function isAction(value: unknown): value is Action {
   if (item.type === 'ask') return ['work', 'pay', 'directions'].includes(String(item.topic));
   if (item.type === 'health-sync') return typeof item.dayKey === 'string' && typeof item.total === 'number';
   return item.type === 'steps' ? typeof item.amount === 'number' && (item.source === undefined || item.source === 'health') :
-    ['learn-side-passage', 'fresh-start', 'enter-campaign', 'visit-campaign-place', 'dismiss-thought', 'extend-return-path', 'resume-help', 'enable-navigation', 'continue-neighborhood', 'explore-neighborhood', 'finish-conversation', 'return-to-offer', 'inspect', 'finish-errand', 'start-journey', 'cross', 'accept', 'rest', 'arrive', 'deliver', 'settle', 'reconsider', 'open-letter', 'destroy-letter', 'report-loss'].includes(String(item.type));
+    ['learn-stair-passage', 'learn-stair-link', 'volunteer-stair-work', 'disclose-stair-claim', 'learn-side-passage', 'fresh-start', 'enter-campaign', 'visit-campaign-place', 'dismiss-thought', 'extend-return-path', 'resume-help', 'enable-navigation', 'continue-neighborhood', 'explore-neighborhood', 'finish-conversation', 'return-to-offer', 'inspect', 'finish-errand', 'start-journey', 'cross', 'accept', 'rest', 'arrive', 'deliver', 'settle', 'reconsider', 'open-letter', 'destroy-letter', 'report-loss'].includes(String(item.type));
 }

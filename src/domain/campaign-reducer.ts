@@ -1,7 +1,8 @@
+import { isStairAction, reduceStairs } from './stairs.ts';
 import {revisitAvailable,revisitRules} from './revisits.ts';
 import type { Run } from './prologue.ts';
 import type { CampaignAction, Campaign, EntrustedLetter } from './campaign.ts';
-import { availableLetters, allLetterRules as letterRules, characterAt, resolvedLetters } from './campaign.ts';
+import { availableLetters, allLetterRules as letterRules, stairLetterRules, characterAt, resolvedLetters } from './campaign.ts';
 import {hasSkill,letterCapacity,giftBonus} from './skills.ts';
 import { currentNode, worldGraph, revealWashPassage } from './navigation.ts';
 import type { Place, EdgeId } from './navigation.ts';
@@ -40,6 +41,7 @@ export function reduceCampaign(run: Run, action: CampaignAction): Partial<Run> {
     return {campaign:{...campaign,pendingThought:undefined,thoughtMark:run.navigation?.odometer ?? 0}};
   }
   if (run.stage !== 'campaign' && !['open-item','destroy-item','focus-letter'].includes(action.type)) throw new Error('Campaign is not active');
+  if (isStairAction(action)) return reduceStairs(run, action);
   if(action.type==='learn-side-passage'){
     if(place!=='square'||!campaign.visited.includes(place)||campaign.washPassage)throw new Error('Passage discovery unavailable');
     return {navigation:revealWashPassage(run),campaign:{...campaign,washPassage:true}};
@@ -67,7 +69,7 @@ export function reduceCampaign(run: Run, action: CampaignAction): Partial<Run> {
     campaign = {...campaign,lastOutcome:undefined};
     const delayed = campaign.delayed.map(item => {
       const rule = letterRules.find(rule => rule.id === item.id)!;
-      if (item.settled || item.due > resolvedLetters(run) || rule.from !== place) return item;
+      if (item.settled || (item.travelDue === undefined ? item.due > resolvedLetters(run) : odometer < item.travelDue) || rule.from !== place) return item;
       campaign = {...campaign,trust:trust(rule.sender,-3),lastOutcome:'contradiction'};
       sous = Math.max(0,sous - (rule.postal ? 2 : 0));
       return {...item,settled:true};
@@ -126,7 +128,14 @@ export function reduceCampaign(run: Run, action: CampaignAction): Partial<Run> {
       const reward = rule.gift && (item.status==='delivered' || lie) ? rule.gift+giftBonus(run) : 0;
       const wages = lie && item.status==='destroyed' && rule.postal ? Math.max(0,rule.pay-4) : 0;
       const reputation = lie ? 1 : item.status==='destroyed' ? item.senderWitnessed==='destroyed'?0:-2 : item.opened ? item.senderWitnessed?0:-1 : 1;
-      return {sous:run.sous+reward+wages,campaign:{...campaign,letters:write(rule.id,{...item,reported:true,honest:!lie}),focus:campaign.focus?.id===rule.id?undefined:campaign.focus,trust:trust(rule.sender,reputation+(!lie&&item.status==='delivered'&&hasSkill(run,'report-trust')?1:0)),lastOutcome:lie?'lie':'reported',delayed:lie?[...campaign.delayed,{id:rule.id,due:resolvedLetters(run)+2,settled:false}]:campaign.delayed}};
+      // New side reports must remain resolvable after the original round is complete.
+      // Old letters retain their event-time progress delay for deterministic replay.
+      const contradiction = {
+        id: rule.id, due: resolvedLetters(run) + 2, settled: false,
+        ...(stairLetterRules.some(letter => letter.id === rule.id)
+          ? { travelDue: (run.navigation?.odometer ?? 0) + Math.max(1, Math.ceil(run.goal * .5)) } : {}),
+      };
+      return {sous:run.sous+reward+wages,campaign:{...campaign,letters:write(rule.id,{...item,reported:true,honest:!lie}),focus:campaign.focus?.id===rule.id?undefined:campaign.focus,trust:trust(rule.sender,reputation+(!lie&&item.status==='delivered'&&hasSkill(run,'report-trust')?1:0)),lastOutcome:lie?'lie':'reported',delayed:lie?[...campaign.delayed,contradiction]:campaign.delayed}};
     }
   }
 }

@@ -23,7 +23,18 @@ export function openingContent(locale: Locale): OpeningContent | undefined {
 }
 
 export interface LetterContent { title: string; offer: string; body: string; delivered: string; deliveredAfterLoss?: string; report: string; question: string; answer: string }
+export interface StairContent {
+  discover: string; learned: string; review: string; link: string; linkLearned: string;
+  requestPrompt: string; diagram: string; meeting: string; decline: string;
+  requestOutcomes: Record<'diagram' | 'meeting' | 'declined', string>;
+  volunteer: string; volunteerConfirm: string; volunteered: string;
+  disclose: string; disclosed: string; correctionReported: string;
+  responsePrompt: string; acceptResponse: string; declineResponse: string;
+  diagramAccepted: string; meetingAccepted: string; responseDeclined: string;
+  journal: Record<string, string>;
+}
 export interface CampaignContent {
+  stairPassage?: StairContent;
   revisits?:Record<string,{title:string;prompt:string;listen:string;brief:string;listening:string;leaving:string}>;
   sidePassage?: {discover:string;learned:string;replyPrompt:string;direct:string;decline:string;directOutcome:string;declineOutcome:string};
   personalReturn?: { prompt: string; listen: string; alive: string; loss: string; aliveJournal?: string; lossJournal?: string };
