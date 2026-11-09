@@ -33,7 +33,18 @@ export interface StairContent {
   diagramAccepted: string; meetingAccepted: string; responseDeclined: string;
   journal: Record<string, string>;
 }
+export interface BelongingsContent {
+  discoverRecipient: string; discoverResident: string; learned: string; review: string;
+  decisionPrompt: string; clarify: string; abstain: string; guess: string; guessConfirm: string;
+  decisions: Record<'clarify' | 'abstain' | 'guess', string>;
+  collectionPrompt: string; witness: string;
+  outcomes: Record<'clarified' | 'left-open' | 'unauthorized' | 'unanswered', string>;
+  returnPrompt: string; acknowledge: string; leave: string;
+  acknowledged: string; respected: string; left: string; recall: string;
+  journal: Record<string, string>;
+}
 export interface CampaignContent {
+  belongings?: BelongingsContent;
   stairPassage?: StairContent;
   revisits?:Record<string,{title:string;prompt:string;listen:string;brief:string;listening:string;leaving:string}>;
   sidePassage?: {discover:string;learned:string;replyPrompt:string;direct:string;decline:string;directOutcome:string;declineOutcome:string};

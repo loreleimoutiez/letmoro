@@ -3,9 +3,9 @@ import type { Run } from './prologue.ts';
 
 export const directions = ['north', 'east', 'south', 'west'] as const;
 export type Direction = typeof directions[number];
-export type Place = 'stair-turn' | 'stair-houses' | 'stair-link' | 'wash-turn' | 'wash-court' | 'start' | 'approach' | 'office' | 'courtyard' | 'square' | 'workshop' | 'garden' | 'gate' | 'outskirts' | 'bridge' | 'relay' | 'cemetery' | 'ridge' | 'reservoir';
+export type Place = 'landing' | 'stair-turn' | 'stair-houses' | 'stair-link' | 'wash-turn' | 'wash-court' | 'start' | 'approach' | 'office' | 'courtyard' | 'square' | 'workshop' | 'garden' | 'gate' | 'outskirts' | 'bridge' | 'relay' | 'cemetery' | 'ridge' | 'reservoir';
 export type Neighborhood = 'square' | 'workshop';
-export type EdgeId = 'workshop-east' | 'stair-lane' | 'stair-link' | 'gate-north' | 'square-west' | 'wash-lane' | 'crosslane' | 'approach' | 'street' | 'courtyard' | 'square' | 'workshop' | 'garden' | 'gate' | 'outskirts' | 'bridge' | 'relay' | 'cemetery' | 'ridge' | 'reservoir';
+export type EdgeId = 'landing-lane' | 'workshop-east' | 'stair-lane' | 'stair-link' | 'gate-north' | 'square-west' | 'wash-lane' | 'crosslane' | 'approach' | 'street' | 'courtyard' | 'square' | 'workshop' | 'garden' | 'gate' | 'outskirts' | 'bridge' | 'relay' | 'cemetery' | 'ridge' | 'reservoir';
 export interface Point { x: number; y: number }
 export interface Edge { id: EdgeId; from: Place; to: Place; length: number; direction: Direction }
 export interface Navigation {
@@ -29,6 +29,7 @@ export function worldGraph(run: Run) {
   const stairOffset = workshop >= 2 ? Math.floor(workshop / 2) : 0;
   const stairHeight = cost(.45);
   const places: Record<Place, Point> = {
+    landing: { x: street + stairOffset - cost(.3), y: -courtyard - stairHeight },
     'stair-turn': { x: street + stairOffset, y: -courtyard },
     'stair-houses': { x: street + stairOffset, y: -courtyard - stairHeight },
     'stair-link': { x: street + workshop, y: -courtyard - stairHeight },
@@ -51,6 +52,7 @@ export function worldGraph(run: Run) {
     ...(stairSplit ? [{ id: 'workshop-east' as const, from: 'stair-turn' as const, to: 'workshop' as const, length: workshop - stairOffset, direction: 'east' as const }] : []),
     ...(run.campaign.stair?.passage ? [{ id: 'stair-lane' as const, from: stairSplit ? 'stair-turn' as const : 'courtyard' as const, to: 'stair-houses' as const, length: stairHeight, direction: 'north' as const }] : []),
     ...(run.campaign.stair?.link ? [{ id: 'stair-link' as const, from: 'stair-houses' as const, to: 'stair-link' as const, length: workshop - stairOffset, direction: 'east' as const }] : []),
+    ...(run.campaign.belongings ? [{ id: 'landing-lane' as const, from: 'stair-houses' as const, to: 'landing' as const, length: cost(.3), direction: 'west' as const }] : []),
     { id: 'garden', from: 'square', to: 'garden', length: long, direction: 'north' },
     { id: 'gate', from: 'workshop', to: run.campaign.stair?.link ? 'stair-link' : 'gate', length: run.campaign.stair?.link ? stairHeight : long, direction: 'north' },
     ...(run.campaign.stair?.link ? [{ id: 'gate-north' as const, from: 'stair-link' as const, to: 'gate' as const, length: long - stairHeight, direction: 'north' as const }] : []),

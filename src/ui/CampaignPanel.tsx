@@ -10,6 +10,7 @@ import type { OpeningContent } from '../content/narrative.ts';
 import type { Locale } from '../content/ui.ts';
 import { DialogueChoices } from './DialogueChoices.tsx';
 import { StairPanel } from './StairPanel.tsx';
+import { BelongingsPanel } from './BelongingsPanel.tsx';
 
 export function CampaignPanel({ run, locale, content, act }: { run: Run; locale: Locale; content: OpeningContent; act: (action: Action) => void }) {
   const c = campaignUI(locale), pack = content.campaign, place = currentNode(run);
@@ -41,6 +42,7 @@ export function CampaignPanel({ run, locale, content, act }: { run: Run; locale:
       <RevisitPanel key={place} run={run} content={content} act={act}/>
       {person&&!waitingReturn&&conversation&&<CharacterConversation key={`${place}:${person}`} conversation={conversation} person={person} reply={reply} locale={locale} act={act}/>}
       {pack.stairPassage && <StairPanel run={run} copy={pack.stairPassage} act={act} />}
+      {pack.belongings && <BelongingsPanel run={run} copy={pack.belongings} act={act} />}
       {person && (run.campaign.trust[person]??0)>=3 && !run.campaign.friends.includes(person) && <button onClick={()=>act({type:'befriend',character:person})}>{c.friend}</button>}
       {offers.map(rule => <details className="message-offer" key={rule.id}><summary>{pack.letters[rule.id].title}</summary><p>{pack.letters[rule.id].offer}</p><p className="muted">{deliveryXP(rule.id)} XP · {locale==='fr'?'à la livraison':'on delivery'}</p>
         <DialogueChoices label={c.details} back={c.choices} initial={<><button disabled={Object.values(run.campaign.letters).filter(item=>item.status==='carried').length>=letterCapacity(run)} onClick={()=>act({type:'take-letter',id:rule.id})}>{c.take}</button><button onClick={()=>act({type:'decline-letter',id:rule.id})}>{c.decline}</button></>}>

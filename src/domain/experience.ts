@@ -2,7 +2,7 @@ import type {Action,Run} from './prologue.ts';
 import {allLetterRules as letterRules} from './campaign.ts';
 import {currentNode} from './navigation.ts';
 import {hasSkill} from './skills.ts';
-const sideDeliveryXP: Readonly<Record<string, number>> = { s01: 32, s02: 18, s03: 24, s04: 30, s05: 30, s06: 22, s07: 22, s08: 18 };
+const sideDeliveryXP: Readonly<Record<string, number>> = { s01: 32, s02: 18, s03: 24, s04: 30, s05: 30, s06: 22, s07: 22, s08: 18, s09: 28, s10: 16, s11: 22 };
 export function deliveryXP(id: string): number {
   const rule = letterRules.find(item => item.id === id);
   if (!rule) return 0;
@@ -12,6 +12,7 @@ export function deliveryXP(id: string): number {
 export function experienceAward(run:Run,action:Action):number {
  const promise=hasSkill(run,'promise-xp')?5:0;
  switch(action.type){
+ case 'witness-belongings-collection': return run.campaign.belongings?.answer === 'guess' ? 0 : 20;
  case 'report-loss':return 6;
  case 'deliver': return 12+(hasSkill(run,'delivery-xp')?4:0)+(!run.letterOpened&&hasSkill(run,'sealed-xp')?6:0);
  case 'finish-errand':return run.errand&&!run.completedErrands.includes(run.errand.from)?(run.errand.from==='square'?35:40)+promise:0;

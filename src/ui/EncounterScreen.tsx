@@ -1,3 +1,4 @@
+import { belongingsSceneHere } from '../domain/belongings.ts';
 import {useEffect,useRef,useState} from 'react';
 import type {ReactNode} from 'react';
 import type {Run} from '../domain/prologue.ts';
@@ -12,6 +13,7 @@ export function EncounterScreen({run,locale,content,children}:{run:Run;locale:Lo
  useEffect(()=>{setClosed(false);dialog.current?.showModal();},[key]);
  const person=node?characterAt(run,node):undefined;
  const ids=new Set<string>(person?[person]:[]);
+ if (belongingsSceneHere(run)) ids.add('recipient');
  if(run.stage==='square'&&run.events.some(event=>event.type==='arrive'))ids.add('recipient');
  if(run.stage==='campaign')for(const rule of letterRules){
    const item=run.campaign.letters[rule.id];

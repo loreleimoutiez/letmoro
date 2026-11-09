@@ -1,8 +1,9 @@
+import { isBelongingsAction, reduceBelongings } from './belongings.ts';
 import { isStairAction, reduceStairs } from './stairs.ts';
 import {revisitAvailable,revisitRules} from './revisits.ts';
 import type { Run } from './prologue.ts';
 import type { CampaignAction, Campaign, EntrustedLetter } from './campaign.ts';
-import { availableLetters, allLetterRules as letterRules, stairLetterRules, characterAt, resolvedLetters } from './campaign.ts';
+import { availableLetters, allLetterRules as letterRules, stairLetterRules, belongingsLetterRules, characterAt, resolvedLetters } from './campaign.ts';
 import {hasSkill,letterCapacity,giftBonus} from './skills.ts';
 import { currentNode, worldGraph, revealWashPassage } from './navigation.ts';
 import type { Place, EdgeId } from './navigation.ts';
@@ -41,6 +42,7 @@ export function reduceCampaign(run: Run, action: CampaignAction): Partial<Run> {
     return {campaign:{...campaign,pendingThought:undefined,thoughtMark:run.navigation?.odometer ?? 0}};
   }
   if (run.stage !== 'campaign' && !['open-item','destroy-item','focus-letter'].includes(action.type)) throw new Error('Campaign is not active');
+  if (isBelongingsAction(action)) return reduceBelongings(run, action);
   if (isStairAction(action)) return reduceStairs(run, action);
   if(action.type==='learn-side-passage'){
     if(place!=='square'||!campaign.visited.includes(place)||campaign.washPassage)throw new Error('Passage discovery unavailable');
@@ -132,7 +134,7 @@ export function reduceCampaign(run: Run, action: CampaignAction): Partial<Run> {
       // Old letters retain their event-time progress delay for deterministic replay.
       const contradiction = {
         id: rule.id, due: resolvedLetters(run) + 2, settled: false,
-        ...(stairLetterRules.some(letter => letter.id === rule.id)
+        ...([...stairLetterRules, ...belongingsLetterRules].some(letter => letter.id === rule.id)
           ? { travelDue: (run.navigation?.odometer ?? 0) + Math.max(1, Math.ceil(run.goal * .5)) } : {}),
       };
       return {sous:run.sous+reward+wages,campaign:{...campaign,letters:write(rule.id,{...item,reported:true,honest:!lie}),focus:campaign.focus?.id===rule.id?undefined:campaign.focus,trust:trust(rule.sender,reputation+(!lie&&item.status==='delivered'&&hasSkill(run,'report-trust')?1:0)),lastOutcome:lie?'lie':'reported',delayed:lie?[...campaign.delayed,contradiction]:campaign.delayed}};

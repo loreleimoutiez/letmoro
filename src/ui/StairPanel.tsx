@@ -10,7 +10,7 @@ export function StairPanel({ run, copy, act }: { run: Run; copy: StairContent; a
   const requestId = state?.request === 'diagram' ? 's04' : state?.request === 'meeting' ? 's05' : undefined;
   return <section className="stair-conversation">
     {available('learn-stair-passage') && <button onClick={() => act({ type: 'learn-stair-passage' })}>{copy.discover}</button>}
-    {state?.passage && place === 'workshop' && <details><summary>{copy.review}</summary><p>{copy.learned}</p></details>}
+    {state?.passage && run.events.some(event => event.type === 'learn-stair-passage') && place === 'workshop' && <details><summary>{copy.review}</summary><p>{copy.learned}</p></details>}
     {available('learn-stair-link') && <button onClick={() => act({ type: 'learn-stair-link' })}>{copy.link}</button>}
     {state?.link && place === 'stair-houses' && <details><summary>{copy.review}</summary><p>{copy.linkLearned}</p></details>}
     {available('choose-stair-request') && <article><p>{copy.requestPrompt}</p>{(['diagram', 'meeting', 'declined'] as const).map(reply =>
