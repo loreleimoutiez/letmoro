@@ -1,4 +1,4 @@
-# Narrative bible
+# Narrative guide
 
 ## Premise
 
@@ -18,9 +18,9 @@ Building a personal life and choosing projects form the campaign's foundation. H
 
 Romantic arcs are optional, deliberate, and as developed as political arcs. Friendship has independent value. The player may pursue either, both, or neither. Consent and commitment require an explicit decision; automatic initiatives must not start a romance.
 
-## M the Accursed
+## “M” the Accursed
 
-The territories are ruled by M the Accursed. Increasing taxes combine understated satire with concrete local effects. First settlement:
+The territories are ruled by “M” the Accursed. Increasing taxes combine understated satire with concrete local effects. First settlement:
 
 | Item | Coins |
 | --- | ---: |
@@ -29,7 +29,7 @@ The territories are ruled by M the Accursed. Increasing taxes combine understate
 | Exceptional contribution to maintaining contributions | -2 |
 | Take-home pay | 4 |
 
-M can become a central antagonist through the player's choices, but opposition is not mandatory. Accommodation, service, and private life under distant authority need developed outcomes too. Taxes should create situations and decisions, without making financial stability impossible.
+“M” can become a central antagonist through the player's choices, but opposition is not mandatory. Accommodation, service, and private life under distant authority need developed outcomes too. Taxes should create situations and decisions, without making financial stability impossible.
 
 ## Story construction
 

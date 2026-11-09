@@ -31,7 +31,7 @@ This ledger resolves important changes during the original design conversation. 
 | Final rescue | Once for the entire account, standard mode only; original run goal reached in one complete day; return with one life. |
 | Reboot | Only archives persist. No permanent XP, skills, money, or cosmetic advantages have been approved. |
 | Currency | `sous` in French, `coins` in English. First gross pay 8, two deductions of 2, net 4; surprise revealed at settlement. |
-| Political route | M le Maudit / M the Accursed can become central antagonist; opposition is optional. |
+| Political route | “M” le Maudit / “M” the Accursed can become central antagonist; opposition is optional. |
 | Romance | Several deep optional routes with importance comparable to political content. |
 | Private-life route | Building a life and choosing personal projects supports players pursuing neither politics nor romance. |
 | Records | Delivery counter, letter outcomes, personal chronology, catch-up, characters, discovered places. |
@@ -115,3 +115,10 @@ Owner accepts proceeding with implementation after the private continuation draf
 Owner requests EN/FR choice at first launch before intro/settings, smaller full-screen interaction text and less same-screen repetition. Explicit first choice is now required when no valid device preference exists, with later changes available before sign-in and in Settings. Deduplicated encounter context and slightly reduced typography retain accessible touch target size.
 
 Owner authorizes additional interactions on some known-place returns. Implement three prerequisite-based once-only follow-ups, not universal repetitive greetings or procedural dialogue. A physical return after the relevant delivery is required; clicks without movement cannot trigger it. No new letter, badge or XP award is added. Catalog remains 9 encounterable characters plus Moro, 23 letters and 17 badges. Pacing examples are measured travel workloads, never guaranteed calendar/story duration.
+
+
+### README and documentation wording — 2026-11-09
+
+- Present the narrative adventure, real-step travel and player choices before development details in the README. Put the documentation links near the top after that introduction.
+- Use “Narrative guide” as the English title of the narrative reference; retain its existing file path.
+- Enclose the ruler's name in quotation marks in documentation: “M” the Accursed / “M” le Maudit. This is an editorial convention, not a change to the character or playable text.

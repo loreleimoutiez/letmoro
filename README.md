@@ -2,22 +2,33 @@
 
 # Letmoro
 
-A quiet Android walking adventure about delivering letters and finding a life of your own.
+A narrative walking adventure for Android, about delivering letters and finding a life of your own.
+
+You follow Moro through a fictional territory, carrying correspondence between people whose lives gradually become familiar. A first offer of postal work opens one way forward; personal favors, conversations and exploration remain possible if Moro refuses it. The story is quiet much of the time, with humor, uncertainty and consequences growing out of ordinary encounters.
+
+Your real steps move Moro along discovered roads. At a destination, you decide what happens next: accept a request, keep a letter sealed, open it, return it, or leave a conversation for another time. Choices and relationships persist. Important decisions wait for you; walking does not make them on your behalf. The world uses abstract square pixels, with readable English and French text.
+
+The full campaign is intended to offer substantial personal, relational and optional political paths. Those larger routes are still being written. The current app provides a playable opening, not the complete five-arc campaign.
+
+## Documentation
+
+[Product and game rules](docs/product.md) · [Story and tone](docs/narrative.md) · [Current playable content](docs/gameplay-status.md) · [Roadmap](docs/roadmap.md)
+
+For development: [Architecture](docs/decisions/0001-architecture.md) · [Decisions](docs/decision-ledger.md) · [Navigation](docs/navigation.md) · [Health](docs/health-connect.md) · [Accounts](docs/auth.md) · [Cloud saves](docs/cloud-saves.md) · [Lives and reboot](docs/lives-and-reboot.md) · [Handoff](docs/handoff.md)
 
 ## Status
 
-Internal Android version 0.6.0 / versionCode 10. This is a playable opening, not the complete five-arc public campaign. Postal delivery is the territory's only available employment. The local ignored manuscript adds twenty letters, seven recurring-character conversations and two optional unpaid errands beyond the easy first job/delivery. Refusing employment preserves a complete ten-request personal route. A first secondary-path extension adds a new encounter and two optional messages without changing that round’s completion requirements.
+Version 0.6.0 is an internal playable Android opening. It includes 23 letters, nine encounterable characters excluding Moro, optional personal requests, branching conversations, a journal, contextual travel thoughts and spendable XP. Letters retain their outcomes, and witnessed actions can affect trust and friendships. A first inhabited secondary path and three conditional return conversations are playable.
 
-- Minimal square-pixel world; real-step-funded cardinal travel, reversal and returns, long journeys and a discovered cross-connection. Pinch, mouse wheel and keyboard zoom scale Moro with the terrain; no zoom buttons or percentage.
-- Above-Moro arrival decisions, dialogue details that replace initial choices, three carried campaign letters by default (four with the capacity skill), opening/destruction/return/delivery/report actions, optional report journeys, trust, explicit friendships and delayed contradictory reports. Earned badges have brief restrained feedback; locked badges/skills remain hidden. Basic respect unlocks three spendable-XP branches with two tiers each and twelve implemented skill alternatives.
-- Persistent travel thoughts: one pending thought until dismissed, no offline queue, context-aware selection and a readable thought archive. Journal uses newest-first local timestamps without numbering.
-- Account-first Supabase Auth, Android Keystore sessions and per-account local saves. Hosted owner-only save migration applied and verified; local cloud synchronization enabled. The owner confirmed sign-in and game restoration on a Samsung tablet on 2026-11-09. Reverse synchronization, concurrent conflicts, offline recovery and untested email/Google flows still need physical checks. No server credentials are shipped.
-- Health Connect and optional foreground step sensors; a pre-map connection invitation, normal coins/steps HUD, and no test toolbar, simulator reset/intro replay, fictional-day input or browser-preview captions in the interface.
-- Tested life/rest/recovery reducer with 24-hour finalization grace and fixed run time zone. Rest weekdays are configurable by difficulty, effective next Monday with a seven-day change cooldown. Real penalties remain disabled pending physical history validation. Pause, rescue, production reboot, mode switching, numerical trait effects and the full campaign skill tree are not implemented.
+Development and device testing currently focus on Samsung Android hardware, initially a Galaxy S23 and Fit3. Letmoro reads step data through Health Connect and can use foreground phone sensors; it does not connect directly to the band. Game restoration on a Samsung tablet has been confirmed. Cross-device step handling, long absences and historical-health acceptance still need work. Real life-loss penalties remain disabled.
 
-The twenty-request sequential round with every optional report return costs about 113 personal daily goals in a deterministic simulation; carrying several letters and skipping optional reports changes effort considerably. This is a route-cost observation, not a measured real-world duration or evidence of a finished year-long campaign. See [current gameplay status](docs/gameplay-status.md).
+The rest of Arc I, the full five-arc campaign, substantial romance and political routes, home/spending projects and trait effects remain unfinished. The private Arc I closing plan is authored but not integrated. See [current gameplay status](docs/gameplay-status.md) for implemented behavior, measured travel examples and dated checks.
 
-Private manuscripts and vertical authoring trees remain under Git ignore; the owner has created a separate private manuscript repository, and an ignored local Git copy is prepared. The owner confirmed its initial push; subsequent local draft commits still need an authenticated push, and an independent backup remains pending. A checkout without them provides the generic first delivery. See [private authoring](docs/narrative-authoring.md). No public publication, application remote push or public license is authorized; the selected private manuscript backup is separate.
+## Source and manuscript
+
+The application code and documentation live in this repository. Authored manuscripts and narrative trees live in a separate private repository and are imported into an ignored local directory for builds. A checkout without the manuscript supports the generic first delivery. See [private authoring](docs/narrative-authoring.md) for setup and backup status.
+
+A GitHub remote is configured for the application repository. No public project license has been selected; the bundled font has its own license below.
 
 ## Development
 
@@ -62,12 +73,6 @@ The 0.6.0 checkpoint passed TypeScript, 88 JavaScript/TypeScript behavioral test
 
 Press Start 2P is bundled locally with its [SIL Open Font License](public/fonts/OFL.txt). That dependency license does not license Letmoro itself. All artwork is authored geometric/vector code; no AI artwork is used.
 
-## Documentation
-
-[Product](docs/product.md) · [Narrative](docs/narrative.md) · [Architecture](docs/decisions/0001-architecture.md) · [Decisions](docs/decision-ledger.md) · [Roadmap](docs/roadmap.md) · [Navigation](docs/navigation.md) · [Health](docs/health-connect.md) · [Accounts](docs/auth.md) · [Cloud saves](docs/cloud-saves.md) · [Lives and reboot](docs/lives-and-reboot.md) · [Handoff](docs/handoff.md)
-
-The supplied future GitHub repository is reserved; no remote or publication is configured. No open-source license has been chosen.
-
 ## Starting over
 
 Settings → Start over → confirm erases the game and its archives locally and in the online save while retaining the account/password. Online saving requires a working connection before local erasure. Reinstalling alone does not erase an account backup. Old daily steps become the new game's baseline rather than restoring the former path. Health Connect's own records remain unchanged. This is separate from the deferred narrative reboot/rescue system.
@@ -75,12 +80,6 @@ Settings → Start over → confirm erases the game and its archives locally and
 ## Android widget and step-source investigation
 
 A native home-screen widget shows Moro on discovered local terrain, remaining quest distance or daily steps/goal, and a last-seen timestamp. It opens Letmoro on tap and retains the last app snapshot while closed; it does not independently advance the game or read steps in the background. A new step-connection detail separates the shared Health Connect aggregate from the phone estimate and identifies Samsung Health contributions. See [Fit3 and Samsung Health research](docs/fit3-and-samsung-health.md). Direct Samsung SDK access and Fit3 notifications remain investigated possibilities, not implemented integrations.
-
-A personal delivery now has distinct optional return outcomes and an exclusive intact-seal badge. XP is now awarded for completed deliveries, promises and first discoveries; it buys implemented bonuses in three progressively revealed two-choice skill branches. Earlier save generations remain readable; existing accomplishments replay into the new base XP rewards, while skill bonuses apply only after purchase. Private scenes and the authoring tree remain ignored.
-
-
-Version 0.6.0 adds explicit English/French choice before the first account/setup/intro screen, lighter interaction copy and three authored conditional return conversations. Current catalog: nine encountered-character identities excluding Moro, 23 letters including the initial delivery, and 17 badge conditions. `npm run measure:pacing` reproduces example travel workloads at a 10,000-step goal; these do not predict calendar duration or reading time.
-
 
 ## Version labels
 
