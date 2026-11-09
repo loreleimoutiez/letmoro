@@ -6,7 +6,7 @@ The intended public repository contains the runtime, content interfaces and beha
 
 `src/content/private/` is ignored by Git. The local `opening.json` supplies `en` and `fr` objects matching `OpeningContent` in `src/content/narrative.ts`. English is source; French is translation. Vite includes the optional pack at build time. The owner created a separate private GitHub repository, `letmoro-manuscript`. A local Git copy lives in ignored `.manuscript/`. The owner confirmed the initial push; local `origin/main` tracks that initial snapshot. This environment still lacks GitHub authentication, so new commits cannot be uploaded or remote visibility independently queried here. No runtime download service or content update protocol exists.
 
-The optional `visits` section now supplies neighborhood dialogue/errand text, and `characters` supplies identities/colors for the current ten encounterable characters excluding Moro. Generic tracked stage copy keeps a checkout buildable without these private scenes.
+The optional `visits` section now supplies neighborhood dialogue/errand text, and `characters` supplies identities/colors for the current eleven encounterable characters excluding Moro. Generic tracked stage copy keeps a checkout buildable without these private scenes.
 
 The local `tree.txt` is the vertical authoring view. Label implemented branches separately from planned scenes and mechanics. Keep it synchronized with manuscript and runtime progress. The tree is an authoring artifact, not a player-visible map or an implemented year-long campaign.
 
@@ -20,7 +20,7 @@ Run TypeScript, behavioral tests and a production build, then exercise both loca
 
 Compiled client assets and Android packages contain any included manuscript. Repository privacy does not prevent extraction from a distributed application. The owner selected the private manuscript repository for backup. This does not authorize public manuscript publication or pushing application changes.
 
-New runtime events extend the existing replay format without changing prior actions. Current generation `prologue-10` accepts `prologue-1` through `prologue-9`. Earlier generations introduced stable campaign letter IDs, item states, relationships, thoughts and schedules; later generations added skill purchases, explicit secondary-path discovery and conditional return choices. Keep these IDs stable; never rewrite the meaning of shipped events. Future content generations and replay compaction still need explicit migration design.
+New runtime events extend the existing replay format without changing prior actions. Current generation `prologue-11` accepts `prologue-1` through `prologue-10`. Earlier generations introduced stable campaign letter IDs, item states, relationships, thoughts and schedules; later generations added skill purchases, explicit secondary-path discovery and conditional return choices. Keep these IDs stable; never rewrite the meaning of shipped events. Future content generations and replay compaction still need explicit migration design.
 
 ## Expanded local pack contract
 
@@ -68,3 +68,10 @@ The new closing document stays in the separate manuscript repository; the curren
 ## Second-loop source integration — 0.7.0
 
 `campaign.stairPassage` supplies localized discovery/direction text, request choices, witnessed-claim/disclosure/correction outcomes, final response variants and journal wording. Its six additional `letters` entries have independent stable IDs and sealed bodies. One added character/conversation and three map nodes accompany the two independently learned connections. Existing playable text is unchanged; additions were compared against the previous private commit. The source now implements this loop, while the closing-plan document and remaining continuation are still authoring material. Keep completed meetings/repairs distinct from communicated intentions.
+
+
+## Third-loop source integration — 0.8.0
+
+`campaign.belongings` contains localized independent-introduction labels/directions, three practical answers, confirmation of the unauthorized choice, four witnessed outcomes, acknowledgement/leave variants and journal copy. Three new stable letter IDs have independently authored bodies, offers, directions, delivery and report text. One character/conversation and one landing are added. All prior playable JSON values remain unchanged.
+
+The collection scene stages a second already-known participant only after the explicit witnessing event. Later rereads are historical; they do not move a live character marker. Refusal and interrupted correspondence must never be written as successful delivery, consent or a forced obligation. The remaining fourth and later loops and Arc I convergence/ending remain draft.

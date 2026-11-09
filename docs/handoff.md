@@ -1,6 +1,6 @@
 # Session handoff
 
-Updated 2026-11-09. Source version 0.7.0 / Android versionCode 11. Read this file, product, narrative, decision ledger and roadmap before implementation. Older milestones are in Git history.
+Updated 2026-11-09. Source version 0.8.0 / Android versionCode 12. Read this file, product, narrative, decision ledger and roadmap before implementation. Older milestones are in Git history.
 
 ## Instructions and authorization
 
@@ -35,7 +35,7 @@ Normal coin/step counters restored. Test toolbar source removed, intro replay ab
 
 Ignored `.env.local` contains public client configuration and VITE_CLOUD_SAVES=true. Example remains false for unconfigured checkouts. Snapshot covers profile, events, navigation, letter outcomes, relationships, thoughts, life calendar/schedules, health checkpoints and language. Revision RPC protects stale writes; conflicts require explicit selection and retain a device backup. Offline local preservation/retry and reset tombstones remain supported. Real-account sign-in and game restoration on a Samsung tablet were confirmed by the owner on 2026-11-09. Reverse synchronization, offline recovery, concurrent conflicts and untested email/OAuth flows remain pending. Do not claim the remaining acceptance scenarios were device-tested.
 
-Content generation prologue-10, schema 1, older prologue-1/2/3/4/5/6/7/8/9 accepted by deterministic replay. Private pack `src/content/private/opening.json`, vertical `tree.txt` and `skills-tree.txt` are ignored and required for the richer narrative. The owner created the private `letmoro-manuscript` repository; the owner confirmed the initial push and local tracking matches it. New draft commits remain local until authenticated upload; remote restoration and independent backup remain pending. Do not force-add manuscripts to the application repository. APK includes local text by design. Generic checkout supports the first delivery without this manuscript.
+Content generation prologue-11, schema 1, older prologue-1/2/3/4/5/6/7/8/9/10 accepted by deterministic replay. Private pack `src/content/private/opening.json`, vertical `tree.txt` and `skills-tree.txt` are ignored and required for the richer narrative. The owner created the private `letmoro-manuscript` repository; the owner confirmed the initial push and local tracking matches it. New draft commits remain local until authenticated upload; remote restoration and independent backup remain pending. Do not force-add manuscripts to the application repository. APK includes local text by design. Generic checkout supports the first delivery without this manuscript.
 
 ## Verification and environment
 
@@ -213,3 +213,19 @@ Current playable private text and authoring status are committed separately as 1
 ### 0.7.0 final native artifact verification
 
 Android assembly and lint pass; the four Kotlin unit tests are valid/up-to-date with zero failures. App lint has 16 non-blocking warnings, zero errors/fatals. Temporary SDK 36 and Gradle were restored; no dependency or health-permission change was introduced. APK metadata confirms app.letmoro.internal, versionName 0.7.0 / versionCode 11. Signature identity matches the preserved 0.6.0 APK. All ten packaged web files match final dist; both localized new texts are present. SHA-256 `31ffa190e4f389a211d17db00b948004bbdeb644ab11061dd71b20a65e3d47c3`. An isolated APK-only LAN server with one-hour expiry follows the owner's established delivery preference. No phone install, actual new-loop playthrough, public distribution or application push is claimed. Main source implementation commit: ab70e87.
+
+
+## Third inhabited loop — 0.8.0 implementation
+
+Owner authorizes the next bounded loop. Source adds one inhabitant/landing, independent introductions through a known person or the preceding resident, three letter identities and explicit clarify/abstain/guess choices. A physical return and explicit witnessed scene resolve four possible outcomes; held questions/answers block premature collection. No object is added to Moro's inventory. Trust changes only with witnesses; acknowledgement is one-time bounded repair, not automatic friendship. The second participant is recorded only at that scene, with a later historical reread rather than live presence.
+
+An independent introduction may invoke the existing stair split but preserves old position, reserve, request flags, letters and focus. It does not fabricate a direction conversation with Neri. The old round and all previous playable text remain unchanged. Source version 0.8.0 / versionCode 12; prologue-11 accepts all earlier generations without a database migration or fresh start. Catalog: 32 letters across alternatives, eleven encounterable characters excluding Moro, 17 badge conditions. No new job, skill, price, life/step-source policy, deadline or romance.
+
+One hundred eleven tests pass. Eight synthetic EN/FR mobile cases cover clarification, interrupted response, abstention and unauthorized choice, including confirmation cancellation, sealed-body privacy, actual participants, later reread, reload and landscape. Six prior second-loop browser regressions also pass. Portrait screenshots were visually inspected. These use synthetic accounts/intercepted HTTP, not real account or health data. Physical phone acceptance remains pending, and tablet tests remain deferred. Final web/native/artifact results follow below.
+
+
+### 0.8.0 final verification and artifact
+
+Generic and manuscript-included builds pass; the included main chunk is approximately 731 kB with the existing Vite warning. The older measured 23-letter pacing itineraries remain unchanged. Android assembly/lint and four valid cached Kotlin unit-test results pass; 16 app lint warnings, zero errors/fatals. Optional metrics could not write its protected settings directory but did not fail the build. New APK versionName/versionCode are 0.8.0/12, app ID unchanged. Signature matches the preserved 0.7.0 APK. All ten packaged web files match final dist and both languages' new text is present. SHA-256 `ebc1435072591b79d8a4892f7508dc34a78624984475bd3320fcd3cd8fdd1d0b`. The old APK is preserved at `/tmp/letmoro-native/letmoro-0.7.0.apk`. Temporary APK-only Wi-Fi delivery has a one-hour expiry, with no public publication or phone installation claimed.
+
+Application implementation commit 1960f7a. Private manuscript/content and authoring verification commits b562313 and 8859485; the imported manifest points to 8859485a9cec0e0c57a53b7229f8ccdc3b43c9d5. Attempted private push failed for missing HTTPS authentication; owner must push new private commits from an authenticated terminal. Public source staging excludes private prose. Independent backup remains pending. Next bounded work is q04; do not claim q04–q08 or complete Arc I implemented.

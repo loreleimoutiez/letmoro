@@ -2,7 +2,7 @@
 
 ## Current milestone
 
-Version 0.7.0 source is a playable opening with authored correspondence and recurring inhabitants, not the full five-arc campaign. See [gameplay status](gameplay-status.md) and [handoff](handoff.md) for implemented behavior and verification. Source/docs commits and an internal APK are authorized; publication, push and a public license are not.
+Version 0.8.0 is a playable opening with authored correspondence and recurring inhabitants, not the full five-arc campaign. See [gameplay status](gameplay-status.md) and [handoff](handoff.md) for implemented behavior and verification. Source/docs commits and an internal APK are authorized; publication, push and a public license are not.
 
 The Supabase save migration is deployed and verified. The ordinary HUD is restored; internal test/reset/replay UI and browser-preview captions are removed. The local ignored manuscript contains twenty new letters, recurring conversations and thirty thoughts. Rest weekday scheduling follows the latest confirmed next-Monday/seven-day rule.
 
@@ -54,3 +54,8 @@ Owner defers tablet tests during a multi-week phone playtest. Private manuscript
 ## Second-loop source milestone — 0.7.0
 
 The next inhabited loop is now integrated in source, including all six alternative letter identities, EN/FR outcomes, explicit discovery/reconnection migrations, optional requests/replies and a communication-based correction route. This advances one bounded loop; the remaining inhabited branches and Arc I convergence/closing are still future implementation. Phone playthrough remains pending. Continue with the next bounded branch rather than treating the written ending as playable or expanding health/tablet scope during the owner's multi-week test.
+
+
+## Third-loop source milestone — 0.8.0
+
+The third inhabited loop is integrated with independent introductions, a side landing, three letters, clarification/abstention/unauthorized-answer routes and witnessed ownership consequences. Existing quest states and round completion are retained. The next bounded implementation is the fourth loop, with distinct firsthand-observation and reporting choices; later administrative/exploration branches and the Arc I convergence/ending remain unfinished. Continue incorporating the owner's long-term phone observations; tablet testing remains deferred.
