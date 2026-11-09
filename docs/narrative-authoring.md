@@ -6,7 +6,7 @@ The intended public repository contains the runtime, content interfaces and beha
 
 `src/content/private/` is ignored by Git. The local `opening.json` supplies `en` and `fr` objects matching `OpeningContent` in `src/content/narrative.ts`. English is source; French is translation. Vite includes the optional pack at build time. The owner created a separate private GitHub repository, `letmoro-manuscript`. A local Git copy lives in ignored `.manuscript/`. The owner confirmed the initial push; local `origin/main` tracks that initial snapshot. This environment still lacks GitHub authentication, so new commits cannot be uploaded or remote visibility independently queried here. No runtime download service or content update protocol exists.
 
-The optional `visits` section now supplies neighborhood dialogue/errand text, and `characters` supplies identities/colors for the current nine encounterable characters excluding Moro. Generic tracked stage copy keeps a checkout buildable without these private scenes.
+The optional `visits` section now supplies neighborhood dialogue/errand text, and `characters` supplies identities/colors for the current ten encounterable characters excluding Moro. Generic tracked stage copy keeps a checkout buildable without these private scenes.
 
 The local `tree.txt` is the vertical authoring view. Label implemented branches separately from planned scenes and mechanics. Keep it synchronized with manuscript and runtime progress. The tree is an authoring artifact, not a player-visible map or an implemented year-long campaign.
 
@@ -20,7 +20,7 @@ Run TypeScript, behavioral tests and a production build, then exercise both loca
 
 Compiled client assets and Android packages contain any included manuscript. Repository privacy does not prevent extraction from a distributed application. The owner selected the private manuscript repository for backup. This does not authorize public manuscript publication or pushing application changes.
 
-New runtime events extend the existing replay format without changing prior actions. Current generation `prologue-9` accepts `prologue-1` through `prologue-8`. Earlier generations introduced stable campaign letter IDs, item states, relationships, thoughts and schedules; later generations added skill purchases, explicit secondary-path discovery and conditional return choices. Keep these IDs stable; never rewrite the meaning of shipped events. Future content generations and replay compaction still need explicit migration design.
+New runtime events extend the existing replay format without changing prior actions. Current generation `prologue-10` accepts `prologue-1` through `prologue-9`. Earlier generations introduced stable campaign letter IDs, item states, relationships, thoughts and schedules; later generations added skill purchases, explicit secondary-path discovery and conditional return choices. Keep these IDs stable; never rewrite the meaning of shipped events. Future content generations and replay compaction still need explicit migration design.
 
 ## Expanded local pack contract
 
@@ -63,3 +63,8 @@ The import writes ignored `src/content/private/source-version.json` with the sou
 The private repository now contains `arc-one-closure.md`: a continuity audit, proposed route/convergence/ending conditions, six closing scene blocks with French translations, and an integration acceptance matrix. It separates the current correspondence-round milestone from the future arc ending, preserves refusal/nonattendance paths, and removes mandatory optional-report quotas from the earlier draft. It does not integrate new runtime scenes or complete Arc I. The existing continuation/tree/skill notes now distinguish playable behavior from draft material.
 
 The new closing document stays in the separate manuscript repository; the current import copies only its four required files and does not copy this additional planning file into runtime content. The playable `opening.json` is unchanged. No new trait effect, purchase price, reward, badge or skill rule is introduced by the plan. Next: fully author the next bounded loop and its outcome variants before implementing it.
+
+
+## Second-loop source integration — 0.7.0
+
+`campaign.stairPassage` supplies localized discovery/direction text, request choices, witnessed-claim/disclosure/correction outcomes, final response variants and journal wording. Its six additional `letters` entries have independent stable IDs and sealed bodies. One added character/conversation and three map nodes accompany the two independently learned connections. Existing playable text is unchanged; additions were compared against the previous private commit. The source now implements this loop, while the closing-plan document and remaining continuation are still authoring material. Keep completed meetings/repairs distinct from communicated intentions.

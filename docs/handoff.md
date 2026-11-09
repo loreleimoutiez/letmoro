@@ -1,6 +1,6 @@
 # Session handoff
 
-Updated 2026-11-09. Source version 0.6.0 / Android versionCode 10. Read this file, product, narrative, decision ledger and roadmap before implementation. Older milestones are in Git history.
+Updated 2026-11-09. Source version 0.7.0 / Android versionCode 11. Read this file, product, narrative, decision ledger and roadmap before implementation. Older milestones are in Git history.
 
 ## Instructions and authorization
 
@@ -33,9 +33,9 @@ Normal coin/step counters restored. Test toolbar source removed, intro replay ab
 
 `supabase/migrations/20261106105934_player_saves.sql` applied to the verified hosted project via the owner-connected Supabase integration. Public schema was empty. Remote checks verified owner RLS, denied anonymous table/RPC access, rejected foreign-owner RPC calls, SECURITY INVOKER and safe search path. Tests used transaction-local synthetic claims and rollback, no player records. Security advisor only flags disabled leaked-password protection; Auth configuration was not changed.
 
-Ignored `.env.local` contains public client configuration and VITE_CLOUD_SAVES=true. Example remains false for unconfigured checkouts. Snapshot covers profile, events, navigation, letter outcomes, relationships, thoughts, life calendar/schedules, health checkpoints and language. Revision RPC protects stale writes; conflicts require explicit selection and retain a device backup. Offline local preservation/retry and reset tombstones remain supported. Real-account sign-in and game restoration on a Samsung tablet were confirmed by the owner on 2026-11-09. Reverse synchronization, offline recovery, concurrent conflicts and untested email/OAuth flows remain pending. Never claim it is device-tested.
+Ignored `.env.local` contains public client configuration and VITE_CLOUD_SAVES=true. Example remains false for unconfigured checkouts. Snapshot covers profile, events, navigation, letter outcomes, relationships, thoughts, life calendar/schedules, health checkpoints and language. Revision RPC protects stale writes; conflicts require explicit selection and retain a device backup. Offline local preservation/retry and reset tombstones remain supported. Real-account sign-in and game restoration on a Samsung tablet were confirmed by the owner on 2026-11-09. Reverse synchronization, offline recovery, concurrent conflicts and untested email/OAuth flows remain pending. Do not claim the remaining acceptance scenarios were device-tested.
 
-Content generation prologue-9, schema 1, older prologue-1/2/3/4/5/6/7/8 accepted by deterministic replay. Private pack `src/content/private/opening.json`, vertical `tree.txt` and `skills-tree.txt` are ignored and required for the richer narrative. The owner created the private `letmoro-manuscript` repository; the owner confirmed the initial push and local tracking matches it. New draft commits remain local until authenticated upload; remote restoration and independent backup remain pending. Do not force-add manuscripts to the application repository. APK includes local text by design. Generic checkout supports the first delivery without this manuscript.
+Content generation prologue-10, schema 1, older prologue-1/2/3/4/5/6/7/8/9 accepted by deterministic replay. Private pack `src/content/private/opening.json`, vertical `tree.txt` and `skills-tree.txt` are ignored and required for the richer narrative. The owner created the private `letmoro-manuscript` repository; the owner confirmed the initial push and local tracking matches it. New draft commits remain local until authenticated upload; remote restoration and independent backup remain pending. Do not force-add manuscripts to the application repository. APK includes local text by design. Generic checkout supports the first delivery without this manuscript.
 
 ## Verification and environment
 
@@ -131,7 +131,7 @@ The ignored manuscript supplies all new identity/dialogue/letter content in EN/F
 0.5.0 verification: 82 behavioral tests pass, including seven secondary-path regressions, old graph position/interval preservation, no repeated completion rewards, optional reply alternatives and employment refusal. Generic manuscript-free and restored private-manuscript production builds pass. Synthetic EN/FR mobile checks pass. Four Kotlin unit tests, Android lint and APK assembly pass; existing nonblocking bundle/lint suggestions remain. Signature verified and final packaged web assets match dist. APK/versionCode: 0.5.0/9. SHA-256: `f23948cdbd291862ca3d92cf93061990364219097b6b74928bedadffdc9e1042`. Physical playthrough of the new loop remains pending. No Supabase migration or data reset required.
 
 
-## Current 0.6.0 — language arrival and readable return encounters
+## Historical 0.6.0 — language arrival and readable return encounters
 
 Owner requests explicit EN/FR choice before account/setup/intro, slightly smaller encounter text, less repeated copy, selected meaningful return interactions, updated counts/pacing, commits/docs/APK, and asks about a silent promotional clip. First launch now gates App mounting until a language is chosen; valid device preferences skip the gate thereafter. Account landing also has a language selector. Explicit session choice survives restoring a differently localized cloud game. Explicit full erasure still returns setup to English as previously specified; it retains Auth.
 
@@ -197,3 +197,19 @@ Private commit `bece1907541ba12d314c6f1a4a60cfaaf1ddd38a`; owner-pushed initial 
 Owner requests a story-first README with early documentation navigation, a replacement for the term "Narrative bible", and quotation marks around the ruler's name in documentation. README now explains Moro, authored correspondence, real-step travel, persistent choices and the campaign ambition before status and development setup. Documentation navigation follows the introduction; technical status is condensed and detailed evidence remains linked. The existing image is preserved. Removed the obsolete claim that no application remote is configured. Narrative reference title is "Narrative guide"; the stable file path is unchanged. Public and private prose uses “M” with quotation marks, without editing playable content.
 
 Owner also asks why the new Arc I plan is not implemented. Prior work was scoped to the proposed first planning step, not blocked on blanket approval or a technical prohibition. Closing scene drafts depend on still-outlined quests and explicit outcome knowledge; implementation can proceed one complete localized loop at a time, then convergence/ending. No requirement to author all five arcs before coding was adopted. This turn changes documentation only; no runtime, save, APK or health behavior changes.
+
+
+## Second inhabited loop — 0.7.0 implementation
+
+Owner explicitly authorizes implementing the next bounded Arc I loop. Source now integrates one inhabitant, a conversation-gated secondary entrance, separately learned reconnection, exclusive request formats, optional replies and an actual communication-based correction route. Full scene/letter content is private EN/FR. No new badge, employment, life policy, step-source selection, deadline, automatic repair or political/romantic commitment. The original round and all previous playable text/outcomes remain unchanged. Arc I convergence and ending remain draft.
+
+The two explicit graph migrations preserve earlier replay geometry, walked intervals, offset/position, reserve and odometer; tiny goals avoid zero edges or ambiguous directions. New report contradictions use paid-travel progression plus returning to the sender, so old round completion cannot strand them; legacy reports retain old semantics. Content prologue-10 accepts all earlier generations. Snapshot schema remains 1 with no database migration. Source/catalog: 0.7.0, versionCode 11, 29 letter identities across alternatives, ten encounterable characters excluding Moro, 17 badge conditions. Do not call catalog size a required delivery count.
+
+One hundred tests, TypeScript, production builds with/without manuscript and all six synthetic EN/FR mobile diagram/discussion/correction browser scenarios pass. Sealed-body privacy, persisted responses, no repeated rewards, landscape and visually inspected portrait layout are covered. No physical phone playthrough or real account test is claimed. Previous APK remains preserved under `/tmp/letmoro-native/letmoro-0.6.0.apk` while the 0.7.0 native build runs. Final native/APK result is recorded below after completion.
+
+Current playable private text and authoring status are committed separately as 10d1cb8b34dd41d9a662ad9ac12771ddbd6a41c0, with an ignored provenance manifest. Remote authentication remains unavailable here; new manuscript commits need an owner-authenticated push. Keep private prose out of the application commit. Tablet tests remain deferred while the owner playtests over weeks.
+
+
+### 0.7.0 final native artifact verification
+
+Android assembly and lint pass; the four Kotlin unit tests are valid/up-to-date with zero failures. App lint has 16 non-blocking warnings, zero errors/fatals. Temporary SDK 36 and Gradle were restored; no dependency or health-permission change was introduced. APK metadata confirms app.letmoro.internal, versionName 0.7.0 / versionCode 11. Signature identity matches the preserved 0.6.0 APK. All ten packaged web files match final dist; both localized new texts are present. SHA-256 `31ffa190e4f389a211d17db00b948004bbdeb644ab11061dd71b20a65e3d47c3`. An isolated APK-only LAN server with one-hour expiry follows the owner's established delivery preference. No phone install, actual new-loop playthrough, public distribution or application push is claimed. Main source implementation commit: ab70e87.

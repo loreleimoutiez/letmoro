@@ -4,7 +4,7 @@ Health Connect reads the daily aggregate; optional foreground sensors provide fa
 
 ## Setup
 
-Build with Node.js 22.12+, JDK 21, SDK 36 and `npm run android:build`. The package is `app.letmoro.internal`, minimum Android 9. Current update: 0.6.0 / versionCode 10. See README and account setup for local configuration and installation.
+Build with Node.js 22.12+, JDK 21, SDK 36 and `npm run android:build`. The package is `app.letmoro.internal`, minimum Android 9. Current update: 0.7.0 / versionCode 11. See README and account setup for local configuration and installation.
 
 After the initial language choice, account login, game setup and introduction, a connection invitation appears before the map/Walk cue if access is not already available. Authorize step reading there, or continue and use Step connection later. On supported updated Android 14+ devices, the phone can collect steps itself; Samsung Health can also write steps with its own granted permissions. The user confirmed a daily total on S23.
 

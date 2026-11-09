@@ -2,7 +2,7 @@
 
 ## Current milestone
 
-Version 0.6.0 is a playable opening with authored correspondence and recurring inhabitants, not the full five-arc campaign. See [gameplay status](gameplay-status.md) and [handoff](handoff.md) for implemented behavior and verification. Source/docs commits and an internal APK are authorized; publication, push and a public license are not.
+Version 0.7.0 source is a playable opening with authored correspondence and recurring inhabitants, not the full five-arc campaign. See [gameplay status](gameplay-status.md) and [handoff](handoff.md) for implemented behavior and verification. Source/docs commits and an internal APK are authorized; publication, push and a public license are not.
 
 The Supabase save migration is deployed and verified. The ordinary HUD is restored; internal test/reset/replay UI and browser-preview captions are removed. The local ignored manuscript contains twenty new letters, recurring conversations and thirty thoughts. Rest weekday scheduling follows the latest confirmed next-Monday/seven-day rule.
 
@@ -49,3 +49,8 @@ First secondary loop is implemented in 0.5.0. Next: physically assess its entran
 ## Current authoring checkpoint — 2026-11-09
 
 Owner defers tablet tests during a multi-week phone playtest. Private manuscript protection is established through the owner-confirmed initial push; a local Git restore was tested, while independent backup and fresh remote restoration remain pending. The private Arc I closing plan now defines convergence, equal refusal/quiet routes, proposed EN/FR closing scenes and acceptance conditions. This is authoring work only; the app remains 0.6.0 with its existing playable opening. Next content work: fully author the next inhabited loop and its failure/refusal variants, then integrate it without changing old quest requirements. Trait/relationship/spending depth should support these scenes rather than delay the ending behind a larger simulation.
+
+
+## Second-loop source milestone — 0.7.0
+
+The next inhabited loop is now integrated in source, including all six alternative letter identities, EN/FR outcomes, explicit discovery/reconnection migrations, optional requests/replies and a communication-based correction route. This advances one bounded loop; the remaining inhabited branches and Arc I convergence/closing are still future implementation. Phone playthrough remains pending. Continue with the next bounded branch rather than treating the written ending as playable or expanding health/tablet scope during the owner's multi-week test.

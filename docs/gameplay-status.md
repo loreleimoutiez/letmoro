@@ -1,6 +1,6 @@
-# Gameplay status — 0.6.0
+# Gameplay status — 0.7.0
 
-This is an internal playable opening, not the complete public campaign. The source and local ignored manuscript include the easy first job, twenty additional letters, recurring branching conversations, two optional unpaid errands, thirty contextual thoughts, trust/friendship and seventeen badge conditions. No runtime-generated or AI-generated story is used.
+This is an internal playable opening, not the complete public campaign. The source and local ignored manuscript include the easy first job, twenty additional letters, recurring branching conversations, two optional unpaid errands, thirty contextual thoughts, trust/friendship and seventeen badge conditions. The second inhabited loop adds six alternative letter identities and one character, bringing the catalog to 29 letters and ten encounterable characters excluding Moro. Its replies and correction route are optional; old round completion is unchanged. No runtime-generated or AI-generated story is used.
 
 ## Playable and saved
 
@@ -21,7 +21,7 @@ The first round has a closing scene and outcomes for both employment and refusal
 
 ## Verification
 
-TypeScript and all 89 tests pass, including the manuscript import/backup tooling regression added on 2026-11-09. The original 0.6.0 application checkpoint had 88 behavioral tests. Tests cover legacy replay, all twenty deliveries and reports, refusal unlocks, privacy/witnessed trust, delayed contradictory reports, optional personal rewards, one pending thought, friendship loss without badge loss, schedule timing/cooldown and corrected daily data. Native compilation, four Kotlin unit tests and Android lint passed; seven existing non-blocking lint suggestions remain. The current native checks use the in-process Kotlin compiler; older checkpoints used a fallback because their daemon home was read-only.
+TypeScript and all 100 tests pass, including eleven second-loop regressions and the manuscript import/backup check. The 0.6.0 application checkpoint had 88 behavioral tests. Tests cover legacy replay, all twenty deliveries and reports, refusal unlocks, privacy/witnessed trust, delayed contradictory reports, optional personal rewards, one pending thought, friendship loss without badge loss, schedule timing/cooldown and corrected daily data. The earlier 0.6.0 checkpoint passed native compilation, four Kotlin unit tests and Android lint with seven non-blocking suggestions; the 0.7.0 checkpoint below records current native results. The current native checks use the in-process Kotlin compiler; older checkpoints used a fallback because their daemon home was read-only.
 
 Browser campaign regression uses synthetic Auth and intercepted cloud HTTP, not a real account: startup/restore, replaced dialogue choices, sealed/opened collection, earned badge, rest settings and cooldown, proportional wheel/two-touch zoom, normal HUD, no test/zoom UI, FR and portrait/landscape. Additional browser checks cover the abstract silent-destination squares, sealed-body privacy and one persistent thought through reload without a queue. Screenshots and harness are external under `/tmp/letmoro-qa/`.
 
@@ -73,10 +73,28 @@ One new secondary entrance/junction and a destination encounter are implemented 
 0.5.0 APK/versionCode 9 built and signature verified; packaged assets match dist. Four native unit tests and lint pass. SHA-256: `f23948cdbd291862ca3d92cf93061990364219097b6b74928bedadffdc9e1042`. New loop awaits owner phone playthrough; existing saves are retained.
 
 
-## 0.6.0 current checkpoint
+## Historical 0.6.0 checkpoint
 
 Explicit EN/FR first-launch gate before account/setup/intro, persisted preference and pre-login selector; compact deduplicated encounter content; optional rereads; automatic once-per-arrival encounter recording; three localized conditional return conversations with saved choices and no repeated XP. Existing saves replay through prologue-9. Content remains 9 encounterable characters (10 with Moro), 23 distinct letters, 17 badges.
 
 `npm run measure:pacing` measures 596,200 steps for all 23 letters with no optional reports, 1,155,450 with reports, and 1,252,450 with reports plus both legacy errands at a 10,000-step goal. Each itinerary carries one letter at a time. These are examples, not optimal/worst bounds or calendar-duration promises. Less walking through batching does not remove story; endless free walking does not add endless authored scenes.
 
 0.6.0 APK/versionCode 10 verified: `bd51b703113d258da08ea95573f993ff25ecc596598fe7367bfed02a880260f4`. Signing identity matches the previous APK; packaged assets match final dist. 88 domain/adapter tests, four Kotlin unit tests, native lint and synthetic EN/FR mobile language/revisit checks pass. Physical acceptance remains pending. A separate ignored 21-second silent portrait UI montage was generated locally; no publication.
+
+
+## 0.7.0 second-loop checkpoint
+
+A second conversation-gated lane, a separately learned connection, one inhabitant and six alternative letter identities are integrated in EN/FR. Request format is chosen before accepting a letter; answers and reports are separate optional journeys. A deliberately unauthorized claim has a local witness, a separate disclosure and a written correction that must actually travel. Baseline solutions and explicit refusals work without employment, skills or money. No new badge condition, job, automatic repair, timed meeting or health rule.
+
+The catalog has 29 letters across alternatives, ten encounterable characters excluding Moro and 17 badge conditions. These are not mandatory per-run counts. The existing pacing script still measures its explicit original 23-letter itinerary; it does not yet measure every new alternative. Arc I convergence and ending remain unimplemented.
+
+One hundred tests pass, with eleven new cases for hidden/explicit discovery, both road migrations, old save replay, tiny goals, alternatives, actual travel, refusal, witness-only consequences, correction and delayed reports after the old round. TypeScript and generic/manuscript-included production builds pass. Main manuscript-included chunk is approximately 706 kB minified; the existing non-blocking Vite warning remains.
+
+Synthetic mobile Chromium checks at 390 × 844 cover both languages and all three new paths: written request, discussion invitation and correction. They verify explicit discovery, optional answer travel, sealed-body privacy, portrait/landscape, response persistence after reload and no JavaScript errors. Screenshots were inspected for readability. Harness/screenshots are under `/tmp/letmoro-qa/`, with synthetic sessions and intercepted backend requests; no real account/health data was used. Every preexisting playable text/value was checked unchanged against the previous private snapshot. Physical phone acceptance remains pending.
+
+Source uses content generation prologue-10 and app version 0.7.0 / versionCode 11. Earlier saves decode through replay without a database migration or fresh start. Older 0.6.0 binaries cannot read a snapshot newly written by 0.7.0; update other devices before resuming that snapshot there.
+
+
+0.7.0 APK/versionCode 11 assembled and signature-verified; signing identity matches the preserved 0.6.0 APK. All ten packaged web files match final dist, and both locales' new content is present. SHA-256: `31ffa190e4f389a211d17db00b948004bbdeb644ab11061dd71b20a65e3d47c3`. Native compilation/assembly, the four Kotlin unit tests (Gradle reused valid test outputs) and lint pass. App lint reports 16 warnings, zero errors/fatals: unused attributes/resources, dependency/version notices, overdraw, small widget text and KTX suggestions. The count differs from the older checkpoint; no new native health/widget implementation was added.
+
+The temporary SDK/Gradle toolchain was restored; AGP installed its required Build Tools 35, and signing verification used Build Tools 36. The initial wrapper-cache permission failure was resolved by running with the authorized writable temporary Gradle home. Restored SDK metadata/license declarations were corrected. This is build verification, not physical installation. The latest APK is offered through an isolated APK-only LAN server with one-hour expiry under the owner's established Wi-Fi delivery preference; no public publication.

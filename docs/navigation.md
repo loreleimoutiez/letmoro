@@ -12,7 +12,7 @@ The initial office quest remains 2% of the daily goal, followed by a 10% northbo
 
 ## Replay and compatibility
 
-New saves use content generation `prologue-9`; decoding also accepts `prologue-1` through `prologue-8`. Existing events replay with their original linear credit rules until a single `enable-navigation` event materializes the already visible progress and charges it once. Existing delivery/letter outcomes remain unchanged. The primary street stays horizontal; the courtyard extends north. This is a geometry update for the prototype, not preservation of old screen coordinates.
+New saves use content generation `prologue-10`; decoding also accepts `prologue-1` through `prologue-9`. Existing events replay with their original linear credit rules until a single `enable-navigation` event materializes the already visible progress and charges it once. Existing delivery/letter outcomes remain unchanged. The primary street stays horizontal; the courtyard extends north. This is a geometry update for the prototype, not preservation of old screen coordinates.
 
 Imported activity before the quest origin forms an earlier known approach, not completed first-quest travel. Native aggregate/high-water reconciliation remains unchanged. Direction, destination, encounter, dialogue and errand events are saved through the same validated replay stream. Cloud decoding normalizes older saves before comparing current content fingerprints. The hosted save migration is applied; the owner confirmed game restoration on a Samsung tablet on 2026-11-09, while reverse synchronization and conflict/offline acceptance remain pending.
 
@@ -52,3 +52,10 @@ New user actions carry UTC timestamps; the unnumbered journal displays local dat
 ## Campaign routes and objectives
 
 Accepted letters authorize a connected route without rendering its unknown places. At an actual node the player may learn an adjacent direction, then choose it in the compass; no click pays travel. A cross-connection allows real alternative loops. An explicit letter focus points either to its delivery or optional sender report. Resolving a different carried item does not clear that focus. Shortest authorized route distance accounts for returns and detours. Visited campaign nodes and actual encounter history are persisted separately from mere route authorization.
+
+
+## Second inhabited loop — 0.7.0
+
+An actual conversation at the workshop allows a separately saved lane discovery. Only that event splits the existing workshop road; the new inhabitant can explain a second connection, whose explicit discovery splits the old gate road. Both migrations remap walked intervals and current offsets while preserving world position, heading except at the new junction, reserve and odometer. Tiny goals attach the lane to the courtyard rather than create a zero-length road or competing compass direction. Existing wash-passage discovery remains independent.
+
+The new six-letter catalog uses the established carrying/inspection/delivery/return/report rules. Request format is chosen explicitly before accepting its letter; the alternatives are exclusive and optional replies are new promises. A witnessed unauthorized claim affects its witness; disclosing it to the affected person is another actual encounter. A written correction requires delivery, and the optional sender report requires returning. No completed repair or meeting is inferred. New false reports use a half-goal paid-travel delay plus a sender encounter, so their contradiction can resolve after the original round is finished; legacy reports keep their original progress-based delay. No life/import policy changes.

@@ -53,9 +53,9 @@ The first work encounter must clearly offer employment, with dialogue choices be
 Full plots, private character biographies, letter bodies, hidden conditions and endings must not be tracked in this repository. The owner selected a separate private manuscript repository and confirmed its initial push; new draft uploads and an independent backup remain separate checks. See [private authoring](narrative-authoring.md). Public documentation may describe mechanics and authoring requirements without spoilers. No full campaign manuscript is tracked here.
 
 
-## Implemented opening — 0.6.0
+## Implemented opening — 0.7.0
 
-Current totals: 23 letters including the initial delivery and two secondary-loop messages, nine encounterable characters excluding Moro, and seventeen badges. The sections below distinguish the original round from its later extensions.
+Current catalog totals: 29 letters across alternative paths, including the initial delivery and eight secondary-loop letters, and ten encounterable characters excluding Moro, and seventeen badges. The sections below distinguish the original round from its later extensions.
 
 The approved neighborhood and cast are authored in the ignored local pack. Postal delivery is the only available employment. The first job has explicit questions/refusal/acceptance and a short initial delivery; two optional unpaid errands remain. Twenty further letters connect recurring inhabitants and new places, with a complete personal-request route when employment is refused. The round has a closing scene; this is not a completed first major arc.
 
@@ -84,3 +84,8 @@ One of the drafted secondary loops is now playable through the local manuscript:
 ### Return conversations and repeated copy — 0.6.0
 
 Three current inhabitants have new follow-up conversations after actual returns and specific delivered messages. They acknowledge work and practical arrangements without revealing sealed contents or granting remote knowledge. Staying to talk can strengthen trust; a brief greeting makes no new promise. These are once-only, replay-safe scenes, not a new complete quest arc. Old conversations remain optional rereads. The reusable UI no longer overlays generic campaign/arrival/delivery prose on top of equivalent authored text. All new scene prose remains in the ignored EN/FR pack.
+
+
+### Second inhabited loop — 0.7.0 source
+
+A second explicitly revealed lane introduces an inhabitant with control over the help being requested. Two exclusive written-request routes, optional return answers and a distinct correction route are integrated in both languages. The correction requires actual communication and does not erase the original breach or automatically create friendship. The inhabitant separately explains an alternative connection back to the existing road. Six letter identities cover alternatives; they are not six mandatory deliveries or a new job. Existing round completion and seventeen badge conditions remain unchanged. Other continuation loops and the Arc I convergence/ending remain draft.
