@@ -4,7 +4,7 @@ The intended public repository contains the runtime, content interfaces and beha
 
 ## Local opening pack
 
-`src/content/private/` is ignored by Git. The local `opening.json` supplies `en` and `fr` objects matching `OpeningContent` in `src/content/narrative.ts`. English is source; French is translation. Vite includes the optional pack at build time. The owner created a separate private GitHub repository, `letmoro-manuscript`. A local Git copy is prepared in ignored `.manuscript/`; remote visibility/access and the first push are not yet verified because this environment lacks GitHub authentication. No runtime download service or content update protocol exists.
+`src/content/private/` is ignored by Git. The local `opening.json` supplies `en` and `fr` objects matching `OpeningContent` in `src/content/narrative.ts`. English is source; French is translation. Vite includes the optional pack at build time. The owner created a separate private GitHub repository, `letmoro-manuscript`. A local Git copy lives in ignored `.manuscript/`. The owner confirmed the initial push; local `origin/main` tracks that initial snapshot. This environment still lacks GitHub authentication, so new commits cannot be uploaded or remote visibility independently queried here. No runtime download service or content update protocol exists.
 
 The optional `visits` section now supplies neighborhood dialogue/errand text, and `characters` supplies identities/colors for the current nine encounterable characters excluding Moro. Generic tracked stage copy keeps a checkout buildable without these private scenes.
 
@@ -31,20 +31,20 @@ New runtime events extend the existing replay format without changing prior acti
 
 The ignored `.manuscript/` directory is a separate Git repository with its own `origin`, history and commits. Its initial snapshot preserves the four existing manuscript files byte for byte. The existing `src/content/private/` copies remain in place. Never add either directory to the application repository.
 
-The initial local snapshot is not yet a verified remote backup. In an authenticated terminal, verify that `loreleimoutiez/letmoro-manuscript` is Private, then fetch its history before pushing:
+The owner confirmed pushing the initial snapshot on 2026-11-09. Keep `loreleimoutiez/letmoro-manuscript` Private. On a future setup or before uploading new drafts, use an authenticated terminal to fetch and inspect remote history:
 
 ```sh
 git -C .manuscript fetch origin
 git -C .manuscript branch -r
 ```
 
-If no remote branch exists, push the prepared initial commit:
+For the prepared checkout whose local branch tracks the owner-pushed `origin/main`, push committed manuscript updates with:
 
 ```sh
 git -C .manuscript push -u origin main
 ```
 
-If a remote branch already exists, inspect and integrate it first; do not force-push or overwrite remote content. Verify the uploaded files and restore a fresh clone before claiming remote backup complete. Authentication credentials belong in the system's Git credential manager, never in commands, project files or chat.
+If remote history has advanced or a new checkout has unrelated history, inspect and integrate it first; do not force-push or overwrite remote content. Verify the uploaded files and restore a fresh clone before claiming remote backup complete. Authentication credentials belong in the system's Git credential manager, never in commands, project files or chat.
 
 For later work, edit and commit the manuscript in that separate repository, then prepare local runtime content:
 
@@ -56,3 +56,10 @@ npm run manuscript:import -- --check
 The command accepts an optional repository path and requires a clean committed source with all four required regular files and EN/FR opening content. It refuses to overwrite divergent local text by default. Preserve local edits in the manuscript repository first. If replacement is intended, `--replace` copies the previous files into ignored `.manuscript-backups/` before replacement. These same-disk copies are recovery aids, not independent backups. It does not delete additional private files or upload anything.
 
 The import writes ignored `src/content/private/source-version.json` with the source commit and SHA-256 hashes. Preserve this manifest with local build records to trace manuscript input. It is not automatically embedded in APK metadata; the existing 0.6.0 APK is unchanged. A future checkout can clone the private repository into `.manuscript/` and run the same import command.
+
+
+## Arc I closing plan — 2026-11-09
+
+The private repository now contains `arc-one-closure.md`: a continuity audit, proposed route/convergence/ending conditions, six closing scene blocks with French translations, and an integration acceptance matrix. It separates the current correspondence-round milestone from the future arc ending, preserves refusal/nonattendance paths, and removes mandatory optional-report quotas from the earlier draft. It does not integrate new runtime scenes or complete Arc I. The existing continuation/tree/skill notes now distinguish playable behavior from draft material.
+
+The new closing document stays in the separate manuscript repository; the current import copies only its four required files and does not copy this additional planning file into runtime content. The playable `opening.json` is unchanged. No new trait effect, purchase price, reward, badge or skill rule is introduced by the plan. Next: fully author the next bounded loop and its outcome variants before implementing it.

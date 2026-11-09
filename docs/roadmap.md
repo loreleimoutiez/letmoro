@@ -23,7 +23,7 @@ The owner initially reported a material mismatch, then confirmed matching wearab
 - Expand contextual consequences beyond the opening's trust/witness/report model, with authored scenes and recoverable relationships. Add discovered skill branches and real trait effects, preserving unknown nodes and avoiding automatic commitments.
 - Design goal/mode switching, emergency-pause boundaries, account-wide rescue and archive-preserving reboot. Follow lives-and-reboot; user deferred these while implementing life/rest/recovery first. Never silently refresh rests/rescue through mode or account-local resets.
 - Reconcile multi-day closed-app travel, old corrections and travel-zone overlap without duplicate credit. Preserve missing data as unknown. Compact replay and version content/save migrations before year-long scale.
-- Meaningful spending/home/customization, archive export/deletion/retention and durable private-content backup. The owner selected `letmoro-manuscript` as a private remote. Complete its authenticated first push and remote restoration check, then add an independent backup; Git ignore alone is not backup.
+- Meaningful spending/home/customization, archive export/deletion/retention and durable private-content backup. The owner selected `letmoro-manuscript` as a private remote. The owner confirmed the initial push. Complete a fresh remote restoration check and add an independent backup; subsequent draft commits need authenticated uploads, and Git ignore alone is not backup.
 
 ## Public release gate
 
@@ -44,3 +44,8 @@ First secondary loop is implemented in 0.5.0. Next: physically assess its entran
 
 
 0.6.0 improves language arrival/readability and adds three selected return follow-ups; counts/pacing are documented with a reproducible script. Next narrative work remains the other inhabited secondary loops and their convergence, rather than artificially extending duration by distance or repeating existing text.
+
+
+## Current authoring checkpoint — 2026-11-09
+
+Owner defers tablet tests during a multi-week phone playtest. Private manuscript protection is established through the owner-confirmed initial push; a local Git restore was tested, while independent backup and fresh remote restoration remain pending. The private Arc I closing plan now defines convergence, equal refusal/quiet routes, proposed EN/FR closing scenes and acceptance conditions. This is authoring work only; the app remains 0.6.0 with its existing playable opening. Next content work: fully author the next inhabited loop and its failure/refusal variants, then integrate it without changing old quest requirements. Trait/relationship/spending depth should support these scenes rather than delay the ending behind a larger simulation.
