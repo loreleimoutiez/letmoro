@@ -1,12 +1,12 @@
 # Account-owned cloud saves
 
-Status: initial migration applied to the verified hosted Letmoro project on 2026-11-06 through the connected Supabase integration. Owner policies, anonymous denial, foreign-owner RPC rejection and invoker privileges were verified remotely without touching player records. The security advisor found no database issue; its separate leaked-password-protection warning remains an Auth configuration task. Local cloud synchronization is enabled in ignored `.env.local`. Real-account cross-device round trips remain to verify.
+Status: initial migration applied to the verified hosted Letmoro project on 2026-11-06 through the connected Supabase integration. Owner policies, anonymous denial, foreign-owner RPC rejection and invoker privileges were verified remotely without touching player records. The security advisor found no database issue; its separate leaked-password-protection warning remains an Auth configuration task. Local cloud synchronization is enabled in ignored `.env.local`. The owner confirmed real-account sign-in and game restoration on a Samsung tablet on 2026-11-09; reverse synchronization, concurrent conflicts and offline recovery remain to verify.
 
 ## Owner setup
 
 Apply [the migration](../supabase/migrations/20261106105934_player_saves.sql) to the existing Supabase project's SQL editor or migration workflow. It creates `player_saves`, authenticated owner-only row policies and the `save_player_progress` function. The initial migration has now been applied; do not re-run its CREATE statements against the deployed table. Never embed a database password or service-role key in the client.
 
-After applying and verifying the migration, set `VITE_CLOUD_SAVES=true` in ignored `.env.local` and rebuild/restart the preview. The checked-in example defaults to false, for unconfigured checkouts; the owner’s ignored local configuration now enables synchronization. Test with two real test accounts before claiming live cross-device persistence. Anonymous reads/writes and cross-account access must fail.
+After applying and verifying the migration, set `VITE_CLOUD_SAVES=true` in ignored `.env.local` and rebuild/restart the preview. The checked-in example defaults to false, for unconfigured checkouts; the owner’s ignored local configuration now enables synchronization. One real-account tablet restoration is owner-confirmed. Further acceptance should cover account isolation, reverse synchronization, concurrent conflicts and offline retry. Anonymous reads/writes and cross-account access must fail.
 
 ## Data and ownership
 
@@ -38,7 +38,7 @@ The owner connected the Supabase integration and authorized the prepared migrati
 
 Verified remotely: RLS enabled; all three policies constrain ownership with `auth.uid()`; anonymous users cannot SELECT or execute the save RPC; the RPC is SECURITY INVOKER with an empty search path; authenticated foreign-owner calls fail. Access tests used transaction-local synthetic claims, performed no player writes, and rolled back. Earlier isolated SQL tests additionally cover stale revisions and tombstones. No personal records, secret keys or live sessions were queried.
 
-The security advisor reports leaked-password protection disabled. This is separate from save isolation and has not been changed automatically. Actual account upload/restore across devices and offline recovery remain device checks before claiming operational cross-device backup.
+The security advisor reports leaked-password protection disabled. This is separate from save isolation and has not been changed automatically. The owner subsequently confirmed sign-in and game restoration on a Samsung tablet on 2026-11-09. Reverse synchronization, offline recovery and concurrent-conflict behavior still require physical checks.
 
 The checked-in migration filename is aligned to hosted version `20261106105934` returned by migration history. Its SQL is unchanged; this avoids a future CLI push treating the same initial schema as a new migration.
 

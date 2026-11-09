@@ -25,7 +25,7 @@ TypeScript and all 88 behavioral tests pass. Tests cover legacy replay, all twen
 
 Browser campaign regression uses synthetic Auth and intercepted cloud HTTP, not a real account: startup/restore, replaced dialogue choices, sealed/opened collection, earned badge, rest settings and cooldown, proportional wheel/two-touch zoom, normal HUD, no test/zoom UI, FR and portrait/landscape. Additional browser checks cover the abstract silent-destination squares, sealed-body privacy and one persistent thought through reload without a queue. Screenshots and harness are external under `/tmp/letmoro-qa/`.
 
-Hosted migration is applied. Metadata and transaction-local access tests verify RLS and grants without reading/writing player records. Cross-device real-account restore, email/OAuth callbacks and closed-day history/corrections still require physical checks. Real life penalties stay disabled. A daily count alone does not validate historical import, multi-day offline travel credit or background execution.
+Hosted migration is applied. Metadata and transaction-local access tests verify RLS and grants without reading/writing player records. The owner confirmed real-account sign-in and game restoration on a Samsung tablet on 2026-11-09. Reverse synchronization, offline recovery, concurrent conflicts, untested email/OAuth callbacks and closed-day history/corrections still require physical checks. Real life penalties stay disabled. A daily count alone does not validate historical import, multi-day offline travel credit or background execution.
 
 Production builds include the ignored local manuscript for owner testing; generic builds without it must also compile. Full replay still has a 50,000-event limit and needs compaction before a year-long release.
 
